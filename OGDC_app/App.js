@@ -1,39 +1,41 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View} from "react-native";
-import styled from "styled-components";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
 
-import Button from './components/Button'; 
-import ImageViewer from './components/ImageViewer';
+import { AuthenScreen, SeConnecterScreen, AideScreen } from './composantes/Authen';
+import ArdoiseScreen from './composantes/ArdoiseScreen';
+import PanierScreen from './composantes/PanierScreen';
+import CommandeScreen from './composantes/CommandeScreen';
+import CommandeInfoScreen from './composantes/CommandeInfoScreen';
+import RestoInfoScreen from './composantes/RestoInfoScreen';
+import AccueilScreen from './composantes/AccueilScreen';
 
-const PlaceholderImage = require("./assets/images/background-image.png");
+const { Navigator, Screen } = createNativeStackNavigator();
 
 export default function App() {
+
   return (
-    <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <ImageViewer placeholderImageSource={PlaceholderImage} />
-      </View>
-      <View style={styles.footerContainer}>
-        <Button theme="primary" label="Choose a photo" />
-        <Button label="Use this photo" />
-      </View>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Navigator initialRouteName="Authen"
+        screenOptions={{
+          headerTitleAlign: "center",
+        }} >
+        <Screen name="Accueil" component={AccueilScreen}
+          options={{
+            title: "OGDC",
+          }} />
+        <Screen name="Aide" component={AideScreen} />
+        <Screen name="Authen" component={AuthenScreen}
+          options={{title:"main"}} />
+        <Screen name="SeConnecter" component={SeConnecterScreen}
+          options={{ title: "connection"}} />
+        <Screen name="Ardoise" component={ArdoiseScreen} />
+        <Screen name="Panier" component={PanierScreen} />
+        <Screen name="Commandes" component={CommandeScreen} />
+        <Screen name="CommandeInfo" component={CommandeInfoScreen}
+          options={{ title: "Détail de la commande" }} />
+        <Screen name="RestoInfo" component={RestoInfoScreen}
+          options={{ title: "Nous joindre" }} />
+      </Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#25292e',
-    alignItems: 'center',
-  },
-  imageContainer: {
-    flex: 1,
-    paddingTop: 58,
-  },
-  footerContainer: {
-    flex: 1 / 3,
-    alignItems: 'center',
-  },
-});
