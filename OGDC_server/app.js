@@ -23,8 +23,9 @@ app.get('/', (req, res) => {
     res.json({ message: 'Bonjour, Hi' });
 });
 
+app.use('/cafehomer/authentification',)
 app.use('/cafehomer/authentification', connexionRoutes);
-app.use(connexion.connecter); // Premièrement authentifier l'usager 
+app.use(connexion.connecter); // Premièrement authentifier l'usager
 app.use('/cafehomer/menu', menu.menuRoutes);
 //app.use('/cafehomer/commandes', commandeRoutes);
 

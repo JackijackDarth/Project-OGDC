@@ -1,0 +1,22 @@
+[
+    {
+        "Id": "1",
+        "prenom": "Mathias",
+        "nom": "Simoneau",
+        "username": "simmat",
+        "pass": "1234",
+        "mail": "simmat12@icloud.com",
+        "phone": "(450) 434-9898",
+        "isLogin": true
+    },
+    {
+        "Id": "2",
+        "prenom": "Antoine",
+        "nom": "Michaud",
+        "username": "antman",
+        "pass": "0987",
+        "mail": "simmat12@icloud.com",
+        "phone": "(450) 434-9898",
+        "isLogin": true
+    }
+]

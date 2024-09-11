@@ -30,17 +30,20 @@ function validerConnexion(req) {
     let users = JSON.parse(fs.readFileSync(usersFilePath));
     let found = false;
     let userAuthentifier;
-    for(let user of users){
-        if(user.username == username && user.pass == pass){
+    console.log(users);
+    for(let i = 0; i < users.length; i++){
+        if(users[i].username == username && users[i].pass == pass){
             found = true;
-            userAuthentifier = user;
+            userAuthentifier = users[i];
         }
     }
     //
-    if (!found)
+    if (!found){
         return { erreur: 1, msg: "username / password invalide"};
-    
-    return { erreur: 0, msg: "username / password validés", userId: user.Id};
+    }   
+    userAuthentifier.isLogin = true;
+    fs.writeFileSync(usersFilePath, JSON.stringify(users));
+    return { erreur: 0, msg: "username / password validés", userId: userAuthentifier.Id};
 }
 
 module.exports = {
