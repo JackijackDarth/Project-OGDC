@@ -12,46 +12,7 @@ import stylesCommuns from '../styles';
 import * as Localization from 'expo-localization';
 import { I18n } from 'i18n-js';
 
-const paramètresLocaux = Localization.getLocales();
-const paramêtresCalendrier = Localization.getCalendars();
-const langue_région = paramètresLocaux[1].languageTag;
-const deviseFormateur = new Intl.NumberFormat(langue_région,
-    { style: 'currency', currency: 'CAD' });
-const en = {
-  welcome: "Hello",
-  menu: "Menu",
-  orders: "Orders",
-  contact: "Contact Us",
-  shopping_cart: "Shopping Cart",
-  total_price: "Total Price",
-  tax_gst: "GST",
-  tax_qst: "QST",
-  delete: "Delete",
-  order: "Order",
-  chose: "Chose",
-  order_success: "Thank you for ordering at Chez Homer"
-  };
-  const fr_ca = {
-  welcome: "Bonjour",
-  menu: "Menu",
-  orders: "Commandes",
-  contact: "Nous joindre",
-  shopping_cart: "Panier",
-  total_price: "Prix total",
-  tax_gst: "TPS",
-  tax_qst: "TVQ",
-  delete: "Supprimer",
-  order: "Commander",
-  chose:"Choisir",
-  order_success: "Merci d’avoir commandé Chez Homer"
-  };
-  const tabTraduction = {
-  "en-US": en,
-  "en-CA": en,
-  "fr-CA": fr_ca,
-  };
-  const i18n = new I18n(tabTraduction);
-  i18n.locale = langue_région;
+
 export default function PanierScreen({ navigation }) {
     const [panier, setPanier] = useState(obtenirPanier());
     const [statutCommande, setStatutCommande] = useState(null);
