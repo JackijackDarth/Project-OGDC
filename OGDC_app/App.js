@@ -25,9 +25,9 @@ export default function App() {
           }} />
         <Screen name="Aide" component={AideScreen} />
         <Screen name="Authen" component={AuthenScreen}
-          options={{title:"main"}} />
+          options={{title:"Sign up", headerShown:false }} />
         <Screen name="SeConnecter" component={SeConnecterScreen}
-          options={{ title: "connection"}} />
+          options={{ title: "",headerTransparent:true, headerBackTitle:"Back"}} />
         <Screen name="Ardoise" component={ArdoiseScreen} />
         <Screen name="Panier" component={PanierScreen} />
         <Screen name="Commandes" component={CommandeScreen} />
