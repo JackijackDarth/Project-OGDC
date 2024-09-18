@@ -1,6 +1,6 @@
 [
     {
-        "Id": "1",
+        "Id": 1,
         "prenom": "Mathias",
         "nom": "Simoneau",
         "username": "simmat",
@@ -10,7 +10,7 @@
         "isLogin": true
     },
     {
-        "Id": "2",
+        "Id": 2,
         "prenom": "Antoine",
         "nom": "Michaud",
         "username": "antman",
