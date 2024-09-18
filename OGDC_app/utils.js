@@ -1,7 +1,7 @@
 let Username = "admin"
 let Password = "password"
 
-const serveur_ip = "172.22.172.220";
+const serveur_ip = "192.168.137.175";
 
 function obtenirJSON_Get(ressource) {
     console.log("username: %s", Username);
@@ -63,14 +63,5 @@ export function connecterUtilisateur(username, password) {
             return res;
         });}
 export function creerUtilisateurJSON(nouvUtilisateur) {
-    /*let utilisateurInfo = {
-        prenom : nouvUtilisateur.prenom,
-        nom : nouvUtilisateur.nom,
-        username : nouvUtilisateur.username,
-        pass : nouvUtilisateur.pass,
-        mail : nouvUtilisateur.mail,
-        phone: nouvUtilisateur.phone,
-        isLogin : false,
-    }*/
     return créerJSON_Post("creationUtilisateur", nouvUtilisateur);
 }
