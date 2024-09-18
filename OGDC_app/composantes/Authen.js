@@ -65,7 +65,7 @@ export function SeConnecterScreen({ navigation }) {
     const [password, setPassword] = useState(null);
 
     function seConnecter() {
-        obtenirAuthenJSON(username, password).then((res) => {
+        connecterUtilisateur(username, password).then((res) => {
             console.log("login success: %s", res);
             navigation.popToTop();
             navigation.replace("Accueil", { nom: res.nom });

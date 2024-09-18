@@ -3,7 +3,7 @@ let Password = "password"
 
 const serveur_ip = "172.22.172.220";
 
-function obtenirRessourceJSON(ressource) {
+function obtenirJSON_Get(ressource) {
     console.log("username: %s", Username);
     console.log("password: %s", Password);
 
@@ -12,18 +12,15 @@ function obtenirRessourceJSON(ressource) {
         headers: {
             "Authorization": `Basic ${Username}:${Password}`,
         },
-    })  // Exécute une requête HTTP GET
-        .then(res => {      // Lorsque la réponse commence à arriver,
+    })
+        .then(res => {  
             if (!res.ok)
                 throw new Error(res.status);
 
-            return res.json(); // Retourner un objet "Promise" représentant
-            // le contenu de la requête.
-            // L'objet Response expose la méthode json et text
-            // pour traiter le contenu.
+            return res.json(); 
         })
 }
-function créerRessourceJSON(ressource, resInfo) {
+function créerJSON_Post(ressource, resInfo) {
     let url = new URL(`http://${serveur_ip}:4242/cafehomer/${ressource}`);
     return fetch(url, {
         method: "POST",
@@ -37,35 +34,43 @@ function créerRessourceJSON(ressource, resInfo) {
             return { satut: `${res.status}` }
         })
 }
-function modifierRessourceJSON(ressource, id, resInfo) {
-    let url = new URL(`http://${serveur_ip}:4242/cafehomer/${ressource}/${id}`);
-    return fetch(url, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Basic ${Username}:${Password}`,
-        },
-        body: JSON.stringify(resInfo),
-    })
-        .then(res => {
-            return { satut: `${res.status}` }
-        })
-}
-// export function obtenirAuthenJSON(username, password) {
-//     Username = username;
-//     Password = password;
-//     return obtenirRessourceJSON("authentification");
+// À implémenter
+// function modifierRessourceJSON(ressource, id, resInfo) {
+//     let url = new URL(`http://${serveur_ip}:4242/cafehomer/${ressource}/${id}`);
+//     return fetch(url, {
+//         method: "PUT",
+//         headers: {
+//             "Content-Type": "application/json",
+//             "Authorization": `Basic ${Username}:${Password}`,
+//         },
+//         body: JSON.stringify(resInfo),
+//     })
+//         .then(res => {
+//             return { satut: `${res.status}` }
+//         })
 // }
-export function obtenirMenuJSON() {
-    return obtenirRessourceJSON("menu");
-}
-export function obtenirAuthenJSON(username, password) {
+// export default function obtenirMenuJSON() {
+//     return obtenirRessourceJSON("menu");
+// }
+export function connecterUtilisateur(username, password) {
     Username = username;
     Password = password;
-    return obtenirRessourceJSON("authentification")
+    return obtenirJSON_Get("authentification")
         .then((res) => {
             console.log("login succès: %s", res);
             Nom = res.nom;
             Prénom = res.prénom;
             return res;
         });}
+export function creerUtilisateurJSON(nouvUtilisateur) {
+    /*let utilisateurInfo = {
+        prenom : nouvUtilisateur.prenom,
+        nom : nouvUtilisateur.nom,
+        username : nouvUtilisateur.username,
+        pass : nouvUtilisateur.pass,
+        mail : nouvUtilisateur.mail,
+        phone: nouvUtilisateur.phone,
+        isLogin : false,
+    }*/
+    return créerJSON_Post("creationUtilisateur", nouvUtilisateur);
+}
