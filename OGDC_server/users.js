@@ -1,3 +1,4 @@
+const fs = require('fs');
 
 const menu = require('./routes/menu');
 const usersFilePath = "./BD/users.json";
@@ -7,7 +8,8 @@ let users = JSON.parse(fs.readFileSync(usersFilePath));
 function créerUtilisateur(userInfo) {
     let maxId = 0;
     users.forEach(user => {
-        if (user.Id > maxId) maxid = user.Id;
+        console.log(user, user.Id);
+        if (user.Id > maxId) maxId = user.Id;
     })
 
     const nouvelleUsager = {

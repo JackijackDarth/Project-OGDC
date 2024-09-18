@@ -6,6 +6,7 @@ const config = require('./config');
 const menu = require('./routes/menu');
 //const commandeRoutes = require('./routes/commande');
 const connexionRoutes = require('./routes/connexion');
+const creerUtilisateurRoutes = require('./routes/creerUtilisateur');
 
 const connexion = require('./verifierConnexion');
 
@@ -23,7 +24,7 @@ app.get('/', (req, res) => {
     res.json({ message: 'Bonjour, Hi' });
 });
 
-app.use('/cafehomer/authentification',)
+app.use('/cafehomer/creationUtilisateur',creerUtilisateurRoutes)
 app.use('/cafehomer/authentification', connexionRoutes);
 app.use(connexion.connecter); // Premièrement authentifier l'usager
 app.use('/cafehomer/menu', menu.menuRoutes);
