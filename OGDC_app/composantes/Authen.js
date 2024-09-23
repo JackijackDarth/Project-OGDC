@@ -25,25 +25,24 @@ export function AuthenScreen({ navigation }) {
                 mail: mail
             });
         }
-        if(!emailvalide){
-            setConnectionmsg("Email invalide");
-        }
+       
         else {
             setInvalidbool(true);
-            if (!surname && !mail && !name) {
-                setConnectionmsg("Veuillez remplir les champ!");
+
+            // else {
+            if (!mail) {
+                setConnectionmsg("Veuillez entrer une adresse couriel!");
             }
-            else {
-                if (!mail) {
-                    setConnectionmsg("Veuillez entrer une adresse couriel!");
-                }
-                if (!name) {
-                    setConnectionmsg("Veuillez entrer un nom!");
-                }
-                if (!surname) {
-                    setConnectionmsg("Veuillez entrer un nom de famille!");
-                }
+            if (!emailvalide) {
+                setConnectionmsg("Email invalide");
             }
+            if (!name) {
+                setConnectionmsg("Veuillez entrer un nom!");
+            }
+            if (!surname) {
+                setConnectionmsg("Veuillez entrer un prénom!");
+            }
+            // }
 
 
         }
@@ -84,7 +83,7 @@ export function AuthenScreen({ navigation }) {
                     />
                     <TextInput
                         style={styles.input}
-                        backgroundColor={invalidbool && !mail || !validate.validate(mail) && invalidbool ? 'rgba(255, 0, 0, 0.4)' : null}
+                        backgroundColor={invalidbool && !mail ||invalidbool && !validate.validate(mail) ? 'rgba(255, 0, 0, 0.4)' : null}
                         placeholder="Email"
                         onChangeText={setMail}
                         value={mail}
@@ -134,7 +133,7 @@ export function CreeCompteScreen({ route, navigation }) {
                 pass: password,
                 mail: mail,
                 phone: phone,
-                isLogin: false,
+                isLogin: false, 
             }
             creerUtilisateurJSON(nouvUtilisateur).then((res) => {
                 console.log("creation réussi %s", res);
@@ -146,10 +145,10 @@ export function CreeCompteScreen({ route, navigation }) {
         }
         else {
             setInvalidbool(true);
-            if (!username && !password && !phone) {
-                setConnectionmsg("Veuillez remplir les champ!");
-            }
-            else {
+            // if (!username && !password && !phone) {
+            //     setConnectionmsg("Veuillez remplir les champ!");
+            // }
+            // else {
                 if (!username) {
                     setConnectionmsg("Veuillez entrer un nom d'utilisateur!");
                 }
@@ -159,7 +158,7 @@ export function CreeCompteScreen({ route, navigation }) {
                 if (!phone) {
                     setConnectionmsg("Veuillez entrer un numero de telephone!");
                 }
-            }
+            // }
         }
     }
     
@@ -171,6 +170,7 @@ export function CreeCompteScreen({ route, navigation }) {
             <View style={styles.form}>
                 <Text style={styles.subtitle}>Veuiller aussi remplir les infos suivantes.</Text>
                 <View style={styles.formContainer}>
+
                     <TextInput
                         style={styles.input}
                         backgroundColor={invalidbool && !username ? 'rgba(255, 0, 0, 0.4)' : null}
@@ -185,8 +185,7 @@ export function CreeCompteScreen({ route, navigation }) {
                         backgroundColor={invalidbool && !phone ? 'rgba(255, 0, 0, 0.4)' : null}
                         placeholder="Telephone"
                         onChangeText={(str) => setPhone(formatPhoneNumber(str))}
-    value={phone}
-                        // value={phone}
+                        value={phone}
                         maxLength={14}
                         inputMode='tel'
                         textContentType='telephoneNumber'
@@ -218,6 +217,8 @@ export function CreeCompteScreen({ route, navigation }) {
 export function SeConnecterScreen({ navigation }) {
     const [username, setUsername] = useState(null);
     const [password, setPassword] = useState(null);
+    const [connectionmsg, setConnectionmsg] = useState(null);
+    const [invalidbool, setInvalidbool] = useState(false);
 
     function seConnecter() {
         connecterUtilisateur(username, password).then((res) => {
@@ -227,6 +228,8 @@ export function SeConnecterScreen({ navigation }) {
         })
             .catch(err => {
                 console.log("login failed: %s", err);
+                setConnectionmsg("Mot de passe/nom d'utilisateur invalide!");
+                setInvalidbool(true);
             });
     }
 
@@ -254,16 +257,19 @@ export function SeConnecterScreen({ navigation }) {
                         placeholder="Nom d'utilisateur"
                         onChangeText={setUsername}
                         value={username}
+                        backgroundColor={invalidbool ? 'rgba(255, 0, 0, 0.4)' : null}
                         autoCapitalize="none"
                     />
                     <TextInput
                         style={styles.input}
                         placeholder="Mot de passe"
+                        backgroundColor={invalidbool ? 'rgba(255, 0, 0, 0.4)' : null}
                         secureTextEntry={true}
                         onChangeText={setPassword}
                         value={password}
                     />
                 </View>
+                <Text style={styles.msgerreur}>{connectionmsg}</Text>
                 <Pressable onPress={seConnecter} style={styles.button}>
                     <Text style={styles.buttonText}>Se connecter</Text>
                 </Pressable>
