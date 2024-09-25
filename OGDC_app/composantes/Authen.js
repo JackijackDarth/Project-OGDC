@@ -111,6 +111,7 @@ export function CreeCompteScreen({ route, navigation }) {
     const [phone, setPhone] = useState(null);
     const [connectionmsg, setConnectionmsg] = useState(null)
     const [invalidbool, setInvalidbool] = useState(false);
+    const [valideusrname, setUsrnmValidBool] = useState(true);
     const { mail, name, surname } = route.params;
     const formatPhoneNumber = (str) => {
         let numbers = str.replace(/\D/g, '')
@@ -138,17 +139,18 @@ export function CreeCompteScreen({ route, navigation }) {
             creerUtilisateurJSON(nouvUtilisateur).then((res) => {
                 console.log("creation réussi %s", res);
                 navigation.popToTop();
-                navigation.replace("Accueil", { nom: res.nom });
+                navigation.replace("Accueil", { nom: res.nom, usrId : res.Id});
             }).catch(err => {
                 console.log("creation échec: %s", err.msg);
+                setInvalidbool(true);
+                setConnectionmsg("Ce nom d'utilisateur ou ce couriel existe déja");
+                setUsrnmValidBool(false);
+
             });
         }
         else {
             setInvalidbool(true);
-            // if (!username && !password && !phone) {
-            //     setConnectionmsg("Veuillez remplir les champ!");
-            // }
-            // else {
+             
                 if (!username) {
                     setConnectionmsg("Veuillez entrer un nom d'utilisateur!");
                 }
@@ -158,7 +160,7 @@ export function CreeCompteScreen({ route, navigation }) {
                 if (!phone) {
                     setConnectionmsg("Veuillez entrer un numero de telephone!");
                 }
-            // }
+            
         }
     }
     
@@ -173,7 +175,7 @@ export function CreeCompteScreen({ route, navigation }) {
 
                     <TextInput
                         style={styles.input}
-                        backgroundColor={invalidbool && !username ? 'rgba(255, 0, 0, 0.4)' : null}
+                        backgroundColor={invalidbool && !username || !valideusrname ? 'rgba(255, 0, 0, 0.4)' : null}
                         placeholder="Nom d'utilisateur"
                         onChangeText={setUsername}
                         value={username}
@@ -224,7 +226,7 @@ export function SeConnecterScreen({ navigation }) {
         connecterUtilisateur(username, password).then((res) => {
             console.log("login success: %s", res);
             navigation.popToTop();
-            navigation.replace("Accueil", { nom: res.nom });
+            navigation.replace("Accueil", { nom: res.nom, usrId : res.Id });
         })
             .catch(err => {
                 console.log("login failed: %s", err);

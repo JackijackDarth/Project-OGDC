@@ -7,7 +7,8 @@ import PanierScreen from './composantes/PanierScreen';
 import CommandeScreen from './composantes/CommandeScreen';
 import CommandeInfoScreen from './composantes/CommandeInfoScreen';
 import RestoInfoScreen from './composantes/RestoInfoScreen';
-import AccueilScreen from './composantes/AccueilScreen';
+import {AccueilScreen, AjoutRobotScreen } from './composantes/AccueilScreen';
+
 
 const { Navigator, Screen, Group } = createNativeStackNavigator();
 
@@ -34,6 +35,11 @@ export default function App() {
         <Group screenOptions={{ presentation: 'modal' }}>
         <Screen name="CreeCompte" component={CreeCompteScreen} options={{title:"S'inscrire"}} />
         </Group>
+
+        <Group screenOptions={{ presentation: 'modal' }}>
+        <Screen name="AjoutRobot" component={AjoutRobotScreen} options={{title:"Ajouter un robot"}} />
+        </Group>
+
 
         <Screen name="Ardoise" component={ArdoiseScreen} />
 

@@ -1,55 +1,14 @@
-import { ScrollView, StyleSheet } from 'react-native';
-import { Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Pressable, Image } from 'react-native';
+import { Text, View, FlatList } from 'react-native';
 import { useState, useEffect, useRef } from 'react';
 import { AntDesign } from '@expo/vector-icons';
 
 import { BarreOutils, Bouton } from './BarreOutils';
 import ItemMenu from './ItemMenu';
 
-import { obtenirMenuJSON } from '../utils';
+import { obtenirRobotsJSON } from '../utils';
 import { nbItemPanier, ajouterItemPanier } from '../panier';
-import * as Localization from 'expo-localization';
-import { I18n } from 'i18n-js';
 
-const paramètresLocaux = Localization.getLocales();
-const paramêtresCalendrier = Localization.getCalendars();
-const langue_région = paramètresLocaux[0].languageTag;
-
-const en = {
-  welcome: "Hello",
-  menu: "Menu",
-  orders: "Orders",
-  contact: "Contact Us",
-  shopping_cart: "Shopping Cart",
-  total_price: "Total Price",
-  tax_gst: "GST",
-  tax_qst: "QST",
-  delete: "Delete",
-  order: "Order",
-  chose: "Chose",
-  order_success: "Thank you for ordering at Chez Homer"
-  };
-  const fr_ca = {
-  welcome: "Bonjour",
-  menu: "Menu",
-  orders: "Commandes",
-  contact: "Nous joindre",
-  shopping_cart: "Panier",
-  total_price: "Prix total",
-  tax_gst: "TPS",
-  tax_qst: "TVQ",
-  delete: "Supprimer",
-  order: "Commander",
-  chose:"Choisir",
-  order_success: "Merci d’avoir commandé Chez Homer"
-  };
-  const tabTraduction = {
-  "en-US": en,
-  "en-CA": en,
-  "fr-CA": fr_ca,
-  };
-  const i18n = new I18n(tabTraduction);
-  i18n.locale = langue_région;
 import stylesCommuns from '../styles';
 
 const mapcouleur = {
@@ -65,6 +24,7 @@ export default function ArdoiseScreen({ navigation }) {
   const [menuJSON, setMenu] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [nbItemsPanier, setNbItemsPanier] = useState(nbItemPanier());
+  console.log(menuJSON)
   useEffect(() => {//jai du chercher un peu pour trouver cela... je ne sais pas si il sagit de la bonne facon mais je ne trouvais pas comment rafraichire
     return navigation.addListener('focus', () => {
       setNbItemsPanier(nbItemPanier());
@@ -83,7 +43,7 @@ export default function ArdoiseScreen({ navigation }) {
     });
   }, [nbItemsPanier,navigation]); 
   useEffect(() => {
-    obtenirMenuJSON().then(menu => setMenu(menu));
+    obtenirRobotsJSON().then(menu => setMenu(menu));
   }, []);
 
   function choisirItem(item) {
@@ -94,31 +54,54 @@ export default function ArdoiseScreen({ navigation }) {
 
   return (
     <View style={stylesCommuns.app}>
-      <ScrollView>
+      {/* <ScrollView>
         {menuJSON.map((categorie, index) => (
-          <Catégorie key={index} titre={categorie.titre} couleur={mapcouleur[categorie.titre]}>
+          <Catégorie key={index} titre={categorie.username} >
             {categorie.items.map(item => (
               <ItemMenu
-                key={item.idItem}
+                key={item.id}
                 sélectionné={item === selectedItem}
-                titre={item.nomItem}
-                prix={item.prix}
-                onPress_cb={() => setSelectedItem(item)}
-                image={item.image}
+                titre={item.username}
+                // onPress_cb={() => setSelectedItem(item)}
+                // image={item.image}
               />
             ))}
           </Catégorie>
         ))}
-      </ScrollView>
-      <Bouton texte={i18n.t("chose")} onPress_cb={() => selectedItem != null &&(choisirItem(selectedItem))} style={styles.boutton}/>
+      </ScrollView> */}
+      <FlatList style={styles.liste}
+           
+           //numColumns={1}
+           data={menuJSON}
+           renderItem={({ item, index }) => {
+             console.log(item.username);
+             return <Thumbnail Nom={`${item.username}`} thumb_cb={() => setCurrentImage(item)} />
+           }}
+         />
+      <Bouton texte={"chose"} onPress_cb={() => selectedItem != null &&(choisirItem(selectedItem))} style={styles.boutton}/>
     </View>
   );
 }
 
-function Catégorie({ titre, couleur, children }) {
+
+
+
+
+export function Thumbnail({ Nom, thumb_cb }) {
+  function onClick_cb(e) {
+    if (thumb_cb !== null && thumb_cb !== undefined)
+      thumb_cb();
+  }
+  return (
+    <Pressable style={styles.thumbnail} onPress={onClick_cb}>
+      <Text>{}</Text>
+    </Pressable>
+  )
+}
+function Catégorie({ titre, children }) {
   
   return (
-    <View style={[styles.section,{ backgroundColor: couleur }]}>
+    <View style={[styles.section,{ backgroundColor: "#98de9c" }]}>
       <Text>{titre}</Text>
       <ScrollView horizontal>
         {children}
