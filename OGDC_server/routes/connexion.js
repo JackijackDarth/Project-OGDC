@@ -28,7 +28,7 @@ connexionRoutes.get('/', (req, res) => {
             });
         }
     }
-
 });
+
 
 module.exports = connexionRoutes;

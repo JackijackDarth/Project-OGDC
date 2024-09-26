@@ -3,12 +3,10 @@ const http = require("http");
 const bodyParser = require('body-parser');
 const config = require('./config');
 
-const menu = require('./routes/menu');
-//const commandeRoutes = require('./routes/commande');
 const connexionRoutes = require('./routes/connexion');
 const creerUtilisateurRoutes = require('./routes/creerUtilisateur');
-
-const connexion = require('./verifierConnexion');
+const robotRoutes = require('./routes/robotConnecter');
+const objetRoutes = require('./routes/listeObjets');
 
 const app = express();
 const { port } = config;
@@ -26,9 +24,8 @@ app.get('/', (req, res) => {
 
 app.use('/cafehomer/creationUtilisateur',creerUtilisateurRoutes)
 app.use('/cafehomer/authentification', connexionRoutes);
-app.use(connexion.connecter); // Premièrement authentifier l'usager
-app.use('/cafehomer/menu', menu.menuRoutes);
-//app.use('/cafehomer/commandes', commandeRoutes);
+app.use('/cafehomer/robot_connecter', robotRoutes)
+app.use('/cafehomer/liste_objets', objetRoutes)
 
 const server = http.createServer(app);
 

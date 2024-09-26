@@ -13,10 +13,19 @@ creationRoute.route('/')
         console.table(usagerInfo);
         const resultat = user.créerUtilisateur(usagerInfo);
         if (resultat.erreur !== 0) {
-            res.status(400).send(resultat);
+            console.log("Erreur création")
+            res.status(400).send(resultat.msg);
         } else {
             res.status(201).send();
         }
     })
-
+creationRoute.route('/:id')
+    .get((req, res) =>{
+        console.log("Obtenir l'usager %d", req.params.id);
+        const resultat = user.obtenirUsager(req.params.id);
+        if (resultat.erreur !== 0)
+            res.status(404).send(resultat);
+        else
+            res.json(resultat.user);
+    })
 module.exports = creationRoute;
