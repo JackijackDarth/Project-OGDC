@@ -2,16 +2,16 @@ import { Pressable, StyleSheet } from 'react-native';
 import { Text, View } from 'react-native';
 import { Image } from 'react-native';
 
-export default function ItemMenu({ sélectionné = false, titre, prix, onPress_cb, image }) {
-  const uri = `data:image/jpg;base64,${image}`;
+export default function ItemMenu({ sélectionné = false, username, onPress_cb }) {
+  // const uri = `data:image/jpg;base64,${image}`;
 
   return (
     <Pressable onPress={onPress_cb} style={[styles.item,sélectionné ? styles.itemSélectionné : styles.item]}>
 
-      <Image source={{ uri }} style={styles.image} />
+      {/* <Image source={{ uri }} style={styles.image} /> */}
       <View style={styles.itemDesc}>
-        <Text>{titre}</Text>
-        <Text>${prix}</Text>
+        <Text>{username}</Text>
+         
       </View>
     </Pressable>
   );

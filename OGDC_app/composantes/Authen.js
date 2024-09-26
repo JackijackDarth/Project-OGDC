@@ -1,77 +1,237 @@
 import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Text, View, Pressable, TextInput } from 'react-native';
+var validate = require("react-email-validator");
 import { useState, useEffect } from 'react';
 import { Bouton } from './BarreOutils'; // Assuming BarreOutils has a Bouton component
-
-import { obtenirAuthenJSON } from '../utils';
+ 
+import { connecterUtilisateur, creerUtilisateurJSON } from '../utils';
 
 export function AuthenScreen({ navigation }) {
+    const [surname, setSurname] = useState(null);
+    const [mail, setMail] = useState(null);
+    const [name, setName] = useState(null);
+    const [connectionmsg, setConnectionmsg] = useState(null);
+    const [invalidbool, setInvalidbool] = useState(false);
 
-    function créerCompte() {
-        console.log("A faire");
+
+    function compte() {
+        emailvalide = validate.validate(mail)
+        if (surname && mail && name && emailvalide) {
+            setInvalidbool(false);
+            setConnectionmsg(null);
+            navigation.navigate("CreeCompte", {
+                surname: surname,
+                name: name,
+                mail: mail
+            });
+        }
+       
+        else {
+            setInvalidbool(true);
+
+            // else {
+            if (!mail) {
+                setConnectionmsg("Veuillez entrer une adresse couriel!");
+            }
+            if (!emailvalide) {
+                setConnectionmsg("Email invalide");
+            }
+            if (!name) {
+                setConnectionmsg("Veuillez entrer un nom!");
+            }
+            if (!surname) {
+                setConnectionmsg("Veuillez entrer un prénom!");
+            }
+            // }
+
+
+        }
     }
 
     function seConnecter() {
+        setInvalidbool(false);
         navigation.navigate("SeConnecter");
     }
 
     return (
         <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.formBox}
-    >
-         
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={styles.formBox}
+        >
+            <View style={styles.form}>
+                <Text style={styles.title}>Sign up</Text>
+                <Text style={styles.subtitle}>Créer vous un compte gratuit avec votre email.</Text>
+                <View style={styles.formContainer}>
+                    <TextInput
+                        style={[styles.input,]}
+                        backgroundColor={invalidbool && !surname ? 'rgba(255, 0, 0, 0.4)' : null}
+                        placeholder="Prenom"
+                        onChangeText={setSurname}
+                        value={surname}
+                        textContentType='givenName'
+                        inputMode='text'
+                    />
+                    <TextInput
+                        style={styles.input}
+                        backgroundColor={invalidbool && !name ? 'rgba(255, 0, 0, 0.4)' : null}
+                        placeholder="Nom"
+                        onChangeText={setName}
+                        value={name}
+                        textContentType='familyName'
+                        inputMode='text'
+
+                    />
+                    <TextInput
+                        style={styles.input}
+                        backgroundColor={invalidbool && !mail ||invalidbool && !validate.validate(mail) ? 'rgba(255, 0, 0, 0.4)' : null}
+                        placeholder="Email"
+                        onChangeText={setMail}
+                        value={mail}
+                        autoCapitalize="none"
+                        textContentType='emailAddress'
+                        inputMode='email'
+                    />
+                </View>
+                <Text style={styles.msgerreur}>{connectionmsg}</Text>
+                <Pressable onPress={compte} style={styles.button}>
+                    <Text style={styles.buttonText}>Sign up</Text>
+                </Pressable>
+            </View>
+            <View style={styles.formSection}>
+                <Text>Have an account? <Text style={styles.link} onPress={seConnecter}>Log in</Text></Text>
+            </View>
+
+        </KeyboardAvoidingView>
+    );
+}
+
+export function CreeCompteScreen({ route, navigation }) {
+    const [username, setUsername] = useState(null);
+    const [password, setPassword] = useState(null);
+    const [phone, setPhone] = useState(null);
+    const [connectionmsg, setConnectionmsg] = useState(null)
+    const [invalidbool, setInvalidbool] = useState(false);
+    const [valideusrname, setUsrnmValidBool] = useState(true);
+    const { mail, name, surname } = route.params;
+    const formatPhoneNumber = (str) => {
+        let numbers = str.replace(/\D/g, '')
+        if (numbers.length > 6) {
+          return '(' + numbers.substr(0, 3) + ') ' + numbers.substr(3, 3) + '-' + numbers.substr(6)
+        } else if (numbers.length > 3) {
+          return '(' + numbers.substr(0, 3) + ') ' + numbers.substr(3)
+        } else if (numbers.length >= 1) {
+          return '(' + numbers  
+        }
+        return numbers
+      }
+    function creerCompte() {
+        if (password && phone) {
+            setInvalidbool(false);
+            let nouvUtilisateur = {
+                prenom: surname,
+                nom: name,
+                username: username,
+                pass: password,
+                mail: mail,
+                phone: phone,
+                isLogin: false, 
+            }
+            creerUtilisateurJSON(nouvUtilisateur).then((res) => {
+                console.log("creation réussi %s", res);
+                navigation.popToTop();
+                navigation.replace("Accueil", { nom: res.nom, usrId : res.Id});
+            }).catch(err => {
+                console.log("creation échec: %s", err.msg);
+                setInvalidbool(true);
+                setConnectionmsg("Ce nom d'utilisateur ou ce couriel existe déja");
+                setUsrnmValidBool(false);
+
+            });
+        }
+        else {
+            setInvalidbool(true);
+             
+                if (!username) {
+                    setConnectionmsg("Veuillez entrer un nom d'utilisateur!");
+                }
+                if (!password) {
+                    setConnectionmsg("Veuillez entrer un mot de passe!");
+                }
+                if (!phone) {
+                    setConnectionmsg("Veuillez entrer un numero de telephone!");
+                }
             
-                <View style={styles.form}>
-                    <Text style={styles.title}>Sign up</Text>
-                    <Text style={styles.subtitle}>Créer vous un compte gratuit avec votre email.</Text>
-                    <View style={styles.formContainer}>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Nom d'utilisateur"
-                            onChangeText={créerCompte}
-                            value=""
-                            autoCapitalize="none"
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Email"
-                            onChangeText={créerCompte}
-                            value=""
-                            autoCapitalize="none"
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Mot de passe"
-                            secureTextEntry={true}
-                            onChangeText={créerCompte}
-                            value=""
-                        />
-                    </View>
-                    <Pressable onPress={créerCompte} style={styles.button}>
-                        <Text style={styles.buttonText}>Sign up</Text>
-                    </Pressable>
+        }
+    }
+    
+    return (
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={styles.formBox}
+        >
+            <View style={styles.form}>
+                <Text style={styles.subtitle}>Veuiller aussi remplir les infos suivantes.</Text>
+                <View style={styles.formContainer}>
+
+                    <TextInput
+                        style={styles.input}
+                        backgroundColor={invalidbool && !username || !valideusrname ? 'rgba(255, 0, 0, 0.4)' : null}
+                        placeholder="Nom d'utilisateur"
+                        onChangeText={setUsername}
+                        value={username}
+                        textContentType='username'
+
+                    />
+                    <TextInput
+                        style={styles.input}
+                        backgroundColor={invalidbool && !phone ? 'rgba(255, 0, 0, 0.4)' : null}
+                        placeholder="Telephone"
+                        onChangeText={(str) => setPhone(formatPhoneNumber(str))}
+                        value={phone}
+                        maxLength={14}
+                        inputMode='tel'
+                        textContentType='telephoneNumber'
+                    />
+                     
+                    <TextInput
+                        style={styles.input}
+                        backgroundColor={invalidbool && !password ? 'rgba(255, 0, 0, 0.4)' : null}
+                        placeholder="Mot de passe"
+                        secureTextEntry={true}
+                        onChangeText={setPassword}
+                        value={password}
+                        textContentType='newPassword'
+                    />
                 </View>
-                <View style={styles.formSection}>
-                    <Text>Have an account? <Text style={styles.link} onPress={seConnecter}>Log in</Text></Text>
-                </View>
-                 
-                </KeyboardAvoidingView>
+                <Text style={styles.msgerreur}>{connectionmsg}</Text>
+                <Pressable onPress={creerCompte} style={styles.button}>
+                    <Text style={styles.buttonText}>Sign up</Text>
+                </Pressable>
+                
+            </View>
+            <View style={styles.formSection}>
+            </View>
+
+        </KeyboardAvoidingView>
     );
 }
 
 export function SeConnecterScreen({ navigation }) {
     const [username, setUsername] = useState(null);
     const [password, setPassword] = useState(null);
+    const [connectionmsg, setConnectionmsg] = useState(null);
+    const [invalidbool, setInvalidbool] = useState(false);
 
     function seConnecter() {
         connecterUtilisateur(username, password).then((res) => {
             console.log("login success: %s", res);
             navigation.popToTop();
-            navigation.replace("Accueil", { nom: res.nom });
+            navigation.replace("Accueil", { nom: res.nom, usrId : res.Id });
         })
             .catch(err => {
                 console.log("login failed: %s", err);
+                setConnectionmsg("Mot de passe/nom d'utilisateur invalide!");
+                setInvalidbool(true);
             });
     }
 
@@ -90,30 +250,33 @@ export function SeConnecterScreen({ navigation }) {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={styles.formBox}
         >
-             
-                <View style={styles.loginform}>
-                    <Text style={styles.title}>Log in</Text>
-                    <View style={styles.formContainer}>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Nom d'utilisateur"
-                            onChangeText={setUsername}
-                            value={username}
-                            autoCapitalize="none"
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Mot de passe"
-                            secureTextEntry={true}
-                            onChangeText={setPassword}
-                            value={password}
-                        />
-                    </View>
-                    <Pressable onPress={seConnecter} style={styles.button}>
-                        <Text style={styles.buttonText}>Se connecter</Text>
-                    </Pressable>
+
+            <View style={styles.loginform}>
+                <Text style={styles.title}>Log in</Text>
+                <View style={styles.formContainer}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Nom d'utilisateur"
+                        onChangeText={setUsername}
+                        value={username}
+                        backgroundColor={invalidbool ? 'rgba(255, 0, 0, 0.4)' : null}
+                        autoCapitalize="none"
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Mot de passe"
+                        backgroundColor={invalidbool ? 'rgba(255, 0, 0, 0.4)' : null}
+                        secureTextEntry={true}
+                        onChangeText={setPassword}
+                        value={password}
+                    />
                 </View>
-           
+                <Text style={styles.msgerreur}>{connectionmsg}</Text>
+                <Pressable onPress={seConnecter} style={styles.button}>
+                    <Text style={styles.buttonText}>Se connecter</Text>
+                </Pressable>
+            </View>
+
         </KeyboardAvoidingView>
     );
 }
@@ -148,7 +311,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     title: {
-        alignSelf:'center',
+        alignSelf: 'center',
         fontWeight: 'bold',
         fontSize: 24,
         marginBottom: 10,
@@ -195,7 +358,7 @@ const styles = StyleSheet.create({
     formSection: {
         paddingVertical: 16,
         fontSize: 14,
-        
+
         alignItems: 'center',
         justifyContent: 'center',
         borderTopWidth: 1,
@@ -213,4 +376,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#0066ff',
     },
+    msgerreur: {
+        color: 'red',
+        fontSize: 20,
+    },
+    boxerreur: {
+        backgroundColor: 'red'
+    }
 });
