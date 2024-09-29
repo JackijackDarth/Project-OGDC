@@ -69,7 +69,7 @@ export default function ArdoiseScreen({ navigation }) {
           </Catégorie>
         ))}
       </ScrollView> */}
-      <FlatList style={styles.liste}
+      {/* <FlatList style={styles.liste}
            
            //numColumns={1}
            data={menuJSON}
@@ -78,7 +78,8 @@ export default function ArdoiseScreen({ navigation }) {
              return <Thumbnail Nom={`${item.username}`} thumb_cb={() => setCurrentImage(item)} />
            }}
          />
-      <Bouton texte={"chose"} onPress_cb={() => selectedItem != null &&(choisirItem(selectedItem))} style={styles.boutton}/>
+      <Bouton texte={"chose"} onPress_cb={() => selectedItem != null &&(choisirItem(selectedItem))} style={styles.boutton}/> */}
+      <Text>Page en dévelopement</Text>
     </View>
   );
 }

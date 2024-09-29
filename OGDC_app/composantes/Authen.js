@@ -139,7 +139,19 @@ export function CreeCompteScreen({ route, navigation }) {
             creerUtilisateurJSON(nouvUtilisateur).then((res) => {
                 console.log("creation réussi %s", res);
                 navigation.popToTop();
-                navigation.replace("Accueil", { nom: res.nom, usrId : res.Id});
+                navigation.dispatch({
+                    type: 'REPLACE',
+                    payload: {
+                      name: 'MainTabs',   // Navigate to the Tab Navigator first
+                      params: {
+                        screen: "Accueil", // Then specify the 'Accueil' screen inside
+                        params: { 
+                            nom: res.nom, usrId : res.Id
+                        },
+                      },
+                    },
+                  });
+                // navigation.replace("Accueil", { nom: res.nom, usrId : res.Id});
             }).catch(err => {
                 console.log("creation échec: %s", err.msg);
                 setInvalidbool(true);
@@ -226,7 +238,18 @@ export function SeConnecterScreen({ navigation }) {
         connecterUtilisateur(username, password).then((res) => {
             console.log("login success: %s", res);
             navigation.popToTop();
-            navigation.replace("Accueil", { nom: res.nom, usrId : res.Id });
+            navigation.dispatch({
+                type: 'REPLACE',
+                payload: {
+                  name: 'MainTabs',   // Navigate to the Tab Navigator first
+                  params: {
+                    screen: "Accueil", // Then specify the 'Accueil' screen inside
+                    params: { 
+                        nom: res.nom, usrId : res.Id
+                    },
+                  },
+                },
+              });
         })
             .catch(err => {
                 console.log("login failed: %s", err);
