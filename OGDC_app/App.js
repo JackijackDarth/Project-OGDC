@@ -1,28 +1,37 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 
-import { AuthenScreen, SeConnecterScreen, AideScreen,CreeCompteScreen } from './composantes/Authen';
+import { AuthenScreen, SeConnecterScreen, AideScreen, CreeCompteScreen } from './composantes/Authen';
 import ArdoiseScreen from './composantes/ArdoiseScreen';
 import PanierScreen from './composantes/PanierScreen';
 import CommandeScreen from './composantes/CommandeScreen';
 import CommandeInfoScreen from './composantes/CommandeInfoScreen';
 import RestoInfoScreen from './composantes/RestoInfoScreen';
-import {AccueilScreen, AjoutRobotScreen } from './composantes/AccueilScreen';
+import { AccueilScreen, AjoutRobotScreen } from './composantes/AccueilScreen';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-
+const Tab = createBottomTabNavigator();
 const { Navigator, Screen, Group } = createNativeStackNavigator();
 
-export default function App() {
+// Create the Bottom Tab Navigator component
+function MainTabNavigator() {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen name="Accueil" component={AccueilScreen} options={{ title: "OGDC" }} />
+      <Tab.Screen name="Ardoise" component={ArdoiseScreen} options={{ title: "Page lambda 1" }}/>
+      <Tab.Screen name="CommandeInfo" component={CommandeInfoScreen}
+          options={{ title: "Page lambda 2" }} />
+    </Tab.Navigator>
+  );
+}
 
+export default function App() {
   return (
     <NavigationContainer>
-      <Navigator initialRouteName="Authen"
-        screenOptions={{
-          headerTitleAlign: "center",
-        }} >
+      <Navigator initialRouteName="Authen" screenOptions={{ headerTitleAlign: "center" }}>
 
-        <Screen name="Accueil" component={AccueilScreen}
-          options={{title: "OGDC",}} />
+        {/* Wrap the Tab Navigator within a Screen component */}
+        <Screen name="MainTabs" component={MainTabNavigator} options={{ headerShown: false }} />
 
         <Screen name="Aide" component={AideScreen} />
 
@@ -33,23 +42,19 @@ export default function App() {
           options={{ title: "", headerTransparent: true, headerBackTitle: "Back" }} />
 
         <Group screenOptions={{ presentation: 'modal' }}>
-        <Screen name="CreeCompte" component={CreeCompteScreen} options={{title:"S'inscrire"}} />
+          <Screen name="CreeCompte" component={CreeCompteScreen} options={{ title: "S'inscrire" }} />
         </Group>
 
         <Group screenOptions={{ presentation: 'modal' }}>
-        <Screen name="AjoutRobot" component={AjoutRobotScreen} options={{title:"Ajouter un robot"}} />
+          <Screen name="AjoutRobot" component={AjoutRobotScreen} options={{ title: "Ajouter un robot" }} />
         </Group>
-
-
-        <Screen name="Ardoise" component={ArdoiseScreen} />
 
         <Screen name="Panier" component={PanierScreen} />
 
         <Screen name="Commandes" component={CommandeScreen} />
 
-        <Screen name="CommandeInfo" component={CommandeInfoScreen}
-          options={{ title: "Détail de la commande" }} />
-          
+        
+
         <Screen name="RestoInfo" component={RestoInfoScreen}
           options={{ title: "Nous joindre" }} />
       </Navigator>

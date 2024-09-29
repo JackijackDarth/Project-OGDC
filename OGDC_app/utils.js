@@ -1,7 +1,7 @@
 let Username = "admin"
 let Password = "password"
 
-const serveur_ip = "192.168.137.181";
+const serveur_ip = "192.168.2.247";
 
 function obtenirJSON_Get(ressource) {
     console.log("username: %s", Username);
