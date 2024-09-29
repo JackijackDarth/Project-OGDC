@@ -3,11 +3,13 @@ const fs = require('fs');
 const { Router } = require('express');
 const authen = require('../verifierConnexion');
 const usersFilePath = "./BD/users.json";
+const robot = require('../robots');
+
 
 const connexionRoutes = Router();
 
 connexionRoutes.get('/', (req, res) => {
-    console.log("authentification");
+    console.log("connexion");
 
     let res_authen = authen.validerConnexion(req);
 
@@ -27,8 +29,15 @@ connexionRoutes.get('/', (req, res) => {
                 phone : user.phone
             });
         }
-    }
-});
-
+    }});
+connexionRoutes.route('/:userPI')
+    .get((req, res) =>{
+        console.log("Obtenir l'usager pour le robot %d", req.params.userPI);
+        const resultat = robot.obtenirUsagerSync(req.params.userPI);
+        if (resultat.erreur !== 0)
+            res.status(404).send(resultat);
+        else
+            res.json(resultat.user);
+    })
 
 module.exports = connexionRoutes;

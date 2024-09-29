@@ -59,6 +59,7 @@ function ajouterRobot(userId, robotId){
     });
     if(trouver){
         fs.writeFileSync(usersFilePath, JSON.stringify(users));
+
         return { erreur: 0, msg: "Réussi" };
     }
     return {erreur: 1, msg: "Erreur: Users non trouvé"}
@@ -77,6 +78,9 @@ function obtenirUsager(userId){
         return {erreur: 0, user: copieUser}
     }
     return {erreur: 1, msg: "Usager pas trouvé"}
+}
+function GetListeUsers(){
+    return users;
 }
 /*
 function supprimerCommandes() {
@@ -133,11 +137,5 @@ module.exports = {
     créerUtilisateur,
     ajouterRobot,
     obtenirUsager,
-    /*
-    supprimerCommandes,
-    supprimerCommande,
-    modifierCommande,
-    obtenirUneCommandes,
-    obtenirCommandes,
-    */
+    GetListeUsers
 };

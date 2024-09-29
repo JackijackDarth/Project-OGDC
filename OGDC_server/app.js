@@ -24,6 +24,7 @@ app.get('/', (req, res) => {
 
 app.use('/cafehomer/creationUtilisateur',creerUtilisateurRoutes)
 app.use('/cafehomer/authentification', connexionRoutes);
+app.use('/cafehomer/connexion/',connexionRoutes)
 app.use('/cafehomer/robot_connecter', robotRoutes)
 app.use('/cafehomer/liste_objets', objetRoutes)
 

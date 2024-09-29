@@ -51,9 +51,27 @@ function connexionRobots(connexionInfo){
     }
     return {erreur:1, msg:"Id ou password erroné"}
 }
+function obtenirUsagerSync(userPI){
+    idRobot = null;
+    listeRobots.forEach(robot => {
+        if(robot.username = userPI)
+            idRobot = robot.Id
+    })
+    if(idRobot != null){
+        listeUsers = users.GetListeUsers()
+        listeUsers.forEach(user => {
+            if(user.idRobot == idRobot)
+                return {erreur: 0, msg:"Réussi", user: user}
+        })
+        return {erreur: 1, msg: "Robot non syncroniser", user: null}
+    }
+    return {erreur: 1, msg: "Username robot inexistant", user: null}
+
+}
 
 module.exports = {
     créerRobot,
     obtenirRobots,
     connexionRobots,
+    obtenirUsagerSync
 };

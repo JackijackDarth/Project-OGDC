@@ -1,4 +1,4 @@
-const listeRobots = require('../listeRobot');
+const listeRobots = require('../robots');
 
 const { Router } = require('express');
 

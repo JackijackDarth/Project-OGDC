@@ -9,7 +9,7 @@
         "mail": "simmat12@icloud.com",
         "phone": "(450) 434-9898",
         "idRobot": null,
-        "isLogin": true
+        "isLogin": false
     },
     {
         "Id": 2,
@@ -19,8 +19,8 @@
         "pass": "password",
         "mail": "simmat12@icloud.com",
         "phone": "(450) 434-9898",
-        "idRobot": 0,
-        "isLogin": true
+        "idRobot": null,
+        "isLogin": false
     },
     {
         "Id": 3,
