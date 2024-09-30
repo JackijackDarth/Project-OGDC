@@ -38,7 +38,7 @@ connexionRoutes.route('/:userPI')
         console.log("Obtenir l'usager pour le robot %d", req.params.userPI);
         const resultat = robot.obtenirUsagerSync(req.params.userPI);
         if (resultat.erreur !== 0)
-            res.status(404).send(resultat);
+            res.status(401).send(resultat);
         else
             res.json(resultat.user);
     })
