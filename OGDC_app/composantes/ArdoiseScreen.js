@@ -1,15 +1,10 @@
-import { ScrollView, StyleSheet, Pressable, Image } from 'react-native';
-import { Text, View, FlatList } from 'react-native';
-import { useState, useEffect, useRef } from 'react';
+import { StyleSheet, Text, View, Pressable, FlatList, Image, SafeAreaView, StatusBar, TouchableOpacity, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
+import { useState, useEffect } from 'react';
 import { AntDesign } from '@expo/vector-icons';
-
-import { BarreOutils, Bouton } from './BarreOutils';
-import ItemMenu from './ItemMenu';
-
-import { obtenirRobotsJSON } from '../utils';
-import { nbItemPanier, ajouterItemPanier } from '../panier';
-
 import stylesCommuns from '../styles';
+import { nbItemPanier, obtenirPanier } from '../panier';
+import Tuilerie from './Tuilerie';
+import { obtenirRobotsJSON, ConnecterRobot, obtenirUser, obtenirObjets} from '../utils';
 
 const mapcouleur = {
   "Déjeuner": "#98de9c",
@@ -21,19 +16,16 @@ const mapcouleur = {
 
 
 export default function ArdoiseScreen({ navigation, route }) {
-  const [menuJSON, setMenu] = useState([]);
+  const [menuJSON, setMenu] = useState();
   const [selectedId, setSelectedId] = useState();
-  const { nom, usrId } = route.params;
-  const [currentuser, setCurrentUser] = useState();
+  const currentuser  = route.params.currentuser;
   const [nbItemsPanier, setNbItemsPanier] = useState(nbItemPanier());
 
   useEffect(() => {
-    obtenirRobotsJSON().then(menu => setMenu(menu));
-  }, []);
-  
-  useEffect(() => {
-    obtenirUser(usrId).then(user => setCurrentUser(user));
-  }, []);
+    console.log(currentuser.rbtId)
+    obtenirObjets(currentuser.rbtId).then(items => setMenu(items));
+    console.log("les obj",menuJSON)
+  },);
   
   useEffect(() => {
     navigation.setOptions({
@@ -76,7 +68,7 @@ export default function ArdoiseScreen({ navigation, route }) {
   return (
     <View style={stylesCommuns.app}>
       <View style={styles.section_haut}>
-        <Text style={styles.bienvenue}>Welcome {nom}</Text>
+        <Text style={styles.bienvenue}>Welcome </Text>
       </View>
       <Tuilerie>
         <SafeAreaView style={styles.section_bas}>
@@ -107,6 +99,19 @@ export function Thumbnail({ Nom, thumb_cb }) {
       <Text>{}</Text>
     </Pressable>
   )
+}
+
+export function Tuile({ texte, onPress_cb, iconNom }) {
+  return (
+    <Pressable style={styles.tuile} onPress={onPress_cb}>
+      <View style={styles.tuile_icon}>
+        <AntDesign name={iconNom} size={50} color="black" />
+      </View>
+      <View style={styles.tuile_texte_box}>
+        <Text style={styles.tuile_texte}>{texte}</Text>
+      </View>
+    </Pressable>
+  );
 }
 function Catégorie({ titre, children }) {
   

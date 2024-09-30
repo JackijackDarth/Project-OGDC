@@ -4,7 +4,7 @@ var validate = require("react-email-validator");
 import { useState, useEffect } from 'react';
 import { Bouton } from './BarreOutils'; // Assuming BarreOutils has a Bouton component
  
-import { connecterUtilisateur, creerUtilisateurJSON } from '../utils';
+import { connecterUtilisateur, creerUtilisateurJSON,obtenirUser } from '../utils';
 
 export function AuthenScreen({ navigation }) {
     const [surname, setSurname] = useState(null);
@@ -233,6 +233,7 @@ export function SeConnecterScreen({ navigation }) {
     const [password, setPassword] = useState("password");
     const [connectionmsg, setConnectionmsg] = useState(null);
     const [invalidbool, setInvalidbool] = useState(false);
+ 
 
     function seConnecter() {
         connecterUtilisateur(username, password).then((res) => {
@@ -243,10 +244,7 @@ export function SeConnecterScreen({ navigation }) {
                 payload: {
                   name: 'MainTabs',   // Navigate to the Tab Navigator first
                   params: {
-                    screen: "Accueil", // Then specify the 'Accueil' screen inside
-                    params: { 
-                        nom: res.nom, usrId : res.Id
-                    },
+                        nom: res.nom, usrId : res.Id, currentuser : res
                   },
                 },
               });
@@ -257,7 +255,7 @@ export function SeConnecterScreen({ navigation }) {
                 setInvalidbool(true);
             });
     }
-
+  
     useEffect(() => {
         navigation.setOptions({
             headerRight: () => (

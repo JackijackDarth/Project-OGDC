@@ -9,8 +9,9 @@ import { obtenirRobotsJSON, ConnecterRobot, obtenirUser } from '../utils';
 export function AccueilScreen({ navigation, route }) {
   const [menuJSON, setMenu] = useState([]);
   const [selectedId, setSelectedId] = useState();
-  const { nom, usrId } = route.params;
-  const [currentuser, setCurrentUser] = useState([]);
+  const { nom, usrId} = route.params;
+  const currentuser = route.params.currentuser
+  const [asur, setCurrentUser] = useState();
   const [nbItemsPanier, setNbItemsPanier] = useState(nbItemPanier());
 
   useEffect(() => {
@@ -18,17 +19,11 @@ export function AccueilScreen({ navigation, route }) {
   }, []);
   
   useEffect(() => {
-    obtenirUser(usrId).then(user => setCurrentUser(user));
-    console.log(currentuser)
-  }, []);
+    obtenirUser(currentuser.Id).then(user => {
+        setCurrentUser(user);
+    });
+}, []);
 
-  // useEffect(() => {
-     
-  //   navigation.setParams({
-  //     usrId: usrId,
-  //     rbtId: currentuser.idRobot,
-  //   });
-  // }, [navigation, usrId, currentuser.idRobot]);
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -44,10 +39,11 @@ export function AccueilScreen({ navigation, route }) {
 
   const Item = ({ item, onPress, backgroundColor, textColor }) => (
     <View>
-      <Tuile texte={item.username} iconNom="pluscircleo" onPress_cb={() => navigation.navigate("AjoutRobot", {
+      <Tuile texte={item.username} iconNom="pluscircleo" onPress_cb={() => {navigation.navigate("AjoutRobot", {
           usrId: usrId,
           rbtId: item.Id,
-      })} />
+      })
+      console.log(currentuser)}} />
     </View>
   );
 

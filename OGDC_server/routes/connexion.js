@@ -23,10 +23,13 @@ connexionRoutes.get('/', (req, res) => {
         if(user.Id == res_authen.userId){
             res.json({
                 Id: user.Id,
-                prénom : user.prenom,
+                prenom : user.prenom,
                 nom : user.nom,
                 mail: user.mail,
-                phone : user.phone
+                phone : user.phone,
+                rbtId : user.idRobot,
+                usrname : user.username,
+                isLogin : user.isLogin
             });
         }
     }});
