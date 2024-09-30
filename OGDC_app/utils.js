@@ -1,7 +1,7 @@
 let Username = "admin"
 let Password = "password"
 
-const serveur_ip = "192.168.2.247";
+const serveur_ip = "172.22.141.140";
 
 async function obtenirJSON_Get(ressource) {
     // console.log("username: %s", Username);
@@ -72,6 +72,7 @@ export function ConnecterRobot(usrId, rbtId, MdpRbt){
         rbtId : rbtId,
         MdpRbt : MdpRbt
     }
+    console.log("cnn infos",connInfo)
     return créerJSON_Post(`robot_connecter/${rbtId}`,connInfo);
 }
 export function creerUtilisateurJSON(nouvUtilisateur) {

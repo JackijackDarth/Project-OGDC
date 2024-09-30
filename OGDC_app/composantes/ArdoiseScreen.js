@@ -6,7 +6,7 @@ import { AntDesign } from '@expo/vector-icons';
 
 export default function ArdoiseScreen({ navigation, route }) {
   const [objetsList, setObjetsList] = useState([]);
-  const [error, setError] = useState(null); // To handle errors
+  const [error, setError] = useState(null);  
   const currentuser  = route.params.currentuser;
   const iconMap = {
     button: "poweroff",   
@@ -25,26 +25,26 @@ export default function ArdoiseScreen({ navigation, route }) {
           status: value.status
         }));
         setObjetsList(transformedObjets);
-        setError(null); // Reset error on successful fetch
+        setError(null);  
       } else {
-        setObjetsList([]); // No objects found
-        setError("No objects found for this robot.");
+        setObjetsList([]);  
+        setError("Ce robot ne semble pas avoir d'objet...");
       }
     }).catch(() => {
-      setObjetsList([]); // Clear list on error
-      setError("Failed to fetch objects. Please try again later.");
+      setObjetsList([]);  
+      setError("Erreur dans la recuperation de la liste!");
     });
   };
 
-  // Initial fetch and setup polling
+ 
   useEffect(() => {
-    fetchObjects(); // Initial fetch
+    fetchObjects();  
     if (!error){
-      const intervalId = setInterval(fetchObjects, 5000); // Poll every 5 seconds
-      return () => clearInterval(intervalId); // Cleanup on unmount
+      const intervalId = setInterval(fetchObjects, 5000); 
+      return () => clearInterval(intervalId);  
     }
    
-  }, [currentuser.rbtId,route]); // Adding currentuser.rbtId to dependencies to refetch when it changes
+  }, [currentuser.rbtId,route]);  
 
   useEffect(() => {
     console.log("Object list:", objetsList);
@@ -53,7 +53,7 @@ export default function ArdoiseScreen({ navigation, route }) {
   const renderItem = ({ item }) => {
     const isTemperatureSensor = item.name === 'temperature_sensor';
     
-    // Set status for temperature_sensor
+     
     const status = isTemperatureSensor 
       ? `Temp: ${item.status[0]}°C, Humidity: ${item.status[1]}%` 
       : `Status: ${item.status}`;

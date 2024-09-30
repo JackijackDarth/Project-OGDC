@@ -26,7 +26,7 @@
             "temperature_sensor": {
                 "pin": 7,
                 "status": [
-                    14,
+                    24,
                     67
                 ]
             }

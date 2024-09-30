@@ -14,6 +14,7 @@ export function AccueilScreen({ navigation, route }) {
   const [asur, setCurrentUser] = useState();
   const [nbItemsPanier, setNbItemsPanier] = useState(nbItemPanier());
 
+  
   useEffect(() => {
     obtenirRobotsJSON().then(menu => setMenu(menu));
   }, []);
@@ -40,7 +41,7 @@ export function AccueilScreen({ navigation, route }) {
   const Item = ({ item, onPress, backgroundColor, textColor }) => (
     <View>
       <Tuile texte={item.username} iconNom="pluscircleo" onPress_cb={() => {navigation.navigate("AjoutRobot", {
-          usrId: usrId,
+          usrId: currentuser.Id,
           rbtId: item.Id,
       })
       console.log(currentuser)}} />
@@ -92,7 +93,7 @@ export function AjoutRobotScreen({ route, navigation }) {
   function ConnectionRobot() {
     if (MdpRbt) {
       ConnecterRobot(usrId, rbtId, MdpRbt).then((res) => {
-        console.log("Creation réussi %s", res);
+        console.log("Creation réussi %s", route.params);
         setInvalidbool(false);
         setConnectionmsg(null);
         navigation.goBack();
