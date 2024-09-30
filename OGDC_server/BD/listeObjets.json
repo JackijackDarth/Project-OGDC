@@ -22,10 +22,11 @@
                 "pin": 8,
                 "status": "Mouvement détecté"
             },
+       
             "temperature_sensor": {
                 "pin": 7,
                 "status": [
-                    24,
+                    14,
                     67
                 ]
             }

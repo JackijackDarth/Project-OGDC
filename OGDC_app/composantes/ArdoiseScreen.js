@@ -1,140 +1,150 @@
-import { StyleSheet, Text, View, Pressable, FlatList, Image, SafeAreaView, StatusBar, TouchableOpacity, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
+import { StyleSheet, Text, View, FlatList, SafeAreaView, Pressable } from 'react-native';
 import { useState, useEffect } from 'react';
-import { AntDesign } from '@expo/vector-icons';
+import { obtenirObjets } from '../utils'; 
 import stylesCommuns from '../styles';
-import { nbItemPanier, obtenirPanier } from '../panier';
-import Tuilerie from './Tuilerie';
-import { obtenirRobotsJSON, ConnecterRobot, obtenirUser, obtenirObjets} from '../utils';
-
-const mapcouleur = {
-  "Déjeuner": "#98de9c",
-  "Sandwichs": "#98b7de",
-  "Salades": "#de98da",
-  "Smoothies": "#debf98",
-  "Breuvages": "#de9c98",
-};
-
+import { AntDesign } from '@expo/vector-icons';
 
 export default function ArdoiseScreen({ navigation, route }) {
-  const [menuJSON, setMenu] = useState();
-  const [selectedId, setSelectedId] = useState();
+  const [objetsList, setObjetsList] = useState([]);
+  const [error, setError] = useState(null); // To handle errors
   const currentuser  = route.params.currentuser;
-  const [nbItemsPanier, setNbItemsPanier] = useState(nbItemPanier());
+  const iconMap = {
+    button: "poweroff",   
+    red_led: "bulb1",     
+    blue_led: "bulb1",
+    green_led: "bulb1",
+    movement_sensor: "eyeo",
+    temperature_sensor: "enviromento",  
+  };
 
-  useEffect(() => {
-    console.log(currentuser.rbtId)
-    obtenirObjets(currentuser.rbtId).then(items => setMenu(items));
-    console.log("les obj",menuJSON)
-  },);
-  
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <AntDesign name="logout" size={25}
-          color="blue"
-          onPress={() => {
-            navigation.replace("Authen");
-          }}
-        />
-      ),
+  const fetchObjects = () => {
+    obtenirObjets(currentuser.rbtId).then(items => {
+      if (items && items.listeObjets) {
+        const transformedObjets = Object.entries(items.listeObjets).map(([key, value]) => ({
+          name: key,
+          status: value.status
+        }));
+        setObjetsList(transformedObjets);
+        setError(null); // Reset error on successful fetch
+      } else {
+        setObjetsList([]); // No objects found
+        setError("No objects found for this robot.");
+      }
+    }).catch(() => {
+      setObjetsList([]); // Clear list on error
+      setError("Failed to fetch objects. Please try again later.");
     });
-  }, [navigation]);
+  };
 
-  const Item = ({ item, onPress, backgroundColor, textColor }) => (
-    <View>
-      <Tuile texte={item.username} iconNom="pluscircleo" onPress_cb={() => navigation.navigate("AjoutRobot", {
-          usrId: usrId,
-          rbtId: item.Id,
-      })} />
-    </View>
-  );
+  // Initial fetch and setup polling
+  useEffect(() => {
+    fetchObjects(); // Initial fetch
+    if (!error){
+      const intervalId = setInterval(fetchObjects, 5000); // Poll every 5 seconds
+      return () => clearInterval(intervalId); // Cleanup on unmount
+    }
+   
+  }, [currentuser.rbtId,route]); // Adding currentuser.rbtId to dependencies to refetch when it changes
+
+  useEffect(() => {
+    console.log("Object list:", objetsList);
+  }, [objetsList]);
 
   const renderItem = ({ item }) => {
-    const backgroundColor = item.Id === selectedId ? '#6e3b6e' : '#f9c2ff';
-    const color = item.Id === selectedId ? 'white' : 'black';
+    const isTemperatureSensor = item.name === 'temperature_sensor';
+    
+    // Set status for temperature_sensor
+    const status = isTemperatureSensor 
+      ? `Temp: ${item.status[0]}°C, Humidity: ${item.status[1]}%` 
+      : `Status: ${item.status}`;
+  
+    const icon = iconMap[item.name] || "question";
+  
     return (
-      <Item
-        item={item}
-        onPress={() => navigation.navigate("AjoutRobot", {
-          usrId: usrId,
-          rbtId: item.Id,
-        })}
-        backgroundColor={backgroundColor}
-        textColor={color}
-      />
+      <Pressable style={styles.item}>
+        <View style={styles.itemContent}>
+          <AntDesign name={icon} size={30} color="black" style={styles.icon} />
+          <View>
+            <Text style={styles.itemName}>{item.name}</Text>
+            <Text style={styles.itemStatus}>{status}</Text>
+          </View>
+        </View>
+      </Pressable>
     );
   };
 
   return (
-    <View style={stylesCommuns.app}>
-      <View style={styles.section_haut}>
-        <Text style={styles.bienvenue}>Welcome </Text>
-      </View>
-      <Tuilerie>
-        <SafeAreaView style={styles.section_bas}>
-          <FlatList
-            data={menuJSON}
-            numColumns={2}
-            renderItem={renderItem}
-            keyExtractor={item => item.Id}
-            extraData={selectedId}
-          />
-        </SafeAreaView>
-      </Tuilerie>
-    </View>
+    <SafeAreaView style={[stylesCommuns.app, styles.container]}>
+      {error ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={objetsList}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => index.toString()}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>No objects available.</Text>
+            </View>
+          }
+        />
+      )}
+    </SafeAreaView>
   );
 }
-
-
-
-
-
-export function Thumbnail({ Nom, thumb_cb }) {
-  function onClick_cb(e) {
-    if (thumb_cb !== null && thumb_cb !== undefined)
-      thumb_cb();
-  }
-  return (
-    <Pressable style={styles.thumbnail} onPress={onClick_cb}>
-      <Text>{}</Text>
-    </Pressable>
-  )
-}
-
-export function Tuile({ texte, onPress_cb, iconNom }) {
-  return (
-    <Pressable style={styles.tuile} onPress={onPress_cb}>
-      <View style={styles.tuile_icon}>
-        <AntDesign name={iconNom} size={50} color="black" />
-      </View>
-      <View style={styles.tuile_texte_box}>
-        <Text style={styles.tuile_texte}>{texte}</Text>
-      </View>
-    </Pressable>
-  );
-}
-function Catégorie({ titre, children }) {
-  
-  return (
-    <View style={[styles.section,{ backgroundColor: "#98de9c" }]}>
-      <Text>{titre}</Text>
-      <ScrollView horizontal>
-        {children}
-      </ScrollView>
-    </View>
-  );
-}
-
 
 const styles = StyleSheet.create({
-  sectionDesc: {
-    textAlign: 'left',
-    fontSize: 22,
+  container: {
+    flex: 1,
+    paddingHorizontal: 16,
   },
-  section: {
-    margin: 5,
+  item: {
+    backgroundColor: '#98de9c',
+    padding: 20,
+    marginVertical: 10,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.30,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  boutton:{
-    alignItems:"center"
-  }
+  itemContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  itemName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  itemStatus: {
+    fontSize: 14,
+    color: 'gray',
+  },
+  icon: {
+    marginRight: 15,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 18,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyText: {
+    fontSize: 18,
+    color: 'gray',
+  },
 });
