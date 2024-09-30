@@ -74,6 +74,7 @@ function obtenirUsager(userId){
             found = true;
         }
     });
+    console.log(copieUser)
     if(found){
         return {erreur: 0, user: copieUser}
     }

@@ -24,7 +24,7 @@ export function obtenirRobotsJSON() {
     return obtenirJSON_Get("robot_connecter");
 }
 export function obtenirUser(usrId){
-    return obtenirJSON_Get(`obtenirUsager/${usrId}`);
+    return obtenirJSON_Get(`creationUtilisateur/${usrId}`);
 }
 function créerJSON_Post(ressource, resInfo) {
     let url = new URL(`http://${serveur_ip}:4242/cafehomer/${ressource}`);

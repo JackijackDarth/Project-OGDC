@@ -10,7 +10,7 @@ export function AccueilScreen({ navigation, route }) {
   const [menuJSON, setMenu] = useState([]);
   const [selectedId, setSelectedId] = useState();
   const { nom, usrId } = route.params;
-  const [currentuser, setCurrentUser] = useState();
+  const [currentuser, setCurrentUser] = useState([]);
   const [nbItemsPanier, setNbItemsPanier] = useState(nbItemPanier());
 
   useEffect(() => {
@@ -19,14 +19,16 @@ export function AccueilScreen({ navigation, route }) {
   
   useEffect(() => {
     obtenirUser(usrId).then(user => setCurrentUser(user));
+    console.log(currentuser)
   }, []);
-  useEffect(() => {
+
+  // useEffect(() => {
      
-    navigation.setParams({
-      usrId: usrId,
-      rbtId: currentuser.idRobot,
-    });
-  }, [navigation, usrId, currentuser.idRobot]);
+  //   navigation.setParams({
+  //     usrId: usrId,
+  //     rbtId: currentuser.idRobot,
+  //   });
+  // }, [navigation, usrId, currentuser.idRobot]);
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
