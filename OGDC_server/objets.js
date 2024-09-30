@@ -36,7 +36,6 @@ function créerListe(listeObjetInfo) {
 
 function obtenirObjets(robotId){
     fichierListe.forEach(listeItems =>{
-        
         if(listeItems.robotId == robotId)
             console.log("la liste youpi", listeItems)
             return listeItems;

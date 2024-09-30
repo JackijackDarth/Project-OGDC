@@ -22,7 +22,7 @@ liste_objets.route('/:id')
         const resultat = listeObjets.obtenirObjets(req.params.id);
         console.log("listobjt", resultat)
         // if (resultat.erreur !== 0)
-        //     res.status(404).send(resultat);
+        //     res.status(401).send(resultat);
         // else
             res.json(resultat.items);
         
