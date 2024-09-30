@@ -35,14 +35,19 @@ function créerListe(listeObjetInfo) {
 };
 
 function obtenirObjets(robotId){
-    fichierListe.forEach(listeItems =>{
-        
-        if(listeItems.robotId == robotId)
-            console.log("la liste youpi", listeItems)
-            return listeItems;
-    })
-   
+    let found = false;
+    let fichierListe = JSON.parse(fs.readFileSync(objetsFilePath));
+    for (let listeItems of fichierListe) {
+        if (listeItems.robotId == robotId) {
+            console.log("la liste youpi", listeItems);
+            found = true;
+            return { erreur: 0, msg: "Réussi", items: listeItems };
+        }
+    }
+    if (!found)
+    return { erreur: 1, msg: "Aucune liste trouvée" }; 
 }
+
 
 module.exports = {
     créerListe,
