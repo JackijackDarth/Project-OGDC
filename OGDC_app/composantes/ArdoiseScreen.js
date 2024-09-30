@@ -39,10 +39,10 @@ export default function ArdoiseScreen({ navigation, route }) {
  
   useEffect(() => {
     fetchObjects();  
-    if (!error){
-      const intervalId = setInterval(fetchObjects, 5000); 
-      return () => clearInterval(intervalId);  
-    }
+    // if (!error){
+    //   const intervalId = setInterval(fetchObjects, 5000); 
+    //   return () => clearInterval(intervalId);  
+    // }
    
   }, [currentuser.rbtId,route]);  
 

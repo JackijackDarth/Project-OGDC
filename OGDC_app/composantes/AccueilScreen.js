@@ -8,22 +8,31 @@ import { obtenirRobotsJSON, ConnecterRobot, obtenirUser } from '../utils';
 
 export function AccueilScreen({ navigation, route }) {
   const [menuJSON, setMenu] = useState([]);
-  const [selectedId, setSelectedId] = useState();
-  const { nom, usrId} = route.params;
-  const currentuser = route.params.currentuser
-  const [asur, setCurrentUser] = useState();
-  const [nbItemsPanier, setNbItemsPanier] = useState(nbItemPanier());
-
+  const [selectedId, setSelectedId] = useState(null);
+  const usrId = route.params.currentuser.Id; // Extract nom and usrId from route.params
+  const [currentuser, setCurrentUser] = useState(null); // Initialize currentUser state
+  const [nbItemsPanier, setNbItemsPanier] = useState(0); // Placeholder for cart items
   
+  // Fetch robots JSON when the component mounts
   useEffect(() => {
-    obtenirRobotsJSON().then(menu => setMenu(menu));
+    obtenirRobotsJSON().then((menu) => setMenu(menu));
+    console.log("leId",usrId)
   }, []);
   
+  // Fetch the current user data and update state
   useEffect(() => {
-    obtenirUser(currentuser.Id).then(user => {
-        setCurrentUser(user);
-    });
-}, []);
+    if (usrId) {
+      obtenirUser(usrId).then((user) => {
+        setCurrentUser(user); // Update the current user
+      }).catch(err => {
+        console.error("Failed to fetch user:", err);
+      });
+    }
+  }, [usrId]);
+  
+  useEffect(() => {
+    console.log("Current user : ",currentuser)
+  }, [currentuser]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -67,7 +76,7 @@ export function AccueilScreen({ navigation, route }) {
   return (
     <View style={stylesCommuns.app}>
       <View style={styles.section_haut}>
-        <Text style={styles.bienvenue}>Welcome {nom}</Text>
+        {/* <Text style={styles.bienvenue}>Welcome {nom}</Text> */}
       </View>
       <Tuilerie>
         <SafeAreaView style={styles.section_bas}>
