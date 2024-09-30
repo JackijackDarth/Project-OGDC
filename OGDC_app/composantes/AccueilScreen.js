@@ -20,7 +20,13 @@ export function AccueilScreen({ navigation, route }) {
   useEffect(() => {
     obtenirUser(usrId).then(user => setCurrentUser(user));
   }, []);
-  
+  useEffect(() => {
+     
+    navigation.setParams({
+      usrId: usrId,
+      rbtId: currentuser.idRobot,
+    });
+  }, [navigation, usrId, currentuser.idRobot]);
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (

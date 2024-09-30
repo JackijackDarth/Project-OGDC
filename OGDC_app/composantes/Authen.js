@@ -229,8 +229,8 @@ export function CreeCompteScreen({ route, navigation }) {
 }
 
 export function SeConnecterScreen({ navigation }) {
-    const [username, setUsername] = useState(null);
-    const [password, setPassword] = useState(null);
+    const [username, setUsername] = useState("admin");
+    const [password, setPassword] = useState("password");
     const [connectionmsg, setConnectionmsg] = useState(null);
     const [invalidbool, setInvalidbool] = useState(false);
 

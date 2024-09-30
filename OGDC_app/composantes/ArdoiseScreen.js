@@ -20,66 +20,75 @@ const mapcouleur = {
 };
 
 
-export default function ArdoiseScreen({ navigation }) {
+export default function ArdoiseScreen({ navigation, route }) {
   const [menuJSON, setMenu] = useState([]);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedId, setSelectedId] = useState();
+  const { nom, usrId } = route.params;
+  const [currentuser, setCurrentUser] = useState();
   const [nbItemsPanier, setNbItemsPanier] = useState(nbItemPanier());
-  console.log(menuJSON)
-  useEffect(() => {//jai du chercher un peu pour trouver cela... je ne sais pas si il sagit de la bonne facon mais je ne trouvais pas comment rafraichire
-    return navigation.addListener('focus', () => {
-      setNbItemsPanier(nbItemPanier());
-    });
-    ;
-  }, [navigation]);
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-          <><AntDesign name="shoppingcart" size={25}
-          color="blue"
-          onPress={() => {
-            navigation.navigate("Panier");
-          } } /><Text>{nbItemsPanier}</Text></>
-      ),
-    });
-  }, [nbItemsPanier,navigation]); 
+
   useEffect(() => {
     obtenirRobotsJSON().then(menu => setMenu(menu));
   }, []);
+  
+  useEffect(() => {
+    obtenirUser(usrId).then(user => setCurrentUser(user));
+  }, []);
+  
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <AntDesign name="logout" size={25}
+          color="blue"
+          onPress={() => {
+            navigation.replace("Authen");
+          }}
+        />
+      ),
+    });
+  }, [navigation]);
 
-  function choisirItem(item) {
-    ajouterItemPanier(item);
-    setSelectedItem(null);
-    setNbItemsPanier(nbItemPanier())
-  }
+  const Item = ({ item, onPress, backgroundColor, textColor }) => (
+    <View>
+      <Tuile texte={item.username} iconNom="pluscircleo" onPress_cb={() => navigation.navigate("AjoutRobot", {
+          usrId: usrId,
+          rbtId: item.Id,
+      })} />
+    </View>
+  );
+
+  const renderItem = ({ item }) => {
+    const backgroundColor = item.Id === selectedId ? '#6e3b6e' : '#f9c2ff';
+    const color = item.Id === selectedId ? 'white' : 'black';
+    return (
+      <Item
+        item={item}
+        onPress={() => navigation.navigate("AjoutRobot", {
+          usrId: usrId,
+          rbtId: item.Id,
+        })}
+        backgroundColor={backgroundColor}
+        textColor={color}
+      />
+    );
+  };
 
   return (
     <View style={stylesCommuns.app}>
-      {/* <ScrollView>
-        {menuJSON.map((categorie, index) => (
-          <Catégorie key={index} titre={categorie.username} >
-            {categorie.items.map(item => (
-              <ItemMenu
-                key={item.id}
-                sélectionné={item === selectedItem}
-                titre={item.username}
-                // onPress_cb={() => setSelectedItem(item)}
-                // image={item.image}
-              />
-            ))}
-          </Catégorie>
-        ))}
-      </ScrollView> */}
-      {/* <FlatList style={styles.liste}
-           
-           //numColumns={1}
-           data={menuJSON}
-           renderItem={({ item, index }) => {
-             console.log(item.username);
-             return <Thumbnail Nom={`${item.username}`} thumb_cb={() => setCurrentImage(item)} />
-           }}
-         />
-      <Bouton texte={"chose"} onPress_cb={() => selectedItem != null &&(choisirItem(selectedItem))} style={styles.boutton}/> */}
-      <Text>Page en dévelopement</Text>
+      <View style={styles.section_haut}>
+        <Text style={styles.bienvenue}>Welcome {nom}</Text>
+      </View>
+      <Tuilerie>
+        <SafeAreaView style={styles.section_bas}>
+          <FlatList
+            data={menuJSON}
+            numColumns={2}
+            renderItem={renderItem}
+            keyExtractor={item => item.Id}
+            extraData={selectedId}
+          />
+        </SafeAreaView>
+      </Tuilerie>
     </View>
   );
 }
