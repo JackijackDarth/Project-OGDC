@@ -36,10 +36,12 @@ function créerListe(listeObjetInfo) {
 
 function obtenirObjets(robotId){
     fichierListe.forEach(listeItems =>{
+        
         if(listeItems.robotId == robotId)
-            return { erreur: 0, msg: "Réussi", items: listeItems};;
+            console.log("la liste youpi", listeItems)
+            return listeItems;
     })
-    return { erreur: 1, msg: "Aucune liste attribuer à ce robot", items: null};;
+   
 }
 
 module.exports = {

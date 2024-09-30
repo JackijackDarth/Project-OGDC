@@ -23,6 +23,7 @@ creationRoute.route('/:id')
     .get((req, res) =>{
         console.log("Obtenir l'usager %d", req.params.id);
         const resultat = user.obtenirUsager(req.params.id);
+        console.log(resultat)
         if (resultat.erreur !== 0)
             res.status(404).send(resultat);
         else

@@ -30,5 +30,38 @@
                 ]
             }
         }
+    },
+    {
+        "robotId": 1,
+        "listeObjets": {
+            "button": {
+                "pin": 5,
+                "status": 0
+            },
+            "red_led": {
+                "pin": 2,
+                "status": "Lumière allumée"
+            },
+            "blue_led": {
+                "pin": 4,
+                "status": "Lumière allumée"
+            },
+            "green_led": {
+                "pin": 3,
+                "status": "Lumière allumée"
+            },
+            "movement_sensor": {
+                "pin": 8,
+                "status": "Mouvement détecté"
+            },
+            "temperature_sensor": {
+                "pin": 7,
+                "status": [
+                    24,
+                    67
+                ]
+            }
+        }
     }
+
 ]

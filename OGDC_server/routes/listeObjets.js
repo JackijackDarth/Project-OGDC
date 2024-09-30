@@ -17,12 +17,13 @@ liste_objets.route('/')
         }
     })
 liste_objets.route('/:id')
-    .get((req, res) => {
+    .get(async (req, res) => {
         console.log("Obtenir la liste d'objet pour robot %d", req.params.id);
         const resultat = listeObjets.obtenirObjets(req.params.id);
-        if (resultat.erreur !== 0)
-            res.status(404).send(resultat);
-        else
+        console.log("listobjt", resultat)
+        // if (resultat.erreur !== 0)
+        //     res.status(404).send(resultat);
+        // else
             res.json(resultat.items);
         
      })

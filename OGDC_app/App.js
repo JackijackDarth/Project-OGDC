@@ -14,16 +14,32 @@ const Tab = createBottomTabNavigator();
 const { Navigator, Screen, Group } = createNativeStackNavigator();
 
 // Create the Bottom Tab Navigator component
-function MainTabNavigator() {
+function MainTabNavigator({ route }) {
+  const currentuser = route.params.currentuser; // Access usrId from the route
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Accueil" component={AccueilScreen} options={{ title: "OGDC" }} />
-      <Tab.Screen name="Ardoise" component={ArdoiseScreen} options={{ title: "Page lambda 1" }}/>
-      <Tab.Screen name="CommandeInfo" component={CommandeInfoScreen}
-          options={{ title: "Page lambda 2" }} />
+      <Tab.Screen
+        name="Accueil"
+        component={AccueilScreen}
+        options={{ title: "OGDC" }}
+        initialParams={{ currentuser }} // Pass usrId to AccueilScreen
+      />
+      <Tab.Screen
+        name="Ardoise"
+        component={ArdoiseScreen}
+        options={{ title: "Page lambda 1" }}
+        initialParams={{ currentuser }} // Pass usrId to ArdoiseScreen
+      />
+      <Tab.Screen
+        name="CommandeInfo"
+        component={CommandeInfoScreen}
+        options={{ title: "Page lambda 2" }}
+        initialParams={{ currentuser }} // Pass usrId to CommandeInfoScreen if needed
+      />
     </Tab.Navigator>
   );
 }
+
 
 export default function App() {
   return (
