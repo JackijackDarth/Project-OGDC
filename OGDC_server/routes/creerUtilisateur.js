@@ -16,7 +16,7 @@ creationRoute.route('/')
             console.log("Erreur création")
             res.status(400).send(resultat.msg);
         } else {
-            res.status(201).send();
+            res.status(201).send(resultat.user);
         }
     })
 creationRoute.route('/:id')

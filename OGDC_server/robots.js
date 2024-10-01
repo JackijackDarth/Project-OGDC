@@ -55,16 +55,27 @@ function connexionRobots(connexionInfo){
 function obtenirUsagerSync(userPI){
     idRobot = null;
     listeRobots.forEach(robot => {
-        if(robot.username = userPI)
+        console.log(robot.username, userPI);
+        console.log(robot.username == userPI);
+        if(robot.username == userPI)
             idRobot = robot.Id
     })
+    console.log('idRobot : ',idRobot);
     if(idRobot != null){
         listeUsers = users.GetListeUsers()
+        let userEnvoyer = null;
+        console.log('listeUser : ',listeUsers);
         listeUsers.forEach(user => {
+            console.log('user.idRobot : ',user.idRobot);
             if(user.idRobot == idRobot)
-                return {erreur: 0, msg:"Réussi", user: user}
+                userEnvoyer = user;
         })
-        return {erreur: 1, msg: "Robot non syncroniser", user: null}
+        if(userEnvoyer != null){
+            return {erreur: 0, msg: "Réussi", user: userEnvoyer}
+        }
+        else{
+            return {erreur: 1, msg: "Robot non syncroniser", user: null}
+        }
     }
     return {erreur: 1, msg: "Username robot inexistant", user: null}
 

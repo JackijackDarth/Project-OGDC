@@ -43,7 +43,7 @@ function créerUtilisateur(userInfo) {
             };
             users.push(nouvelleUsager);
             fs.writeFileSync(usersFilePath, JSON.stringify(users));
-            return { erreur: 0, msg: "Réussi" };
+            return { erreur: 0, msg: "Réussi", user : nouvelleUsager};
         }
     }
     return {erreur: 1, msg: "Erreur dans les champs requis"}
