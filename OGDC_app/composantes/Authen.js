@@ -142,12 +142,9 @@ export function CreeCompteScreen({ route, navigation }) {
                 navigation.dispatch({
                     type: 'REPLACE',
                     payload: {
-                      name: 'MainTabs',   // Navigate to the Tab Navigator first
+                      name: 'MainTabs',    
                       params: {
-                        screen: "Accueil", // Then specify the 'Accueil' screen inside
-                        params: { 
-                            nom: res.nom, usrId : res.Id
-                        },
+                            currentuser : res.user
                       },
                     },
                   });
@@ -241,7 +238,7 @@ export function SeConnecterScreen({ navigation }) {
             navigation.dispatch({
                 type: 'REPLACE',
                 payload: {
-                  name: 'MainTabs',   // Navigate to the Tab Navigator first
+                  name: 'MainTabs',   
                   params: {
                         nom: res.nom, usrId : res.Id, currentuser : res
                   },

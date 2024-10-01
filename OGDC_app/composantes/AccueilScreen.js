@@ -9,6 +9,7 @@ import { obtenirRobotsJSON, ConnecterRobot, obtenirUser } from '../utils';
 export function AccueilScreen({ navigation, route }) {
   const [menuJSON, setMenu] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
+  console.log(route)
   const usrId = route.params.currentuser.Id; // Extract nom and usrId from route.params
   const [currentuser, setCurrentUser] = useState(null); // Initialize currentUser state
   const [nbItemsPanier, setNbItemsPanier] = useState(0); // Placeholder for cart items
