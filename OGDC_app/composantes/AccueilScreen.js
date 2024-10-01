@@ -16,7 +16,6 @@ export function AccueilScreen({ navigation, route }) {
   // Fetch robots JSON when the component mounts
   useEffect(() => {
     obtenirRobotsJSON().then((menu) => setMenu(menu));
-    console.log("leId",usrId)
   }, []);
   
   // Fetch the current user data and update state
@@ -31,6 +30,7 @@ export function AccueilScreen({ navigation, route }) {
   }, [usrId]);
   
   useEffect(() => {
+    if(currentuser)
     console.log("Current user : ",currentuser)
   }, [currentuser]);
 
@@ -53,7 +53,7 @@ export function AccueilScreen({ navigation, route }) {
           usrId: currentuser.Id,
           rbtId: item.Id,
       })
-      console.log(currentuser)}} />
+     }} />
     </View>
   );
 
@@ -105,7 +105,7 @@ export function AjoutRobotScreen({ route, navigation }) {
         console.log("Creation réussi %s", route.params);
         setInvalidbool(false);
         setConnectionmsg(null);
-        navigation.goBack();
+        navigation.navigate("Ardoise");
       }).catch(err => {
         console.log("Creation échec: %s", err.msg);
         setInvalidbool(true);

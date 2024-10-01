@@ -27,7 +27,7 @@ function MainTabNavigator({ route }) {
       <Tab.Screen
         name="Ardoise"
         component={ArdoiseScreen}
-        options={{ title: "Page lambda 1" }}
+        options={{ title: "Page d'objet" }}
         initialParams={{ currentuser }} // Pass usrId to ArdoiseScreen
       />
       <Tab.Screen

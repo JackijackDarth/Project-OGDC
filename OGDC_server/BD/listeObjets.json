@@ -8,19 +8,19 @@
             },
             "red_led": {
                 "pin": 2,
-                "status": "Lumière allumée"
+                "status": "On"
             },
             "blue_led": {
                 "pin": 4,
-                "status": "Lumière allumée"
+                "status": "On"
             },
             "green_led": {
                 "pin": 3,
-                "status": "Lumière allumée"
+                "status": "Lumière alumé"
             },
             "movement_sensor": {
                 "pin": 8,
-                "status": "Mouvement détecté"
+                "status": "Active"
             },
        
             "temperature_sensor": {
@@ -37,29 +37,29 @@
         "listeObjets": {
             "button": {
                 "pin": 5,
-                "status": 0
+                "status": 1
             },
             "red_led": {
                 "pin": 2,
-                "status": "Lumière allumée"
+                "status": "Off"
             },
             "blue_led": {
                 "pin": 4,
-                "status": "Lumière allumée"
+                "status": "Off"
             },
             "green_led": {
                 "pin": 3,
-                "status": "Lumière allumée"
+                "status": "Lumière éteinte"
             },
             "movement_sensor": {
                 "pin": 8,
-                "status": "Mouvement détecté"
+                "status": "Aucun mouvement"
             },
             "temperature_sensor": {
                 "pin": 7,
                 "status": [
-                    24,
-                    67
+                    31,
+                    20
                 ]
             }
         }

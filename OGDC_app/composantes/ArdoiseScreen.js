@@ -1,67 +1,92 @@
-import { StyleSheet, Text, View, FlatList, SafeAreaView, Pressable } from 'react-native';
+import { StyleSheet, Text, View, FlatList, SafeAreaView, Pressable, Alert } from 'react-native';
 import { useState, useEffect } from 'react';
-import { obtenirObjets } from '../utils'; 
+import { obtenirObjets, obtenirUser } from '../utils';
 import stylesCommuns from '../styles';
 import { AntDesign } from '@expo/vector-icons';
 
 export default function ArdoiseScreen({ navigation, route }) {
   const [objetsList, setObjetsList] = useState([]);
-  const [error, setError] = useState(null);  
-  const currentuser  = route.params.currentuser;
+  const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);  // State for refreshing
+  const usrId = route.params.currentuser.Id;
+  const [currentuser, setCurrentUser] = useState(null);
+
   const iconMap = {
-    button: "poweroff",   
-    red_led: "bulb1",     
+    button: "poweroff",
+    red_led: "bulb1",
     blue_led: "bulb1",
     green_led: "bulb1",
     movement_sensor: "eyeo",
-    temperature_sensor: "enviromento",  
+    temperature_sensor: "enviromento",
   };
 
+  const fetchUser = () => {
+    if (usrId) {
+      obtenirUser(usrId).then((user) => {
+        setCurrentUser(user);
+      }).catch(err => {
+        console.error("Failed to fetch user:", err);
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+    const intervalId = setInterval(fetchUser, 10000);
+    return () => clearInterval(intervalId);
+  }, [route, usrId]);
+
+  useEffect(() => {
+    if (currentuser) {
+      const robotName = currentuser.idRobot != null ? `Robot ID: ${currentuser.idRobot}` : "No robot assigned";
+      navigation.setOptions({ title: robotName });
+    }
+  }, [currentuser, navigation]);
+
   const fetchObjects = () => {
-    obtenirObjets(currentuser.rbtId).then(items => {
-      if (items && items.listeObjets) {
+    if (currentuser && currentuser.idRobot != null) {
+      obtenirObjets(currentuser.idRobot).then(items => {
         const transformedObjets = Object.entries(items.listeObjets).map(([key, value]) => ({
           name: key,
           status: value.status
         }));
         setObjetsList(transformedObjets);
-        setError(null);  
-      } else {
-        setObjetsList([]);  
+        setError(null);
+      }).catch(() => {
+        setObjetsList([]);
         setError("Ce robot ne semble pas avoir d'objet...");
-      }
-    }).catch(() => {
-      setObjetsList([]);  
-      setError("Erreur dans la recuperation de la liste!");
-    });
+      });
+    } else {
+      setError("Vous n'avez pas de robot!");
+    }
   };
 
- 
   useEffect(() => {
-    fetchObjects();  
-    // if (!error){
-    //   const intervalId = setInterval(fetchObjects, 5000); 
-    //   return () => clearInterval(intervalId);  
-    // }
-   
-  }, [currentuser.rbtId,route]);  
+    fetchObjects();
+    const intervalId = setInterval(fetchObjects, 5000);
+    return () => clearInterval(intervalId);
+  }, [route, usrId, currentuser]);
 
-  useEffect(() => {
-    console.log("Object list:", objetsList);
-  }, [objetsList]);
+  // J'ai trouver ça en fouillant en ligne. sert pas a grand chose mais c'est cool (:
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchObjects();
+    setRefreshing(false);
+  };
+
+  const handleItemPress = (item) => {
+    Alert.alert("Work in Progress", `Le controle de ${item.name} n'est pas encore implémenté.`);
+  };
 
   const renderItem = ({ item }) => {
     const isTemperatureSensor = item.name === 'temperature_sensor';
-    
-     
-    const status = isTemperatureSensor 
-      ? `Temp: ${item.status[0]}°C, Humidity: ${item.status[1]}%` 
+    const status = isTemperatureSensor
+      ? `Temp: ${item.status[0]}°C, Humidity: ${item.status[1]}%`
       : `Status: ${item.status}`;
-  
     const icon = iconMap[item.name] || "question";
-  
+
     return (
-      <Pressable style={styles.item}>
+      <Pressable style={styles.item} onPress={() => handleItemPress(item)}>
         <View style={styles.itemContent}>
           <AntDesign name={icon} size={30} color="black" style={styles.icon} />
           <View>
@@ -84,6 +109,8 @@ export default function ArdoiseScreen({ navigation, route }) {
           data={objetsList}
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Text style={styles.emptyText}>No objects available.</Text>

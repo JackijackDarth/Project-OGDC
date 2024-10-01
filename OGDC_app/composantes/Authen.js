@@ -237,7 +237,6 @@ export function SeConnecterScreen({ navigation }) {
 
     function seConnecter() {
         connecterUtilisateur(username, password).then((res) => {
-            console.log("login success: %s", res.Id);
             navigation.popToTop();
             navigation.dispatch({
                 type: 'REPLACE',

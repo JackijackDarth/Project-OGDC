@@ -66,6 +66,7 @@ function ajouterRobot(userId, robotId){
 }
 
 function obtenirUsager(userId){
+    let users = JSON.parse(fs.readFileSync(usersFilePath));
     let copieUser;
     let found = false;
     users.forEach(user => {
