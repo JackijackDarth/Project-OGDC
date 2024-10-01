@@ -12,6 +12,7 @@ export default function ArdoiseScreen({ navigation, route }) {
   const [currentuser, setCurrentUser] = useState(null);
 
   const iconMap = {
+    camera: "camera",
     button: "poweroff",
     red_led: "bulb1",
     blue_led: "bulb1",
