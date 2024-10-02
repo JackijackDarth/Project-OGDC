@@ -18,8 +18,8 @@
         "pass": "password",
         "mail": "simmat12@icloud.com",
         "phone": "(450) 434-9898",
-        "idRobot": 2,
-        "isLogin": false
+        "idRobot": 0,
+        "isLogin": true
     },
     {
         "Id": 3,
@@ -40,6 +40,50 @@
         "pass": "ryqtih-kYxbic-9wiwsa",
         "mail": "smullkick@gmail.com",
         "phone": "(514) 603-1910",
+        "idRobot": 0,
+        "isLogin": false
+    },
+    {
+        "Id": 5,
+        "prenom": "Mathias",
+        "nom": "Simoneau",
+        "username": "Papa051",
+        "pass": "dEpveq-pitgi6-sozhac",
+        "mail": "simmat@iclos.com",
+        "phone": "(214) 543-4946",
+        "idRobot": null,
+        "isLogin": false
+    },
+    {
+        "Id": 6,
+        "prenom": "Antoine",
+        "nom": "Michaud",
+        "username": "Laejjf",
+        "pass": "vabXyq-rabroq-vynxy3",
+        "mail": "liaiao@gmail.com",
+        "phone": "(514) 603-1910",
+        "idRobot": null,
+        "isLogin": false
+    },
+    {
+        "Id": 7,
+        "prenom": "Mathias",
+        "nom": "Simoneau",
+        "username": "Ksksks",
+        "pass": "pottib-zyrvAf-8nekqo",
+        "mail": "simmat@[![[![![.com",
+        "phone": "(464) 646-44",
+        "idRobot": 0,
+        "isLogin": false
+    },
+    {
+        "Id": 8,
+        "prenom": "Antoine",
+        "nom": "Michaud",
+        "username": "Usernameplus",
+        "pass": "xokfob-4qUvbi-rakkek",
+        "mail": "blabla@gmail.com",
+        "phone": "(512) 451-3451",
         "idRobot": 0,
         "isLogin": false
     }
