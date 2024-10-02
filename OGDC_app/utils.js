@@ -23,6 +23,9 @@ export function obtenirRobotsJSON() {
 export function obtenirUser(usrId){
     return obtenirJSON_Get(`creationUtilisateur/id/${usrId}`);
 }
+export function obtenirUserUsrnm(username){
+    return obtenirJSON_Get(`creationUtilisateur/username/${username}`);
+}
 export function obtenirObjets(rbtId){
     return obtenirJSON_Get(`liste_objets/${rbtId}`);
 }

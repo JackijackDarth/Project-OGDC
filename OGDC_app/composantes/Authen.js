@@ -4,7 +4,7 @@ var validate = require("react-email-validator");
 import { useState, useEffect } from 'react';
 import { Bouton } from './BarreOutils'; // Assuming BarreOutils has a Bouton component
  
-import { connecterUtilisateur, creerUtilisateurJSON,obtenirUser } from '../utils';
+import { connecterUtilisateur, creerUtilisateurJSON,obtenirUserUsrnm } from '../utils';
 
 export function AuthenScreen({ navigation }) {
     const [surname, setSurname] = useState(null);
@@ -112,6 +112,7 @@ export function CreeCompteScreen({ route, navigation }) {
     const [connectionmsg, setConnectionmsg] = useState(null)
     const [invalidbool, setInvalidbool] = useState(false);
     const [valideusrname, setUsrnmValidBool] = useState(true);
+    const [currentusrnm, setCurrentUsrnm] = useState();
     const { mail, name, surname } = route.params;
     const formatPhoneNumber = (str) => {
         let numbers = str.replace(/\D/g, '')
@@ -136,30 +137,43 @@ export function CreeCompteScreen({ route, navigation }) {
                 phone: phone,
                 isLogin: false, 
             }
+           
             creerUtilisateurJSON(nouvUtilisateur).then((res) => {
                 console.log("creation réussi %s", res);
-                navigation.popToTop();
-                navigation.dispatch({
-                    type: 'REPLACE',
-                    payload: {
-                      name: 'MainTabs',    
-                      params: {
-                            currentuser : res.user
-                      },
-                    },
+                obtenirUserUsrnm(nouvUtilisateur.username).then((user) => {
+                    console.log("ahhhh:",user);
+                    console.log("le user :",user);
+                    navigation.popToTop();
+                    navigation.dispatch({
+                        type: 'REPLACE',
+                        payload: {
+                          name: 'MainTabs',    
+                          params: {
+                                currentuser : user
+                          },
+                        },
+                      });
+                  }).catch(err => {
+                    console.error("Failed to fetch user:", err);
                   });
+                
+                    
+                
+               
                 // navigation.replace("Accueil", { nom: res.nom, usrId : res.Id});
             }).catch(err => {
                 console.log("creation échec: %s", err.msg);
                 setInvalidbool(true);
-                setConnectionmsg("Ce nom d'utilisateur ou ce couriel existe déja");
-                setUsrnmValidBool(false);
+                // setConnectionmsg("Ce nom d'utilisateur ou ce couriel existe déja");
+                // setUsrnmValidBool(false);
 
             });
         }
         else {
             setInvalidbool(true);
-             
+                // if (!password.length < 8){
+                //     setConnectionmsg("Veuillez entrer un mot de passer plus gros!");
+                // }
                 if (!username) {
                     setConnectionmsg("Veuillez entrer un nom d'utilisateur!");
                 }

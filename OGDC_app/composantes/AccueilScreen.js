@@ -10,20 +10,20 @@ export function AccueilScreen({ navigation, route }) {
   const [menuJSON, setMenu] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   console.log(route)
-  const usrId = route.params.currentuser.Id; // Extract nom and usrId from route.params
-  const [currentuser, setCurrentUser] = useState(null); // Initialize currentUser state
-  const [nbItemsPanier, setNbItemsPanier] = useState(0); // Placeholder for cart items
+  const usrId = route.params.currentuser.Id; 
+  const [currentuser, setCurrentUser] = useState(null); 
+  const [nbItemsPanier, setNbItemsPanier] = useState(0);  
   
-  // Fetch robots JSON when the component mounts
+   
   useEffect(() => {
     obtenirRobotsJSON().then((menu) => setMenu(menu));
   }, []);
   
-  // Fetch the current user data and update state
+   
   useEffect(() => {
     if (usrId) {
       obtenirUser(usrId).then((user) => {
-        setCurrentUser(user); // Update the current user
+        setCurrentUser(user);  
       }).catch(err => {
         console.error("Failed to fetch user:", err);
       });
@@ -73,11 +73,10 @@ export function AccueilScreen({ navigation, route }) {
       />
     );
   };
-
   return (
     <View style={stylesCommuns.app}>
       <View style={styles.section_haut}>
-        {/* <Text style={styles.bienvenue}>Welcome {nom}</Text> */}
+        {/* <Text style={styles.bienvenue}>Welcome {currentuser.username}</Text>  */}
       </View>
       <Tuilerie>
         <SafeAreaView style={styles.section_bas}>
