@@ -2,11 +2,10 @@ const fs = require('fs');
 
 const usersFilePath = "./BD/users.json";
 
-let users = JSON.parse(fs.readFileSync(usersFilePath));
-
 function créerUtilisateur(userInfo) {
     let maxId = 0;
     let userConforme = true;
+    let users = JSON.parse(fs.readFileSync(usersFilePath));
     // for(let i; i < userInfo.length; i++) {
     //     console.log(userInfo[i]);
 
@@ -51,6 +50,7 @@ function créerUtilisateur(userInfo) {
 
 function ajouterRobot(userId, robotId){
     let trouver = false;
+    let users = JSON.parse(fs.readFileSync(usersFilePath));
     users.forEach(user => {
         if (user.Id == userId){
             user.idRobot = robotId;
@@ -80,63 +80,31 @@ function obtenirUsager(userId){
     }
     return {erreur: 1, msg: "Usager pas trouvé"}
 }
-function GetListeUsers(){
-    return users;
-}
-/*
-function supprimerCommandes() {
-    commandes = [];
-};
-
-function supprimerCommande(id) {
-    let idx = commandes.findIndex((commande) => commande.id === id);
-    if (idx === -1)
-        return { erreur: 1, msg: "commande id invalide" };
-
-    commandes = commandes.filter((commande) => commande.id !== id);
-    return { erreur: 0, msg: "supprimée" };
-};
-
-function modifierCommande(id, commandeModifiée) {
-    let idx = commandes.findIndex((commande) => commande.id === id);
-    if (idx === -1)
-        return { erreur: 1, msg: "commande id invalide" };
-
-    commandes = commandes.map((commmande) => (commmande.id === id ? {
-        ...commmande,
-        items: commandeModifiée.items,
-        // nom: commandeModifiée.nom,
-        // mobile: commandeModifiée.mobile,
-        // codePostal: commandeModifiée.codePostal,
-        // statut: commandeModifiée.statut,
-    } : commmande));
-
-    return { erreur: 0, msg: "modifiée" };
-};
-function obtenirUneCommandes(id) {
-    let comm = commandes.find((commande) => commande.id === id);
-    if (comm === undefined)
-        return { erreur: 1, msg: "commande id invalide" };
-
-    return { erreur: 0, msg: "obtenue", commande: comm };
-}
-function obtenirCommandes() {
-    let comm = commandes.map((commande) => {
-        return {
-            id: commande.id,
-            nom: commande.nom,
-            prénom: commande.prénom,
-            statut: commande.statut,
+function obtenirUsagerUsername(username){
+    let users = JSON.parse(fs.readFileSync(usersFilePath));
+    let copieUser;
+    let found = false;
+    console.log("Dans fonction : ",username);
+    users.forEach(user => {
+        if(user.username == username){
+            copieUser = user
+            found = true;
         }
     });
-
-    return comm;
+    if(found){
+        return {erreur: 0, user: copieUser}
+    }
+    return {erreur: 1, msg: "Usager pas trouvé"}
 }
-*/
+function GetListeUsers(){
+    let users = JSON.parse(fs.readFileSync(usersFilePath));
+    return users;
+}
 
 module.exports = {
     créerUtilisateur,
     ajouterRobot,
     obtenirUsager,
-    GetListeUsers
+    GetListeUsers,
+    obtenirUsagerUsername
 };

@@ -16,13 +16,19 @@ creationRoute.route('/')
             console.log("Erreur création")
             res.status(400).send(resultat.msg);
         } else {
-            res.status(201).send(resultat.user);
+            res.status(201).send();
         }
     })
-creationRoute.route('/:id')
+creationRoute.route('/:method/:value')
     .get((req, res) =>{
-        console.log("Obtenir l'usager %d", req.params.id);
-        const resultat = user.obtenirUsager(req.params.id);
+        console.log("Obtenir l'usager method: ", req.params.method);
+        let resultat;
+        if(req.params.method == "id"){
+            resultat = user.obtenirUsager(req.params.value);
+        }
+        else if (req.params.method == "username"){
+            resultat = user.obtenirUsagerUsername(req.params.value);
+        }
         console.log(resultat)
         if (resultat.erreur !== 0)
             res.status(404).send(resultat);

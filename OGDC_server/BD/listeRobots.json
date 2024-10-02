@@ -1,7 +1,12 @@
 [
   {
-    "Id": 1,
+    "Id": 0,
     "username": "OGDC",
     "password": "1"
+  },
+  {
+    "Id": 1,
+    "username": "RobotTest",
+    "password": "1234"
   }
 ]
