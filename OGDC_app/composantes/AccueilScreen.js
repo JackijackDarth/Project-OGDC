@@ -12,6 +12,7 @@ export function AccueilScreen({ navigation, route }) {
   console.log(route)
   const usrId = route.params.currentuser.Id; 
   const [currentuser, setCurrentUser] = useState(null); 
+  const [currentusername, setCurrentUsername] = useState(null); 
   const [nbItemsPanier, setNbItemsPanier] = useState(0);  
   
    
@@ -23,6 +24,7 @@ export function AccueilScreen({ navigation, route }) {
   useEffect(() => {
     if (usrId) {
       obtenirUser(usrId).then((user) => {
+
         setCurrentUser(user);  
       }).catch(err => {
         console.error("Failed to fetch user:", err);
