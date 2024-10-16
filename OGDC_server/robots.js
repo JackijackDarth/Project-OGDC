@@ -2,15 +2,16 @@ const fs = require('fs');
 const users = require('./users.js');
 
 const robotsFilePath = "./BD/listeRobots.json";
-let listeRobots = JSON.parse(fs.readFileSync(robotsFilePath));
-
+/**
+ * Création d'un robot
+ * @param {Array} robotInfo 
+ * @returns status 201 || 401
+ */
 function créerRobot(robotInfo) {
     let double = false;
     let maxId = 0;
 
-    if (!Array.isArray(listeRobots)) {
-        listeRobots = [];
-    }
+    let listeRobots = JSON.parse(fs.readFileSync(robotsFilePath));
 
     listeRobots.forEach(robot => {
         if (robot.Id > maxId) {
@@ -29,14 +30,19 @@ function créerRobot(robotInfo) {
         };
         listeRobots.push(nouveauRobot);
 
-        fs.writeFileSync(robotsFilePath, JSON.stringify(listeRobots, null, 2));
+        fs.writeFileSync(robotsFilePath, JSON.stringify(listeRobots));
         return { erreur: 0, msg: "Réussi" };
     }
 
     return { erreur: 1, msg: "Robot déjà existant" };
 }
-
+/**
+ * Obtenir une liste de tout les robots
+ * @returns liste de robot
+ */
 function obtenirRobots() {
+    let listeRobots = JSON.parse(fs.readFileSync(robotsFilePath));
+
     let robots = listeRobots.map((robot) => {
         return {
             Id: robot.Id,
@@ -47,9 +53,14 @@ function obtenirRobots() {
 
     return robots;
 }
-
+/**
+ * Permet de se connecter à un robot via ses infos
+ * @param {Array} connexionInfo table Id, MDP
+ * @returns 201 | 401
+ */
 function connexionRobots(connexionInfo){
     let connecter = false;
+    let listeRobots = JSON.parse(fs.readFileSync(robotsFilePath));
 
     listeRobots.forEach(robot => {
         if (robot.Id === connexionInfo.rbtId && robot.password === connexionInfo.MdpRbt) {
@@ -69,9 +80,14 @@ function connexionRobots(connexionInfo){
     return { erreur: 1, msg: "Id ou password erroné" };
 }
 
+/**
+ * Permet de get l'usager associer au robot
+ * @param {string} userPI username PI
+ * @returns 201 + user | 401
+ */
 function obtenirUsagerSync(userPI) {
     let idRobot = null;
-
+    let listeRobots = JSON.parse(fs.readFileSync(robotsFilePath));
     listeRobots.forEach(robot => {
         if (robot.username === userPI) {
             idRobot = robot.Id; // Stocker l'ID du robot

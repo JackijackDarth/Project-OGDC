@@ -6,6 +6,13 @@ const robot = require('../robots');
 
 const connexionRoutes = Router();
 
+/**
+ * connexionRoutes  /GET/
+ * Vérifie si l'usager est connue de la base de donner.
+ * Il le connnecte
+ * Change la bd en considération de sa connexion 
+ * isLogin = true;
+ */
 connexionRoutes.get('/', (req, res) => {
     console.log("connexion");
 
@@ -35,7 +42,12 @@ connexionRoutes.get('/', (req, res) => {
     }
     res.status(404).send({ erreur: 1, msg: "Utilisateur non trouvé." });
 });
-
+/**
+ * connexionRoutes /GET/userPI
+ * Obtiens l'usager connecter au robot
+ * Si trouver dans la bse de donner retourne le user
+ * Si non trouver retourne une erreur
+ */
 connexionRoutes.route('/:userPI')
     .get((req, res) => {
         console.log("Obtenir l'usager pour le robot ", req.params.userPI);

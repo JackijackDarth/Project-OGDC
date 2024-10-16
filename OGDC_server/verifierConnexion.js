@@ -1,6 +1,13 @@
 const fs = require('fs');
 
 const usersFilePath = "./BD/users.json";
+/**
+ * Connecter une usager
+ * @param {Request} req 
+ * @param {Response} res 
+ * @param {*} next 
+ * @returns 
+ */
 function connecter(req, res, next) {
     let res_authen = validerConnexion(req);
 
@@ -12,7 +19,11 @@ function connecter(req, res, next) {
 
     return next(res_authen.userId);
 }
-
+/**
+ * Connexion de l'usager voir si il est dans la base de donné
+ * @param {Request} req 
+ * @returns 
+ */
 function validerConnexion(req) {
     const authheader = req.headers.authorization;
     console.log(req.headers);

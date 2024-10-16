@@ -6,6 +6,12 @@ const { Router } = require('express');
 
 const creationRoute = Router();
 
+/**
+ * creationRoute /POST/
+ * Créer un usager
+ * Envoie les données a une fonction créer si tout est beau il l'a crée dans BD
+ * Sinon il renvoie un erreur
+ */
 creationRoute.route('/')
     .post((req, res) => {
         console.log("Créer un usager");
@@ -19,6 +25,13 @@ creationRoute.route('/')
             res.status(201).send();
         }
     })
+/**
+ *  creationRoute /GET/ method/ value/
+ *  Obtenir un usager précis
+ *  Si method est ID il cherche via ID
+ *  Si method est username il cherche via username
+ *  Il retourne l'user si il est trouver
+ */
 creationRoute.route('/:method/:value')
     .get((req, res) =>{
         console.log("Obtenir l'usager method: ", req.params.method);
