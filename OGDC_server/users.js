@@ -2,15 +2,16 @@ const fs = require('fs');
 
 const usersFilePath = "./BD/users.json";
 
+/**
+ * Créer un utilisateur dans la BD
+ * Vérifier les infos et l'ajouter dans la BD si conforme
+ * @param {Array} userInfo 
+ * @returns 201 + nouveau user | 401
+ */
 function créerUtilisateur(userInfo) {
     let maxId = 0;
     let userConforme = true;
     let users = JSON.parse(fs.readFileSync(usersFilePath));
-    // for(let i; i < userInfo.length; i++) {
-    //     console.log(userInfo[i]);
-
-    //     if(userInfo[i] == null) return {erreur: 1, msg: "Champ(s) null(s)"}
-    // }
     if(userInfo.prenom != null && userInfo.nom != null && userInfo.username != null && userInfo.pass != null && userInfo.mail != null && userInfo.phone != null){
         users.forEach(user => {
             if (user.Id > maxId) maxId = user.Id;
@@ -48,6 +49,13 @@ function créerUtilisateur(userInfo) {
     return {erreur: 1, msg: "Erreur dans les champs requis"}
 };
 
+/**
+ * Connecte un user à un robot
+ * Vérifie si les deux existent et si ils peuvent se connecter
+ * @param {int} userId Id username
+ * @param {int} robotId Id robot
+ * @returns 201 | 401
+ */
 function ajouterRobot(userId, robotId){
     let trouver = false;
     let users = JSON.parse(fs.readFileSync(usersFilePath));
@@ -65,6 +73,11 @@ function ajouterRobot(userId, robotId){
     return {erreur: 1, msg: "Erreur: Users non trouvé"}
 }
 
+/**
+ * Get un usager précis via ID
+ * @param {int} userId Id username
+ * @returns 201 + copie user | 401
+ */
 function obtenirUsager(userId){
     let users = JSON.parse(fs.readFileSync(usersFilePath));
     let copieUser;
@@ -80,6 +93,11 @@ function obtenirUsager(userId){
     }
     return {erreur: 1, msg: "Usager pas trouvé"}
 }
+/**
+ * Get un usager précis via USERNAME
+ * @param {string} username Username user
+ * @returns 201 + copie user | 401
+ */
 function obtenirUsagerUsername(username){
     let users = JSON.parse(fs.readFileSync(usersFilePath));
     let copieUser;
@@ -96,9 +114,37 @@ function obtenirUsagerUsername(username){
     }
     return {erreur: 1, msg: "Usager pas trouvé"}
 }
+/**
+ * Retourne la liste de tout les users
+ * @returns liste de user
+ */
 function GetListeUsers(){
-    let users = JSON.parse(fs.readFileSync(usersFilePath));
-    return users;
+    return JSON.parse(fs.readFileSync(usersFilePath));
+}
+/**
+ * Déconnexion d'un usager
+ * @param {*} userId 
+ * @returns 
+ */
+function Deconnexion(userId){
+    let users = GetListeUsers()
+    let found = false;
+    let copieUser = null;
+    users.forEach(user =>{
+        if(user.Id == userId){
+            user.isLogin = false;
+            found = true;
+            copieUser = user
+        }
+    })
+    if(found){
+        fs.writeFileSync(usersFilePath,JSON.stringify(users));
+        return{erreur:0,msg:"Réussi", user:copieUser}
+    }
+    else{
+        return {erreur:1,msg:"User non-trouver", user:copieUser}
+    }
+
 }
 
 module.exports = {
@@ -106,5 +152,6 @@ module.exports = {
     ajouterRobot,
     obtenirUsager,
     GetListeUsers,
-    obtenirUsagerUsername
+    obtenirUsagerUsername,
+    Deconnexion
 };
