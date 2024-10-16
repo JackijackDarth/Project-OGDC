@@ -49,8 +49,10 @@ export default function ArdoiseScreen({ navigation, route }) {
       obtenirObjets(currentuser.idRobot).then(items => {
         const transformedObjets = Object.entries(items.listeObjets).map(([key, value]) => ({
           name: key,
-          status: value.status
+          status: value.status,
+          location: value.location
         }));
+        console.log(transformedObjets);
         setObjetsList(transformedObjets);
         setError(null);
       }).catch(() => {
@@ -78,6 +80,7 @@ export default function ArdoiseScreen({ navigation, route }) {
   const handleItemPress = (item) => {
     Alert.alert("Work in Progress", `Le controle de ${item.name} n'est pas encore implémenté.`);
   };
+  
 
   const renderItem = ({ item }) => {
     const isTemperatureSensor = item.name === 'temperature_sensor';

@@ -6,14 +6,18 @@ import { nbItemPanier, obtenirPanier } from '../panier';
 import Tuilerie from './Tuilerie';
 import { obtenirRobotsJSON, ConnecterRobot, obtenirUser } from '../utils';
 
+
+
+
+////////////////////
+//AccueilScreen//
+///////////////////
 export function AccueilScreen({ navigation, route }) {
   const [menuJSON, setMenu] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   console.log(route)
   const usrId = route.params.currentuser.Id; 
   const [currentuser, setCurrentUser] = useState(null); 
-  const [currentusername, setCurrentUsername] = useState(null); 
-  const [nbItemsPanier, setNbItemsPanier] = useState(0);  
   
    
   useEffect(() => {
@@ -37,18 +41,7 @@ export function AccueilScreen({ navigation, route }) {
     console.log("Current user : ",currentuser)
   }, [currentuser]);
 
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <AntDesign name="logout" size={25}
-          color="blue"
-          onPress={() => {
-            navigation.replace("Authen");
-          }}
-        />
-      ),
-    });
-  }, [navigation]);
+
 
   const Item = ({ item, onPress, backgroundColor, textColor }) => (
     <View>
@@ -95,6 +88,12 @@ export function AccueilScreen({ navigation, route }) {
   );
 }
 
+
+
+
+////////////////////
+//AjoutRobotScreen//
+///////////////////
 export function AjoutRobotScreen({ route, navigation }) {
   const [MdpRbt, setPassword] = useState(null);
   const [connectionmsg, setConnectionmsg] = useState(null);
@@ -274,4 +273,5 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginTop: 10,
   },
+  
 });

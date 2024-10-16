@@ -1,7 +1,7 @@
 let Username = "admin"
 let Password = "password"
 
-const serveur_ip = "192.168.137.181";
+const serveur_ip = "192.168.137.113";
 
 async function obtenirJSON_Get(ressource) {
     // console.log("username: %s", Username);
@@ -28,6 +28,9 @@ export function obtenirUserUsrnm(username){
 }
 export function obtenirObjets(rbtId){
     return obtenirJSON_Get(`liste_objets/${rbtId}`);
+}
+export function deconnexion(usrId){
+    return obtenirJSON_Get(`deconnexion/${usrId}`);
 }
 async function créerJSON_Post(ressource, resInfo) {
     let url = new URL(`http://${serveur_ip}:4242/cafehomer/${ressource}`);
