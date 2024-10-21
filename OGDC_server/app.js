@@ -8,6 +8,7 @@ const creerUtilisateurRoutes = require('./routes/creerUtilisateur');
 const robotRoutes = require('./routes/robotConnecter');
 const objetRoutes = require('./routes/listeObjets');
 const deconnexionRoutes = require('./routes/deconnexion');
+const commandesRoutes = require('./routes/commandes');
 
 const app = express();
 const { port } = config;
@@ -29,6 +30,7 @@ app.use('/cafehomer/connexion/',connexionRoutes)
 app.use('/cafehomer/robot_connecter', robotRoutes)
 app.use('/cafehomer/liste_objets', objetRoutes)
 app.use('/cafehomer/deconnexion',deconnexionRoutes)
+app.use('/cafehomer/commandes',commandesRoutes)
 
 const server = http.createServer(app);
 

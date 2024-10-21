@@ -2,6 +2,7 @@ const fs = require('fs');
 
 const objetsFilePath = "./BD/listeObjets.json";
 const robotsFilePath = "./BD/listeRobots.json";
+const commandesFilePath = "./BD/pilesCommandes.json";
 
 /**
  * Créer une liste pour la première fois
@@ -103,8 +104,54 @@ function UpdateListe(listeInfo){
     return { erreur: 1, msg: "Robot associé a cette liste non trouver"}
 }
 
+/**
+ * Fonction permettant de créer des commandes (initier pareil)
+ * Attention: Commande créer mais pas enregistrer dans la BD
+ * @param {int} id 
+ * @param {string} nomCommande 
+ * @param {string} nomObjet 
+ * @param {int} numPin 
+ * @param {int} nouvelleValeur
+ * @returns Un objet JS qui représente une commande
+ */
+function CreerCommande(id, nomCommande, nomObjet, numPin, nouvelleValeur){
+    let today = new Date();
+    let now = today.toLocaleString();
+    return {
+        Id: id,
+        name: nomCommande,
+        object: nomObjet,
+        pin: numPin,
+        newValue: nouvelleValeur,
+        date: now
+    }
+}
+
+function ChangerEtatLED(infoLED){
+    let pilesCommandes = JSON.parse(fs.readFileSync(commandesFilePath));
+    let maxId = 0
+    pilesCommandes.forEach(commande => {
+        if (commande.Id > maxId) maxId = commande.Id;
+    });
+    if(infoLED != null){
+        let nouvelleCommande = CreerCommande(maxId+1, "Allumer/Éteindre LED", infoLED.name, infoLED.pin, infoLED.value)
+        if(nouvelleCommande != null){
+            pilesCommandes.push(nouvelleCommande)
+            fs.writeFileSync(commandesFilePath,JSON.stringify(pilesCommandes))
+            return {erreur:0,msg:"Création de la commande réussi"};
+        }
+        else{
+            return {erreur:1,msg:"Échec de création de la commande"};
+        }
+    }
+    else{
+        return{erreur:1,msg:"Information LED null ou incorrect"};
+    }
+}
+
 module.exports = {
     créerListe,
     obtenirObjets,
     UpdateListe,
+    ChangerEtatLED,
 };
