@@ -127,14 +127,41 @@ function CreerCommande(id, nomCommande, nomObjet, numPin, nouvelleValeur){
     }
 }
 
-function ChangerEtatLED(infoLED){
+/**
+ * Fonction qui prend le keyWord de la commande et en crée une à l'aides des informations fournies
+ * Appelle une autre fonction pour vérifier que les infos fournies sont correcte avec le style de commande due
+ * @param {Array} infoObjet 
+ * @param {string} nomCommande 
+ * @returns 201 + "Réussi" | Error:1,msg:""
+ */
+function EnvoyerCommande(infoObjet,nomCommande){
     let pilesCommandes = JSON.parse(fs.readFileSync(commandesFilePath));
     let maxId = 0
     pilesCommandes.forEach(commande => {
         if (commande.Id > maxId) maxId = commande.Id;
     });
-    if(infoLED != null){
-        let nouvelleCommande = CreerCommande(maxId+1, "Allumer/Éteindre LED", infoLED.name, infoLED.pin, infoLED.value)
+    if(infoObjet != null){
+        let nouvelleCommande = null;
+        switch (nomCommande){
+            case "switchLed":
+                nouvelleCommande = CreerCommande(maxId+1, "Allumer/Éteindre LED", infoObjet.name, infoObjet.pin, infoObjet.value)
+                break;
+            case "changeTemp":
+                nouvelleCommande = CreerCommande(maxId+1, "Changer temp. cible", infoObjet.name, infoObjet.pin, infoObjet.value)
+                break;
+            case "startCamera":
+                nouvelleCommande = CreerCommande(maxId+1, "Lancement caméra", infoObjet.name, infoObjet.pin, infoObjet.value)
+                break;
+            case "captureMovement":
+                nouvelleCommande = CreerCommande(maxId+1, "Lancement capteur de mouvement", infoObjet.name, infoObjet.pin, infoObjet.value)
+                break;
+            case "pressButton":
+                nouvelleCommande = CreerCommande(maxId+1, "Appuyer sur bouton principal", infoObjet.name, infoObjet.pin, infoObjet.value)
+                break;
+            default:
+                return {error:1,msg:"Nom de commande incorrect ou inconnu"}
+
+        }
         if(nouvelleCommande != null){
             pilesCommandes.push(nouvelleCommande)
             fs.writeFileSync(commandesFilePath,JSON.stringify(pilesCommandes))
@@ -145,7 +172,7 @@ function ChangerEtatLED(infoLED){
         }
     }
     else{
-        return{erreur:1,msg:"Information LED null ou incorrect"};
+        return{erreur:1,msg:"Information commande null ou incorrect"};
     }
 }
 
@@ -153,5 +180,5 @@ module.exports = {
     créerListe,
     obtenirObjets,
     UpdateListe,
-    ChangerEtatLED,
+    EnvoyerCommande,
 };
