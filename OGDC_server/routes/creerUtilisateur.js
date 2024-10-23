@@ -42,7 +42,7 @@ creationRoute.route('/:method/:value')
         else if (req.params.method == "username"){
             resultat = user.obtenirUsagerUsername(req.params.value);
         }
-        console.log(resultat)
+        //console.log(resultat)
         if (resultat.erreur !== 0)
             res.status(404).send(resultat);
         else

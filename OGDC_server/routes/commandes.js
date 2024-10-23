@@ -1,9 +1,10 @@
 const { Router } = require('express');
-const objets = require('../objets');
+const commandes = require('../commandes');
 
 const commandesRoutes = Router();
 
-commandesRoutes.route()
+
+commandesRoutes.route('/')
     /**
      * commandesRoutes  /GET/
      * Obtiens toute les commandes enregistrer dans la BD
@@ -12,7 +13,7 @@ commandesRoutes.route()
      */
     .get((req,res)=>{
         console.log("Obtenir les commandes pour le robot ");
-        const resultat = objets.obtenirTouteCommandes();
+        const resultat = commandes.obtenirTouteCommandes();
         console.log("Résultat de obtenirTouteCommandes:", resultat);
         
         if (resultat.erreur !== 0) {
@@ -21,8 +22,7 @@ commandesRoutes.route()
             res.json(resultat.commandes);
         }
     })
-
-commandesRoutes.route('/:nomCommande')
+commandesRoutes.route('/:param1')
     /**
      * commandesRoutes  /POST/nomCommande/
      * Recois les commande envoyer en POST et la crée à l'aide
@@ -31,13 +31,23 @@ commandesRoutes.route('/:nomCommande')
      * Retourne status 201 + resultat | status 401 + resultat
      */
     .post((req, res) => {
-        console.log("Commande envoyer : ", req.params.nomCommande);
-        let resultat = objets.EnvoyerCommande(req.body,req.params.nomCommande);
+        console.log("Commande envoyer : ", req.params.param1);
+        let resultat = commandes.EnvoyerCommande(req.body,req.params.param1);
         if (resultat.erreur !== 0) {
             res.status(401).send(resultat);
         } else {
             res.status(201).send(resultat);
         }
-    });
+    })
+    .delete((req,res)=>{
+        console.log("Commande delete : ", req.params.param1);
+        let resultat = commandes.SupprimerCommande(req.params.param1);
+        console.log(resultat);
+        if (resultat.erreur !== 0) {
+            res.status(401).send(resultat);
+        } else {
+            res.status(201).send(resultat);
+        }
+    })
 
 module.exports = commandesRoutes;

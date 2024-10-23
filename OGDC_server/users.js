@@ -22,8 +22,8 @@ function créerUtilisateur(userInfo) {
         const MAX_MOT = 30
         const MIN_MDP = 8
         const MAX_MDP = 25
-        console.log(userInfo.prenom)
-        console.log(userInfo.prenom.length)
+        //console.log(userInfo.prenom)
+        //console.log(userInfo.prenom.length)
         if(userInfo.prenom.length < MIN_MOT || userInfo.prenom.length > MAX_MOT) userConforme = false;
         if(userInfo.nom.length < MIN_MOT || userInfo.nom.length > MAX_MOT) userConforme = false;
         if(userInfo.pass.length < MIN_MDP || userInfo.pass.length > MAX_MDP) userConforme = false;
@@ -39,6 +39,7 @@ function créerUtilisateur(userInfo) {
                 mail: userInfo.mail,
                 phone: userInfo.phone,
                 idRobot: null,
+                idFamille:null,
                 isLogin: false
             };
             users.push(nouvelleUsager);
@@ -114,6 +115,7 @@ function obtenirUsagerUsername(username){
     }
     return {erreur: 1, msg: "Usager pas trouvé"}
 }
+
 /**
  * Retourne la liste de tout les users
  * @returns liste de user
@@ -121,6 +123,7 @@ function obtenirUsagerUsername(username){
 function GetListeUsers(){
     return JSON.parse(fs.readFileSync(usersFilePath));
 }
+
 /**
  * Déconnexion d'un usager
  * @param {*} userId 
@@ -147,11 +150,35 @@ function Deconnexion(userId){
 
 }
 
+function AjouterUneFamilleAuUser(idUser,idFamille){
+    let listeUsager = GetListeUsers()
+    let find = false;
+    listeUsager.forEach((user)=>{
+        if(user.Id == idUser){
+            user.idFamille = idFamille
+            find = true;
+        }
+    })
+    PostListeUsager(listeUsager);
+    if(find){
+        PostListeUsager(listeUsager);
+        return {erreur:0,msg:"Réussi"};
+    }
+    else{
+        return {erreur:1,msg:"userId null ou inexistant"};
+    }
+}
+
+function PostListeUsager(listeUser){
+    fs.writeFileSync(usersFilePath, JSON.stringify(listeUser));
+}
+
 module.exports = {
     créerUtilisateur,
     ajouterRobot,
     obtenirUsager,
     GetListeUsers,
     obtenirUsagerUsername,
-    Deconnexion
+    Deconnexion,
+    AjouterUneFamilleAuUser
 };

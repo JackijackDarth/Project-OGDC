@@ -29,6 +29,7 @@ liste_objets.route('/')
         const listeInfo = req.body;
         console.table(listeInfo);
         const resultat = listeObjets.UpdateListe(listeInfo);
+        console.log(resultat);
         if (resultat.erreur !== 0) {
             res.status(400).send(resultat.msg);
         } else {

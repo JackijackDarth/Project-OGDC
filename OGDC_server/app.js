@@ -9,6 +9,7 @@ const robotRoutes = require('./routes/robotConnecter');
 const objetRoutes = require('./routes/listeObjets');
 const deconnexionRoutes = require('./routes/deconnexion');
 const commandesRoutes = require('./routes/commandes');
+const famillesRoutes = require('./routes/familles');
 
 const app = express();
 const { port } = config;
@@ -24,13 +25,14 @@ app.get('/', (req, res) => {
     res.json({ message: 'Bonjour, Hi' });
 });
 
-app.use('/cafehomer/creationUtilisateur',creerUtilisateurRoutes)
+app.use('/cafehomer/creationUtilisateur',creerUtilisateurRoutes);
 app.use('/cafehomer/authentification', connexionRoutes);
-app.use('/cafehomer/connexion/',connexionRoutes)
-app.use('/cafehomer/robot_connecter', robotRoutes)
-app.use('/cafehomer/liste_objets', objetRoutes)
-app.use('/cafehomer/deconnexion',deconnexionRoutes)
-app.use('/cafehomer/commandes',commandesRoutes)
+app.use('/cafehomer/connexion/',connexionRoutes);
+app.use('/cafehomer/robot_connecter', robotRoutes);
+app.use('/cafehomer/liste_objets', objetRoutes);
+app.use('/cafehomer/deconnexion',deconnexionRoutes);
+app.use('/cafehomer/commandes',commandesRoutes);
+app.use('/cafehomer/familles/',famillesRoutes);
 
 const server = http.createServer(app);
 
