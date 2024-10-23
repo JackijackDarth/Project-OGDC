@@ -1,10 +1,14 @@
-import { StyleSheet, Text, View, FlatList, SafeAreaView, Pressable, Alert } from 'react-native';
+import { StyleSheet, Text, View, FlatList, SafeAreaView, Pressable, Alert,KeyboardAvoidingView, Platform,TextInput} from 'react-native';
 import { useState, useEffect } from 'react';
-import { obtenirObjets, obtenirUser } from '../utils';
+import { obtenirObjets, obtenirUser, UpdateObjet } from '../utils';
 import stylesCommuns from '../styles';
 import { AntDesign } from '@expo/vector-icons';
 
-export default function ArdoiseScreen({ navigation, route }) {
+
+///////////
+//ARDOISE//
+///////////
+export function ArdoiseScreen({ navigation, route }) {
   const [objetsList, setObjetsList] = useState([]);
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);  // State for refreshing
@@ -47,6 +51,7 @@ export default function ArdoiseScreen({ navigation, route }) {
   const fetchObjects = () => {
     if (currentuser && currentuser.idRobot != null) {
       obtenirObjets(currentuser.idRobot).then(items => {
+        console.log(items)
         const transformedObjets = Object.entries(items.listeObjets).map(([key, value]) => ({
           name: key,
           status: value.status,
@@ -77,8 +82,14 @@ export default function ArdoiseScreen({ navigation, route }) {
     setRefreshing(false);
   };
 
+  //Selection dun objet//
   const handleItemPress = (item) => {
-    Alert.alert("Work in Progress", `Le controle de ${item.name} n'est pas encore implémenté.`);
+    // Alert.alert("Work in Progress", `Le controle de ${item.name} n'est pas encore implémenté.`);
+    console.log(item)
+    navigation.navigate("MenuObjet", {
+      usrId: currentuser.Id,
+      rbtId: item.Id,
+  })
   };
   
 
@@ -123,6 +134,46 @@ export default function ArdoiseScreen({ navigation, route }) {
         />
       )}
     </SafeAreaView>
+  );
+}
+
+
+////////////////////
+//MenuObjectScreen//
+///////////////////
+export function MenuObjetScreen({ route, navigation }) {
+  const [NomPièce, setRoomName] = useState(null);
+  const [errormsg, setErrorMsg] = useState(null);
+  const [invalidbool, setInvalidbool] = useState(false);
+  const { rbtId, usrId } = route.params;
+
+  function EditObjet() {
+    console.log(NomPièce)
+    UpdateObjet()
+  }
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.formBox}
+    >
+      <View style={styles.form}>
+        <Text style={styles.subtitle}>Entrez l'emplacement désiré de l'objet</Text>
+        <View style={styles.formContainer}>
+          <TextInput
+            style={styles.input}
+            backgroundColor={invalidbool ? 'rgba(255, 0, 0, 0.4)' : null}
+            placeholder="Nom de la pièce"
+            onChangeText={setRoomName}
+            value={NomPièce}
+          />
+        </View>
+        <Text style={styles.msgerreur}>{errormsg}</Text>
+        <Pressable onPress={EditObjet} style={styles.button}>
+          <Text style={styles.buttonText}>yes</Text>
+        </Pressable>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -177,5 +228,94 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     color: 'gray',
+  },
+  tuile: {
+    flex: 0,
+    height: 150,
+    width: 150,
+    margin: 10,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  tuile_icon: {
+    flex: 3,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  tuile_texte_box: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  tuile_texte: {
+    fontSize: 22,
+  },
+  formBox: {
+    backgroundColor: '#f1f7fe',
+    overflow: 'hidden',
+    borderRadius: 16,
+    color: '#010101',
+    alignSelf: `stretch`,
+    paddingVertical: 20,
+    paddingHorizontal: 30,
+    flex: 1,
+    justifyContent: 'center',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 30,
+    textAlign: 'center',
+    justifyContent: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 20,
+  },
+  formContainer: {
+    gap: 10,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    marginVertical: 45,
+    width: '100%',
+    padding: 10,
+  },
+  input: {
+    backgroundColor: 'none',
+    borderWidth: 0,
+    outlineWidth: 0,
+    height: 44,
+    width: '100%',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    fontSize: 16,
+    paddingHorizontal: 15,
+    marginBottom: 0,
+  },
+  button: {
+    backgroundColor: '#0066ff',
+    borderRadius: 24,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    fontWeight: '600',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  msgerreur: {
+    color: 'red',
+    fontSize: 20,
+    marginTop: 10,
   },
 });

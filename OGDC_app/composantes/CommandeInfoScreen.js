@@ -34,56 +34,7 @@ export default function CommandeInfoScreen({ navigation,route }) {
     );
 }
 
-export function MenuObjetScreen({ route, navigation }) {
-    const [MdpRbt, setPassword] = useState(null);
-    const [connectionmsg, setConnectionmsg] = useState(null);
-    const [invalidbool, setInvalidbool] = useState(false);
-    const { rbtId, usrId } = route.params;
-  
-    function ConnectionRobot() {
-      if (MdpRbt) {
-        ConnecterRobot(usrId, rbtId, MdpRbt).then((res) => {
-          console.log("Creation réussi %s", route.params);
-          setInvalidbool(false);
-          setConnectionmsg(null);
-          navigation.navigate("Ardoise");
-        }).catch(err => {
-          console.log("Creation échec: %s", err.msg);
-          setInvalidbool(true);
-          setConnectionmsg("Un problème est survenu lors de la connexion");
-        });
-      } else {
-        setInvalidbool(true);
-        setConnectionmsg("Veuillez entrer le NIP du robot!");
-      }
-    }
-  
-    return (
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.formBox}
-      >
-        <View style={styles.form}>
-          <Text style={styles.subtitle}>Veuillez entrer le NIP du robot</Text>
-          <View style={styles.formContainer}>
-            <TextInput
-              style={styles.input}
-              backgroundColor={invalidbool ? 'rgba(255, 0, 0, 0.4)' : null}
-              placeholder="NIP du robot"
-              secureTextEntry={true}
-              onChangeText={setPassword}
-              value={MdpRbt}
-              inputMode='numeric'
-            />
-          </View>
-          <Text style={styles.msgerreur}>{connectionmsg}</Text>
-          <Pressable onPress={ConnectionRobot} style={styles.button}>
-            <Text style={styles.buttonText}>Connecter</Text>
-          </Pressable>
-        </View>
-      </KeyboardAvoidingView>
-    );
-  }
+
   
   export function Thumbnail({ Nom, thumb_cb }) {
     function onClick_cb(e) {

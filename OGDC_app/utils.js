@@ -1,7 +1,7 @@
 let Username = "admin"
 let Password = "password"
 
-const serveur_ip = "192.168.0.158";
+const serveur_ip = "192.168.2.247";
 
 async function obtenirJSON_Get(ressource) {
     // console.log("username: %s", Username);
@@ -29,6 +29,10 @@ export function obtenirUserUsrnm(username){
 export function obtenirObjets(rbtId){
     return obtenirJSON_Get(`liste_objets/${rbtId}`);
 }
+export function UpdateObjet(lst){
+    return obtenirJSON_Get(`liste_objets`,{lst});
+}
+
 //Modif 21/10/2024
 export function lancerCommande(keyCommand,infoObject){
     return créerJSON_Post(`commandes/${keyCommand}`,infoObject);
@@ -41,6 +45,20 @@ async function créerJSON_Post(ressource, resInfo) {
     let url = new URL(`http://${serveur_ip}:4242/cafehomer/${ressource}`);
     const res = await fetch(url, {
         method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Basic ${Username}:${Password}`,
+        },
+        body: JSON.stringify(resInfo),
+    });
+    if (!res.ok)
+        throw new Error(res.status);
+    return { res };
+}
+async function ModifierJSON_Put(ressource, resInfo) {
+    let url = new URL(`http://${serveur_ip}:4242/cafehomer/${ressource}`);
+    const res = await fetch(url, {
+        method: "PUT",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Basic ${Username}:${Password}`,

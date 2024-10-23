@@ -19,12 +19,12 @@ export function AccueilScreen({ navigation, route }) {
   const usrId = route.params.currentuser.Id; 
   const [currentuser, setCurrentUser] = useState(null); 
   
-   
+   //Get les robot//
   useEffect(() => {
     obtenirRobotsJSON().then((menu) => setMenu(menu));
   }, []);
   
-   
+  //GET le user actuel//
   useEffect(() => {
     if (usrId) {
       obtenirUser(usrId).then((user) => {
@@ -36,13 +36,14 @@ export function AccueilScreen({ navigation, route }) {
     }
   }, [usrId]);
   
+  //simple log pour voir les infos du user actuel
   useEffect(() => {
     if(currentuser)
     console.log("Current user : ",currentuser)
   }, [currentuser]);
 
 
-
+//renderItem ou Item a supprimer. ne pas toucher pour le moment
   const Item = ({ item, onPress, backgroundColor, textColor }) => (
     <View>
       <Tuile texte={item.username} iconNom="pluscircleo" onPress_cb={() => {navigation.navigate("AjoutRobot", {
@@ -68,6 +69,9 @@ export function AccueilScreen({ navigation, route }) {
       />
     );
   };
+
+
+  //Affichage//
   return (
     <View style={stylesCommuns.app}>
       <View style={styles.section_haut}>
@@ -100,6 +104,7 @@ export function AjoutRobotScreen({ route, navigation }) {
   const [invalidbool, setInvalidbool] = useState(false);
   const { rbtId, usrId } = route.params;
 
+  //Actions qui se produit quand on clique sur connect//
   function ConnectionRobot() {
     if (MdpRbt) {
       ConnecterRobot(usrId, rbtId, MdpRbt).then((res) => {
@@ -118,6 +123,7 @@ export function AjoutRobotScreen({ route, navigation }) {
     }
   }
 
+  //Affichage menu remplire le code etc
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -144,6 +150,8 @@ export function AjoutRobotScreen({ route, navigation }) {
     </KeyboardAvoidingView>
   );
 }
+
+
 
 export function Thumbnail({ Nom, thumb_cb }) {
   function onClick_cb(e) {

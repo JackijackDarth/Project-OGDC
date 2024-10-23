@@ -1,0 +1,79 @@
+{
+    "devices": {
+        "blue_led": {
+            "location": null,
+            "pin": 4,
+            "status": "La lumière est fonctionnelle."
+        },
+        "button": {
+            "location": null,
+            "pin": 5,
+            "status": 0
+        },
+        "camera": {
+            "location": null,
+            "pin": null,
+            "status": "La caméra n'est pas active."
+        },
+        "green_led": {
+            "location": null,
+            "pin": 3,
+            "status": "La lumière est fonctionnelle."
+        },
+        "movement_sensor": {
+            "location": null,
+            "pin": 8,
+            "status": "Mouvement détecté"
+        },
+        "red_led": {
+            "location": null,
+            "pin": 2,
+            "status": "La lumière est fonctionnelle."
+        },
+        "temperature_sensor": {
+            "location": null,
+            "pin": 7,
+            "status": [Array
+            ]
+        }
+    },
+    "listeObjets": {
+        "blue_led": {
+            "location": null,
+            "pin": 4,
+            "status": "La lumière est fonctionnelle."
+        },
+        "button": {
+            "location": null,
+            "pin": 5,
+            "status": 0
+        },
+        "camera": {
+            "location": null,
+            "pin": null,
+            "status": "La caméra n'est pas active."
+        },
+        "green_led": {
+            "location": null,
+            "pin": 3,
+            "status": "La lumière est fonctionnelle."
+        },
+        "movement_sensor": {
+            "location": null,
+            "pin": 8,
+            "status": "Mouvement détecté"
+        },
+        "red_led": {
+            "location": null,
+            "pin": 2,
+            "status": "La lumière est fonctionnelle."
+        },
+        "temperature_sensor": {
+            "location": null,
+            "pin": 7,
+            "status": [Array
+            ]
+        }
+    },
+    "robotId": 0
+}
