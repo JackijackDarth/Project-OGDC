@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList, SafeAreaView, Pressable, Alert,KeyboardAvoidingView, Platform,TextInput} from 'react-native';
+import { StyleSheet, Text, View, FlatList, SafeAreaView, Pressable, Alert,KeyboardAvoidingView, Platform,TextInput,TouchableOpacity,SectionList,StatusBar} from 'react-native';
 import { useState, useEffect } from 'react';
 import { obtenirObjets, obtenirUser, UpdateObjet } from '../utils';
 import stylesCommuns from '../styles';
@@ -10,10 +10,12 @@ import { AntDesign } from '@expo/vector-icons';
 ///////////
 export function ArdoiseScreen({ navigation, route }) {
   const [objetsList, setObjetsList] = useState([]);
+  const [ListobjComplet, setListobjComplet] = useState();
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);  // State for refreshing
   const usrId = route.params.currentuser.Id;
   const [currentuser, setCurrentUser] = useState(null);
+  const [locationlist, setLocationList] = useState([]);
 
   const iconMap = {
     camera: "camera",
@@ -49,8 +51,10 @@ export function ArdoiseScreen({ navigation, route }) {
   }, [currentuser, navigation]);
 
   const fetchObjects = () => {
+    const listloc = []
     if (currentuser && currentuser.idRobot != null) {
       obtenirObjets(currentuser.idRobot).then(items => {
+        setListobjComplet(items)
         console.log(items)
         const transformedObjets = Object.entries(items.listeObjets).map(([key, value]) => ({
           name: key,
@@ -59,6 +63,13 @@ export function ArdoiseScreen({ navigation, route }) {
         }));
         console.log(transformedObjets);
         setObjetsList(transformedObjets);
+       
+        transformedObjets.forEach(objet => {
+          console.log(objet.location)
+          listloc.push(objet.location)
+        });
+        setLocationList(listloc);
+        console.log(locationlist)
         setError(null);
       }).catch(() => {
         setObjetsList([]);
@@ -68,12 +79,17 @@ export function ArdoiseScreen({ navigation, route }) {
       setError("Vous n'avez pas de robot!");
     }
   };
+  // useEffect(() => {
+  //   fetchlocations();
+  //   // const intervalId = setInterval(fetchObjects, 30000);
+  //   // return () => clearInterval(intervalId);
+  // }, [route, currentuser,navigation,locationlist]);
 
   useEffect(() => {
     fetchObjects();
-    const intervalId = setInterval(fetchObjects, 5000);
+    const intervalId = setInterval(fetchObjects, 30000);
     return () => clearInterval(intervalId);
-  }, [route, usrId, currentuser]);
+  }, [route, usrId, currentuser,navigation]);
 
   // J'ai trouver ça en fouillant en ligne. sert pas a grand chose mais c'est cool (:
   const onRefresh = () => {
@@ -87,8 +103,8 @@ export function ArdoiseScreen({ navigation, route }) {
     // Alert.alert("Work in Progress", `Le controle de ${item.name} n'est pas encore implémenté.`);
     console.log(item)
     navigation.navigate("MenuObjet", {
-      usrId: currentuser.Id,
-      rbtId: item.Id,
+      objet:item,
+      ListobjComplet:ListobjComplet ,
   })
   };
   
@@ -107,6 +123,7 @@ export function ArdoiseScreen({ navigation, route }) {
           <View>
             <Text style={styles.itemName}>{item.name}</Text>
             <Text style={styles.itemStatus}>{status}</Text>
+            <Text>{item.location}</Text>
           </View>
         </View>
       </Pressable>
@@ -133,6 +150,14 @@ export function ArdoiseScreen({ navigation, route }) {
           }
         />
       )}
+       {/* <SectionList
+      sections={objetsList}
+      keyExtractor={(item, index) => item + index}
+      renderItem={renderItem}
+      renderSectionHeader={({section: {title}}) => (
+        <Text style={styles.header}>{title}</Text>
+      )}
+    /> */}
     </SafeAreaView>
   );
 }
@@ -145,32 +170,71 @@ export function MenuObjetScreen({ route, navigation }) {
   const [NomPièce, setRoomName] = useState(null);
   const [errormsg, setErrorMsg] = useState(null);
   const [invalidbool, setInvalidbool] = useState(false);
-  const { rbtId, usrId } = route.params;
+  const { objet,ListobjComplet } = route.params;
+  const [selectedId, setSelectedId] = useState();
+  const choixlocation = ["Chambre","Cuisine","Chambre d'amis","Sous-sol","Sale de jeux"] 
 
   function EditObjet() {
-    console.log(NomPièce)
-    UpdateObjet()
+    newlist = ListobjComplet.listeObjets[objet.name].location = NomPièce
+    UpdateObjet(ListobjComplet).then((res) => {
+      console.log("Assignation de pièce réussi %s", res);
+      navigation.navigate("Ardoise");
+  }).catch(err => {
+      console.log("Location change error: %s", err.msg);
+      setInvalidbool(true);
+      setConnectionmsg("Une erreur est survenue! Reessayer plus tard...");
+      // setUsrnmValidBool(false);
+
+  });
   }
 
+  const Item = ({item, onPress, backgroundColor, textColor}) => (
+    <TouchableOpacity onPress={onPress} style={[styles.item, {backgroundColor}]}>
+      <Text style={[styles.title, {color: textColor}]}>{item}</Text>
+    </TouchableOpacity>
+  );
+
+  const renderItem = ({item}) => {
+    const backgroundColor = item === NomPièce ? '#6e3b6e' : '#f9c2ff';
+    const color = item === NomPièce ? 'white' : 'black';
+
+    return (
+      <Item
+        item={item}
+        onPress={() => setRoomName(item)}
+        backgroundColor={backgroundColor}
+        textColor={color}
+      />
+    );
+  };
+  
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.formBox}
+      behavior={Platform.OS === "ios" ? "position" : "padding"}
+      style={styles.formBox} 
+      contentContainerStyle={styles.container}
     >
       <View style={styles.form}>
         <Text style={styles.subtitle}>Entrez l'emplacement désiré de l'objet</Text>
         <View style={styles.formContainer}>
+        <FlatList
+        data={choixlocation}
+        renderItem={renderItem}
+        keyExtractor={item => item}
+        extraData={NomPièce}
+        />
           <TextInput
             style={styles.input}
             backgroundColor={invalidbool ? 'rgba(255, 0, 0, 0.4)' : null}
             placeholder="Nom de la pièce"
             onChangeText={setRoomName}
+            defaultValue={objet.location}
             value={NomPièce}
           />
         </View>
         <Text style={styles.msgerreur}>{errormsg}</Text>
         <Pressable onPress={EditObjet} style={styles.button}>
-          <Text style={styles.buttonText}>yes</Text>
+          <Text style={styles.buttonText}>Confirmer</Text>
         </Pressable>
       </View>
     </KeyboardAvoidingView>
@@ -180,7 +244,7 @@ export function MenuObjetScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
+     
   },
   item: {
     backgroundColor: '#98de9c',
@@ -229,35 +293,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'gray',
   },
-  tuile: {
-    flex: 0,
-    height: 150,
-    width: 150,
-    margin: 10,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  tuile_icon: {
-    flex: 3,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  tuile_texte_box: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  tuile_texte: {
-    fontSize: 22,
-  },
   formBox: {
     backgroundColor: '#f1f7fe',
-    overflow: 'hidden',
+    overflow:'hidden',
     borderRadius: 16,
     color: '#010101',
     alignSelf: `stretch`,
@@ -269,9 +307,8 @@ const styles = StyleSheet.create({
   form: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 30,
+    gap:10,
     textAlign: 'center',
-    justifyContent: 'center',
   },
   subtitle: {
     fontSize: 16,
@@ -279,10 +316,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   formContainer: {
-    gap: 10,
+    
     borderRadius: 8,
     backgroundColor: '#fff',
-    marginVertical: 45,
+    marginVertical: 0,
     width: '100%',
     padding: 10,
   },
@@ -306,7 +343,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
   buttonText: {
     color: '#fff',
