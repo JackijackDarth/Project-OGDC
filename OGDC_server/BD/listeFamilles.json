@@ -3,6 +3,14 @@
         "Id": 1001,
         "name": "Famille Simoneau",
         "ownerId": 1,
-        "dateCreation": "2024-10-23 12 h 24 min 09 s"
+        "password": "NuJecLU3wc",
+        "dateCreation": "2024-10-25 13 h 08 min 44 s"
+    },
+    {
+        "Id": 1002,
+        "name": "Famille Ouellet",
+        "ownerId": 1,
+        "password": "nRomE78Xqc",
+        "dateCreation": "2024-10-25 13 h 09 min 00 s"
     }
 ]

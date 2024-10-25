@@ -2,6 +2,7 @@ const math = require('mathjs');
 const fs = require('fs');
 const famillesFilePath = "./BD/listeFamilles.json";
 const users = require("./users")
+const utils = require("./utils")
 
 function CreerFamille(infoFamille){
     let listeFamille = GetListeFamilles();
@@ -22,7 +23,7 @@ function CreerFamille(infoFamille){
         }
     }
     else{
-        nouvFamille = CréerObjetFamille(maxId+1,infoFamille.name,infoFamille.idOwner);    //Ultérieurement doit sync le owner de la famille à l'aide de infoFamille.idOwner
+        nouvFamille = CréerObjetFamille(maxId+1,infoFamille.name,infoFamille.idOwner);   
     }
     if(nouvFamille != null){
         listeFamille.push(nouvFamille);
@@ -49,13 +50,65 @@ function CreerFamille(infoFamille){
 function CréerObjetFamille(id,nameFamille,userId){
     let today = new Date();
     let now = today.toLocaleString();
+    const longueur_mdp = 10
+    let pass = utils.genererChaineRandom(longueur_mdp);
     return {
         Id:id,
         name: nameFamille,
         ownerId: userId,
+        password: pass,
         dateCreation: now
     }
 }
+
+function ObtenirMembreFamille(idFamille){
+    //Vérifie ID famille est bon
+    if(EstFamilleExistante(idFamille)){
+        let membres = []
+        let listeUsers = users.GetListeUsers()
+        listeUsers.forEach((user)=>{
+            if(user.idFamille == idFamille){
+                membres.push(user.Id)
+            }
+        })
+        if(membres.length > 0){
+            return{erreur:0,msg:"Réussi",famille:membres}
+        }
+        else{
+            return{erreur:1,msg:"Aucun membres trouver correspondant à cette famille",famille:null}
+        }
+    }
+    else{
+        return{erreur:1,msg:"Id de famille erronée, Aucune famille trouvée"}
+    }
+}
+
+function EstFamilleExistante(idFamille){
+    liste_familles = GetListeFamilles();
+    let find = false;
+    liste_familles.forEach((famille)=>{
+        if(famille.Id == idFamille){
+            find = true;
+        }
+    })
+    return find;
+}
+
+function AjouterUserAFamille(userId, infoConnexionFamille){
+    //Vérifie ID famille est bon
+    if(EstFamilleExistante(infoConnexionFamille.idFamille)){
+        liste_user = users.GetListeUsers()
+        if(VérifierConnexionFamille(infoConnexionFamille.idFamille,infoConnexionFamille.passFamille)){
+            liste_user.forEach((user)=>{
+                    //TODO
+            })
+        }
+    }
+    else{
+        return{erreur:1,msg:"Id de famille erronée, Aucune famille trouvée"}
+    }
+}
+
 /**
  * Fonction retournant la liste de familles
  * @returns Un tableau JavaScript de la liste de familles dans le fichier JSON
@@ -81,4 +134,5 @@ function PostListeFamilles(listeFamilles){
 
 module.exports = {
     CreerFamille,
+    ObtenirMembreFamille,
 };
