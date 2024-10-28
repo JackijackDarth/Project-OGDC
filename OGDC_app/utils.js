@@ -7,7 +7,7 @@ async function obtenirJSON_Get(ressource) {
     // console.log("username: %s", Username);
     // console.log("password: %s", Password);
 
-    let url = new URL(`http://${serveur_ip}:4242/cafehomer/${ressource}`);
+    let url = new URL(`http://${serveur_ip}:1883/cafehomer/${ressource}`);
     const res = await fetch(url, {
         headers: {
             "Authorization": `Basic ${Username}:${Password}`,
@@ -42,7 +42,7 @@ export function deconnexion(usrId){
     return obtenirJSON_Get(`deconnexion/${usrId}`);
 }
 async function créerJSON_Post(ressource, resInfo) {
-    let url = new URL(`http://${serveur_ip}:4242/cafehomer/${ressource}`);
+    let url = new URL(`http://${serveur_ip}:1883/cafehomer/${ressource}`);
     const res = await fetch(url, {
         method: "POST",
         headers: {
@@ -56,7 +56,7 @@ async function créerJSON_Post(ressource, resInfo) {
     return { res };
 }
 async function ModifierJSON_Put(ressource, resInfo) {
-    let url = new URL(`http://${serveur_ip}:4242/cafehomer/${ressource}`);
+    let url = new URL(`http://${serveur_ip}:1883/cafehomer/${ressource}`);
     const res = await fetch(url, {
         method: "PUT",
         headers: {
@@ -71,7 +71,7 @@ async function ModifierJSON_Put(ressource, resInfo) {
 }
 // À implémenter
 // function modifierRessourceJSON(ressource, id, resInfo) {
-//     let url = new URL(`http://${serveur_ip}:4242/caType": "application/json",
+//     let url = new URL(`http://${serveur_ip}:1883/caType": "application/json",
 //             "Authorization": `Basic ${Username}:${Password}`,
 //         },
 //         body: JSON.stringify(resInfo),
