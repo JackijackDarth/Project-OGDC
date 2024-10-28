@@ -32,6 +32,15 @@ export function obtenirObjets(rbtId){
 export function UpdateObjet(lst){
     return ModifierJSON_Put(`liste_objets`,lst);
 }
+export function getCommandeAsync(){
+    return obtenirRessourceJSON("commandes");
+}
+export function creerFamille(nomFamille){
+    return créerJSON_Post("familles",nomFamille)
+}
+export function getMembresFamille(idFamille){
+    return obtenirRessourceJSON("familles/${idFamille}")
+}
 
 //Modif 21/10/2024
 export function lancerCommande(keyCommand,infoObject){
@@ -69,6 +78,20 @@ async function ModifierJSON_Put(ressource, resInfo) {
         throw new Error(res.status);
     return { res };
 }
+
+async function supprimerRessourceJSON(ressource) {
+    let url = new URL(`http://${serveur_ip}:1883/cafehomer/$%7Bressource%7D/%60`);
+    const res = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Basic ${Username}:${Password}`,
+        },
+    });
+    return { satut: `${res.status}` };
+}
+
+
 // À implémenter
 // function modifierRessourceJSON(ressource, id, resInfo) {
 //     let url = new URL(`http://${serveur_ip}:1883/caType": "application/json",
