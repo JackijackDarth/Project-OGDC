@@ -24,12 +24,16 @@ liste_objets.route('/')
             res.status(201).send();
         }
     })
+    /**
+     * liste_objet  /PUT/
+     * Update de la liste pour le robot (utiliser par le robot et le user)
+     * Retourne msg erreur
+     * Sinon retourne status 201
+     */
     .put((req,res)=>{
         console.log("Update liste pour Robot");
         const listeInfo = req.body;
-        console.table(listeInfo);
-        console.log("Dans listeObjets")
-        console.table(listeInfo.listeObjets);
+        //console.table(listeInfo);
         const resultat = listeObjets.UpdateListe(listeInfo);
         console.log(resultat);
         if (resultat.erreur !== 0) {
