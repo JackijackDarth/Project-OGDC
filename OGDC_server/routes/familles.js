@@ -5,9 +5,11 @@ const famillesRoutes = Router();
 
 
 famillesRoutes.route('/')
-    .get((req,res)=>{
-       
-    })
+    /**
+     * familles /POST/
+     * Créer une famille avec les infos de la famille envoyé
+     * Retourne status 401 ou 201 avec le resultat
+     */
     .post((req, res) => {
         console.log("Création groupe famille ");
         let resultat = familles.CreerFamille(req.body);
@@ -20,9 +22,12 @@ famillesRoutes.route('/')
     })
 
 famillesRoutes.route('/:param1')
-    .post((req, res) => {
-        
-    })
+    /**
+     * familles /GET/idFamille
+     * Retourne les membres de la famille associé à l'ID donner
+     * Si trouver elle retourne les membres de la famille en JSON
+     * Sinon retourne status 401
+     */
     .get((req,res)=>{
         console.log("Obtenir les membres de la famille ",req.params.param1);
         const resultat = familles.ObtenirMembreFamille(req.params.param1);
@@ -33,9 +38,15 @@ famillesRoutes.route('/:param1')
             res.json(resultat.famille);
         }
     })
+    /**
+     * familles /PUT/idUser
+     * Prend l'id du user et ajoute une famille passer par le body
+     * Si l'ajout du user se fait avec succès                               EN TRAVAUX
+     * status 201 | status 401
+     */
     .put((req, res) => {
         console.log("Ajouter à la famille le user # ",req.params.param1);
-        let resultat = familles.AjouterUserAFamille(req.params.param1,req.body);
+        let resultat = familles.ConnexionUserAFamille(req.params.param1,req.body);
         console.log(resultat);
         if (resultat.erreur !== 0) {
             res.status(401).send(resultat);

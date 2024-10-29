@@ -150,6 +150,12 @@ function Deconnexion(userId){
 
 }
 
+/**
+ * Ajoute un idFamille à un user dans la BD pour montrer la famille à laquelle il a rejoint
+ * @param {int} idUser 
+ * @param {int} idFamille 
+ * @returns \{erreur,msg}
+ */
 function AjouterUneFamilleAuUser(idUser,idFamille){
     let listeUsager = GetListeUsers()
     let find = false;
@@ -169,6 +175,10 @@ function AjouterUneFamilleAuUser(idUser,idFamille){
     }
 }
 
+/**
+ * Prend une liste complète de users et l'enregistre dans la BD
+ * @param {Array} listeUser 
+ */
 function PostListeUsager(listeUser){
     fs.writeFileSync(usersFilePath, JSON.stringify(listeUser));
 }

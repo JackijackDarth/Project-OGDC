@@ -4,6 +4,11 @@ const famillesFilePath = "./BD/listeFamilles.json";
 const users = require("./users")
 const utils = require("./utils")
 
+/**
+ * Envoie les données a fonction pour créer l'objet famille et ensuite enregistre dans la BD la nouvelle famille si elle est conforme
+ * @param {Array} infoFamille 
+ * @returns \{erreur,msg}
+ */
 function CreerFamille(infoFamille){
     let listeFamille = GetListeFamilles();
     let maxId = 1000;   // Id de famille matricule commencant à 1000
@@ -47,6 +52,13 @@ function CreerFamille(infoFamille){
     
 }
 
+/**
+ * Créer un objet famille à l'aide des informations fournies (N'ENREGISTRE PAS DANS LA BD)
+ * @param {int} id 
+ * @param {string} nameFamille 
+ * @param {int} userId 
+ * @returns L'objet famille créée
+ */
 function CréerObjetFamille(id,nameFamille,userId){
     let today = new Date();
     let now = today.toLocaleString();
@@ -61,6 +73,11 @@ function CréerObjetFamille(id,nameFamille,userId){
     }
 }
 
+/**
+ * Selon l'id de la famille, la fonction retourne les membres de la familles correspondants
+ * @param {int} idFamille 
+ * @returns Un tableau d'idUser correspondant aux membres de la famille
+ */
 function ObtenirMembreFamille(idFamille){
     //Vérifie ID famille est bon
     if(EstFamilleExistante(idFamille)){
@@ -83,6 +100,11 @@ function ObtenirMembreFamille(idFamille){
     }
 }
 
+/**
+ * Fonction booléen qui vérifie si la famille existe ou non selon son id
+ * @param {int} idFamille 
+ * @returns Un booléen
+ */
 function EstFamilleExistante(idFamille){
     liste_familles = GetListeFamilles();
     let find = false;
@@ -94,14 +116,20 @@ function EstFamilleExistante(idFamille){
     return find;
 }
 
-function AjouterUserAFamille(userId, infoConnexionFamille){
+/**
+ * Vérifie si les informations de connexion à la famille sont exact et si oui associe l'user à cette famille
+ * @param {int} userId 
+ * @param {Array} infoConnexionFamille 
+ * @returns \{erreur,msg}
+ */
+function ConnexionUserAFamille(userId, infoConnexionFamille){
     //Vérifie ID famille est bon
     if(EstFamilleExistante(infoConnexionFamille.idFamille)){
-        liste_user = users.GetListeUsers()
         if(VérifierConnexionFamille(infoConnexionFamille.idFamille,infoConnexionFamille.passFamille)){
-            liste_user.forEach((user)=>{
-                    //TODO
-            })
+            return users.AjouterUneFamilleAuUser(userId,infoConnexionFamille,idFamille)
+        }
+        else{
+            return{erreur:1,msg:"Les infos de connexion pour la famille sont inccorect"}
         }
     }
     else{
@@ -109,6 +137,30 @@ function AjouterUserAFamille(userId, infoConnexionFamille){
     }
 }
 
+/**
+ * Vérifie si les donnée fournie pour se connecter à la famille sont correct (autorisation)
+ * @param {int} idFamille 
+ * @param {string} passFamille 
+ * @returns Un booléen du status des données
+ */
+function VérifierConnexionFamille(idFamille,passFamille){
+    connexionReussi = false;
+    liste_familles = GetListeFamilles();
+    liste_familles.forEach((famille)=>{
+        if(famille.Id == idFamille){
+            if(famille.password == passFamille){
+                connexionReussi = true;
+            }
+        }
+    })
+    return connexionReussi;
+}
+
+/**
+ * Retourne les infos complète de la famille selon l'Id fournie
+ * @param {int} idFamille 
+ * @returns Un tableau de donnée pour la famille [ id, name, password ]
+ */
 function GetFamille(idFamille){
     liste_familles = GetListeFamilles()
     let infoFamille = null
@@ -147,4 +199,5 @@ module.exports = {
     CreerFamille,
     ObtenirMembreFamille,
     GetFamille,
+    ConnexionUserAFamille,
 };

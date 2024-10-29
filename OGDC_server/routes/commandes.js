@@ -39,6 +39,11 @@ commandesRoutes.route('/:param1')
             res.status(201).send(resultat);
         }
     })
+    /**
+     * commandesRoutes /DELETE/idCommande
+     * Recois l'id de la commande à supprimer et la supprime dans la BD si elle existe
+     * Retourne status 201 | status 401
+     */
     .delete((req,res)=>{
         console.log("Commande delete : ", req.params.param1);
         let resultat = commandes.SupprimerCommande(req.params.param1);
