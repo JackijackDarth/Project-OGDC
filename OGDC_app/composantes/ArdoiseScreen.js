@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, FlatList, SafeAreaView, Pressable, Alert,KeyboardAvoidingView, Platform,TextInput,TouchableOpacity,SectionList,StatusBar} from 'react-native';
 import { useState, useEffect } from 'react';
-import { obtenirObjets, obtenirUser, UpdateObjet } from '../utils';
+import { obtenirObjets, obtenirUser, UpdateObjet,lancerCommande } from '../utils';
 import stylesCommuns from '../styles';
 import { AntDesign } from '@expo/vector-icons';
 
@@ -57,7 +57,8 @@ export function ArdoiseScreen({ navigation, route }) {
         const transformedObjets = Object.entries(items.listeObjets).map(([key, value]) => ({
           name: key,
           status: value.status,
-          location: value.location
+          location: value.location,
+          pin:value.pin
         }));
         console.log("Liste objets : ",transformedObjets);
         // console.log("Liste locations : ",transformedObjets.map(objet => objet.location))
@@ -114,7 +115,6 @@ export function ArdoiseScreen({ navigation, route }) {
       ? `Temp: ${item.status[0]}°C, Humidity: ${item.status[1]}%`
       : `Status: ${item.status}`;
     const icon = iconMap[item.name] || "question";
-
     return (
       <Pressable style={styles.item} onPress={() => handleItemPress(item)}>
         <View style={styles.itemContent}>
@@ -122,9 +122,13 @@ export function ArdoiseScreen({ navigation, route }) {
           <View>
             <Text style={styles.itemName}>{item.name}</Text>
             <Text style={styles.itemStatus}>{status}</Text>
+            <Text style={styles.itemStatus}>{item.pin}</Text>
           </View>
+            <Pressable style={styles.item} onPress={() => {lancerCommande("switchLed",{name:item.name,pin:item.pin,value:item.status == 1? 0:1}); console.log(item); fetchObjects()}}>
+            <AntDesign name={`exclamationcircleo`} size={30} color="black"/>
+          </Pressable>
         </View>
-      </Pressable>
+        </Pressable>
     );
   };
 
