@@ -109,6 +109,17 @@ function AjouterUserAFamille(userId, infoConnexionFamille){
     }
 }
 
+function GetFamille(idFamille){
+    liste_familles = GetListeFamilles()
+    let infoFamille = null
+    liste_familles.forEach((famille)=>{
+        if(famille.idFamille == idFamille){
+            infoFamille = famille
+        }
+    })
+    return infoFamille;
+}
+
 /**
  * Fonction retournant la liste de familles
  * @returns Un tableau JavaScript de la liste de familles dans le fichier JSON
@@ -135,4 +146,5 @@ function PostListeFamilles(listeFamilles){
 module.exports = {
     CreerFamille,
     ObtenirMembreFamille,
+    GetFamille,
 };

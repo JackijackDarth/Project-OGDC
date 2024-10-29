@@ -57,7 +57,7 @@ connexionRoutes.route('/:userPI')
         if (resultat.erreur !== 0) {
             res.status(401).send(resultat);
         } else {
-            res.json(resultat.users);
+            res.json(resultat.user);
         }
     });
 

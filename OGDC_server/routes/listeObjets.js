@@ -28,6 +28,8 @@ liste_objets.route('/')
         console.log("Update liste pour Robot");
         const listeInfo = req.body;
         console.table(listeInfo);
+        console.log("Dans listeObjets")
+        console.table(listeInfo.listeObjets);
         const resultat = listeObjets.UpdateListe(listeInfo);
         console.log(resultat);
         if (resultat.erreur !== 0) {

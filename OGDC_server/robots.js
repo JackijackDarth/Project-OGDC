@@ -1,5 +1,6 @@
 const fs = require('fs');
 const users = require('./users.js');
+const familles = require('./familles');
 
 const robotsFilePath = "./BD/listeRobots.json";
 /**
@@ -96,17 +97,27 @@ function obtenirUsagerSync(userPI) {
 
     if (idRobot != null) {
         const listeUsers = users.GetListeUsers();
-        let usersEnvoyer = [];
+        let usersEnvoyer = null;
+        //let familleEnvoyer = null;
 
         listeUsers.forEach(user => {
             if (user.idRobot === idRobot) {
-                usersEnvoyer.push(user);
+                //if(user.idFamille != null){
+                //    familleEnvoyer = familles.GetFamille(user.idFamille);
+                //}
+                //else{
+                usersEnvoyer = user;
+                //}
             }
         });
 
-        if (usersEnvoyer.length > 0) {
-            return { erreur: 0, msg: "Réussi", users: usersEnvoyer };
-        } else {
+        if (usersEnvoyer != null) {
+            return { erreur: 0, msg: "Réussi user trouver", user: usersEnvoyer}; //famille:null
+        }
+        //else if(familleEnvoyer != null) {
+        //    return { erreur: 0, msg: "Réussi famille trouver", user: null };    //Envoyer Famille
+        //}
+        else{
             return { erreur: 1, msg: "Robot non synchronisé", user: null };
         }
     }
