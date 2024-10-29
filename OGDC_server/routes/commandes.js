@@ -33,6 +33,7 @@ commandesRoutes.route('/:param1')
     .post((req, res) => {
         console.log("Commande envoyer : ", req.params.param1);
         let resultat = commandes.EnvoyerCommande(req.body,req.params.param1);
+        console.log(resultat);
         if (resultat.erreur !== 0) {
             res.status(401).send(resultat);
         } else {
