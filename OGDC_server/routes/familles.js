@@ -23,7 +23,7 @@ famillesRoutes.route('/')
 
 famillesRoutes.route('/:param1')
     /**
-     * familles /GET/idFamille
+     * familles /GET/idFamille={id}
      * Retourne les membres de la famille associé à l'ID donner
      * Si trouver elle retourne les membres de la famille en JSON
      * Sinon retourne status 401
@@ -52,6 +52,26 @@ famillesRoutes.route('/:param1')
             res.status(401).send(resultat);
         } else {
             res.status(201).send(resultat);
+        }
+    })
+
+famillesRoutes.route('/:param1/:param2')
+    /**
+         * familles /GET/infoFamille/idFamille
+         * Retourne les infos de la famille associé à l'ID donner
+         * Si trouver elle retourne les infos de la famille en JSON
+         * Sinon retourne status 401
+         */
+    .get((req,res)=>{
+        if(req.params.param1 == "infoFamille"){
+            console.log("Obtenir les infos de la famille ",req.params.param2);
+            const resultat = familles.GetFamille(req.params.param2);
+            console.log("Résultat de GetFamille:", resultat);
+            if (resultat == null) {
+                res.status(401).send(resultat);
+            } else {
+                res.json(resultat);
+            }
         }
     })
 

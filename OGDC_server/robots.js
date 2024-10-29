@@ -98,25 +98,25 @@ function obtenirUsagerSync(userPI) {
     if (idRobot != null) {
         const listeUsers = users.GetListeUsers();
         let usersEnvoyer = null;
-        //let familleEnvoyer = null;
+        let familleEnvoyer = null;
 
         listeUsers.forEach(user => {
             if (user.idRobot === idRobot) {
-                //if(user.idFamille != null){
-                //    familleEnvoyer = familles.GetFamille(user.idFamille);
-                //}
-                //else{
-                usersEnvoyer = user;
-                //}
+                if(user.idFamille != null){
+                    familleEnvoyer = familles.GetFamille(user.idFamille);
+                }
+                else{
+                    usersEnvoyer = user;
+                }
             }
         });
 
         if (usersEnvoyer != null) {
-            return { erreur: 0, msg: "Réussi user trouver", user: usersEnvoyer}; //famille:null
+            return { erreur: 0, msg: "Réussi user trouver", user: usersEnvoyer, famille:null};
         }
-        //else if(familleEnvoyer != null) {
-        //    return { erreur: 0, msg: "Réussi famille trouver", user: null };    //Envoyer Famille
-        //}
+        else if(familleEnvoyer != null) {
+            return { erreur: 0, msg: "Réussi famille trouver", user: null, famille:familleEnvoyer };
+        }
         else{
             return { erreur: 1, msg: "Robot non synchronisé", user: null };
         }

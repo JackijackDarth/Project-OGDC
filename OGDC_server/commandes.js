@@ -56,12 +56,12 @@ function EnvoyerCommande(infoObjet, nomCommande) {
             case "startCamera":
                 nouvelleCommande = CreerCommande(maxId + 1, "Lancement caméra", infoObjet.name, infoObjet.pin, infoObjet.value)
                 break;  // Vérifier Camera ? Besoin plus D'info
-            case "captureMovement":
-                if (EstUneDemandeDeMouvement(infoObjet))
-                    nouvelleCommande = CreerCommande(maxId + 1, "Lancement capteur de mouvement", infoObjet.name, infoObjet.pin, infoObjet.value)
-                else
-                    return { erreur: 1, msg: "Type Mouvement non-valide" }
-                break;
+            //case "captureMovement":
+            //    if (EstUneDemandeDeMouvement(infoObjet))
+            //        nouvelleCommande = CreerCommande(maxId + 1, "Lancement capteur de mouvement", infoObjet.name, infoObjet.pin, infoObjet.value)
+            //    else
+            //        return { erreur: 1, msg: "Type Mouvement non-valide" }
+            //    break;
             case "pressButton":
                 if (EstUnBouton(infoObjet))
                     nouvelleCommande = CreerCommande(maxId + 1, "Appuyer sur bouton principal", infoObjet.name, infoObjet.pin, infoObjet.value)
@@ -106,8 +106,8 @@ function EstUneLumiere(infoLED) {
     const minValLum = 0;
     const maxValLum = 1;
     let donneeValide = true
-    console.log(infoLED.name.includes("LED"));
-    if (infoLED.name == null || !infoLED.name.includes("LED"))
+    console.log(infoLED);
+    if (infoLED.name == null || !infoLED.name.includes("led"))
         donneeValide = false;
     if (infoLED.pin == null || !EstUnePinValide(infoLED.pin))
         donneeValide = false;
