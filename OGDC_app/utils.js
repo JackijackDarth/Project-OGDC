@@ -32,6 +32,7 @@ export function obtenirObjets(rbtId){
 export function UpdateObjet(lst){
     return ModifierJSON_Put(`liste_objets`,lst);
 }
+
 export function getCommandeAsync(){
     return obtenirRessourceJSON("commandes");
 }

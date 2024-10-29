@@ -247,8 +247,6 @@ export function MenuObjetScreen({ route, navigation }) {
   }).catch(err => {
       console.log("Location change error: %s", err.msg);
       setInvalidbool(true);
-      setConnectionmsg("Une erreur est survenue! Reessayer plus tard...");
-      // setUsrnmValidBool(false);
 
   });
   }
