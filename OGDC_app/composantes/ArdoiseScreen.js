@@ -142,6 +142,13 @@ export function ArdoiseScreen({ navigation, route }) {
     const status = isTemperatureSensor
       ? `Temp: ${item.status[0]}°C, Humidity: ${item.status[1]}%`
       : `Status: ${item.status}`;
+    const isLed =
+      item.name == "red_led" ||
+      item.name == "green_led" ||
+      item.name == "blue_led";
+    const ledIcon = item.status == 1 ? `toggle-on` : `toggle-off`;
+    const isButton = item.name == "button";
+    const buttonIcon = "bullseye";
     const icon = iconMap[item.name] || "question";
     return (
       <Pressable style={styles.item} onPress={() => handleItemPress(item)}>
@@ -151,31 +158,37 @@ export function ArdoiseScreen({ navigation, route }) {
             <Text style={styles.itemName}>{item.name}</Text>
             <Text style={styles.itemStatus}>{status}</Text>
           </View>
-          <Pressable
-            style={styles.objttgl}
-            onPress={async () => {
-              
-              lancerCommande("switchLed", {
-                name: item.name,
-                pin: item.pin,
-                value: item.status == 1 ? 0 : 1,
-              })
-                .then((res) => {
-                  console.log("commande Lancer %s", res);
-                  fetchObjects()
-                })
-                .catch((err) => {
-                  console.log("commande error: %s", err.msg);
-                });
-              console.log(item);
-            }}
-          >
-            <FontAwesome5
-              name={item.status == 1 ? `toggle-on` : `toggle-off`}
-              size={30}
-              color="black"
-            />
-          </Pressable>
+          {item.name != "temperature_sensor" &&
+          item.name != "camera" &&
+          item.name != "movement_sensor" ? (
+            <Pressable
+              style={styles.objttgl}
+              onPress={async () => {
+                lancerCommande(
+                  isLed ? "switchLed" : isButton ? "pressButton" : "erreur",
+                  {
+                    name: item.name,
+                    pin: item.pin,
+                    value: item.status == 1 ? 0 : 1,
+                  }
+                )
+                  .then((res) => {
+                    console.log("commande Lancer %s", res);
+                    fetchObjects();
+                  })
+                  .catch((err) => {
+                    console.log("commande error: %s", err.msg);
+                  });
+                console.log(item);
+              }}
+            >
+              <FontAwesome5
+                name={isLed ? ledIcon : isButton ? buttonIcon : "question"}
+                size={30}
+                color="black"
+              />
+            </Pressable>
+          ) : null}
         </View>
       </Pressable>
     );
@@ -280,6 +293,7 @@ export function MenuObjetScreen({ route, navigation }) {
   const [invalidbool, setInvalidbool] = useState(false);
   const { objet, ListobjComplet } = route.params;
   const [selectedId, setSelectedId] = useState();
+  const isTemperatureSensor = objet.name == "temperature_sensor";
   const choixlocation = [
     "Chambre",
     "Cuisine",
@@ -326,10 +340,24 @@ export function MenuObjetScreen({ route, navigation }) {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "position" : "padding"}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.formBox}
+      keyboardVerticalOffset={100}
       contentContainerStyle={styles.container}
     >
+      {isTemperatureSensor ? (
+          <View>
+          <Text style={styles.subtitle}>
+            Entrez l'emplacement désiré de l'objet
+          </Text>
+          <TextInput
+            style={styles.input}
+            backgroundColor={invalidbool ? "rgba(255, 0, 0, 0.4)" : null}
+            placeholder="Nom de la pièce"
+            defaultValue={objet.value}
+          />
+         </View>
+      ) : null}
       <View style={styles.form}>
         <Text style={styles.subtitle}>
           Entrez l'emplacement désiré de l'objet
@@ -412,7 +440,7 @@ const styles = StyleSheet.create({
   },
   formBox: {
     backgroundColor: "#f1f7fe",
-    overflow: "hidden",
+    overflow:"scroll",
     borderRadius: 16,
     color: "#010101",
     alignSelf: `stretch`,
