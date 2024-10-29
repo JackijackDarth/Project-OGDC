@@ -7,7 +7,7 @@ async function obtenirJSON_Get(ressource) {
     // console.log("username: %s", Username);
     // console.log("password: %s", Password);
 
-    let url = new URL(`http://${serveur_ip}:4242/cafehomer/${ressource}`);
+    let url = new URL(`http://${serveur_ip}:1883/cafehomer/${ressource}`);
     const res = await fetch(url, {
         headers: {
             "Authorization": `Basic ${Username}:${Password}`,
@@ -32,6 +32,15 @@ export function obtenirObjets(rbtId){
 export function UpdateObjet(lst){
     return ModifierJSON_Put(`liste_objets`,lst);
 }
+export function getCommandeAsync(){
+    return obtenirRessourceJSON("commandes");
+}
+export function creerFamille(nomFamille){
+    return créerJSON_Post("familles",nomFamille)
+}
+export function getMembresFamille(idFamille){
+    return obtenirRessourceJSON("familles/${idFamille}")
+}
 
 //Modif 21/10/2024
 export function lancerCommande(keyCommand,infoObject){
@@ -42,7 +51,7 @@ export function deconnexion(usrId){
     return obtenirJSON_Get(`deconnexion/${usrId}`);
 }
 async function créerJSON_Post(ressource, resInfo) {
-    let url = new URL(`http://${serveur_ip}:4242/cafehomer/${ressource}`);
+    let url = new URL(`http://${serveur_ip}:1883/cafehomer/${ressource}`);
     const res = await fetch(url, {
         method: "POST",
         headers: {
@@ -56,7 +65,7 @@ async function créerJSON_Post(ressource, resInfo) {
     return { res };
 }
 async function ModifierJSON_Put(ressource, resInfo) {
-    let url = new URL(`http://${serveur_ip}:4242/cafehomer/${ressource}`);
+    let url = new URL(`http://${serveur_ip}:1883/cafehomer/${ressource}`);
     const res = await fetch(url, {
         method: "PUT",
         headers: {
@@ -69,9 +78,23 @@ async function ModifierJSON_Put(ressource, resInfo) {
         throw new Error(res.status);
     return { res };
 }
+
+async function supprimerRessourceJSON(ressource) {
+    let url = new URL(`http://${serveur_ip}:1883/cafehomer/$%7Bressource%7D/%60`);
+    const res = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Basic ${Username}:${Password}`,
+        },
+    });
+    return { satut: `${res.status}` };
+}
+
+
 // À implémenter
 // function modifierRessourceJSON(ressource, id, resInfo) {
-//     let url = new URL(`http://${serveur_ip}:4242/caType": "application/json",
+//     let url = new URL(`http://${serveur_ip}:1883/caType": "application/json",
 //             "Authorization": `Basic ${Username}:${Password}`,
 //         },
 //         body: JSON.stringify(resInfo),

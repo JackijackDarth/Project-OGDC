@@ -33,3 +33,4 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+/OGDC_Vosk_Remote_Api

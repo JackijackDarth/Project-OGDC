@@ -51,25 +51,31 @@ export function ArdoiseScreen({ navigation, route }) {
   }, [currentuser, navigation]);
 
   const fetchObjects = () => {
-    const listloc = []
     if (currentuser && currentuser.idRobot != null) {
       obtenirObjets(currentuser.idRobot).then(items => {
         setListobjComplet(items)
-        console.log(items)
         const transformedObjets = Object.entries(items.listeObjets).map(([key, value]) => ({
           name: key,
           status: value.status,
           location: value.location
         }));
-        console.log(transformedObjets);
-        setObjetsList(transformedObjets);
+        console.log("Liste objets : ",transformedObjets);
+        // console.log("Liste locations : ",transformedObjets.map(objet => objet.location))
+        // setLocationList(transformedObjets.map(objet => objet.location));
+        // setObjetsList(transformedObjets);
+        const groupedByLocation = transformedObjets.reduce((sections, item) => {
+          const section = sections.find(s => s.title === item.location);
+          if (section) {
+            section.data.push(item);
+          } else {
+            sections.push({ title: item.location, data: [item] });
+          }
+          return sections;
+        }, []);
+        console.table("Objets par emplacements : ",groupedByLocation);
+        setObjetsList(groupedByLocation);
        
-        transformedObjets.forEach(objet => {
-          console.log(objet.location)
-          listloc.push(objet.location)
-        });
-        setLocationList(listloc);
-        console.log(locationlist)
+      
         setError(null);
       }).catch(() => {
         setObjetsList([]);
@@ -78,18 +84,17 @@ export function ArdoiseScreen({ navigation, route }) {
     } else {
       setError("Vous n'avez pas de robot!");
     }
+    
   };
-  // useEffect(() => {
-  //   fetchlocations();
-  //   // const intervalId = setInterval(fetchObjects, 30000);
-  //   // return () => clearInterval(intervalId);
-  // }, [route, currentuser,navigation,locationlist]);
+
+
 
   useEffect(() => {
     fetchObjects();
     const intervalId = setInterval(fetchObjects, 30000);
     return () => clearInterval(intervalId);
-  }, [route, usrId, currentuser,navigation]);
+  }, [route,usrId, currentuser ,navigation]);
+
 
   // J'ai trouver ça en fouillant en ligne. sert pas a grand chose mais c'est cool (:
   const onRefresh = () => {
@@ -100,14 +105,8 @@ export function ArdoiseScreen({ navigation, route }) {
 
   //Selection dun objet//
   const handleItemPress = (item) => {
-    // Alert.alert("Work in Progress", `Le controle de ${item.name} n'est pas encore implémenté.`);
-    console.log(item)
-    navigation.navigate("MenuObjet", {
-      objet:item,
-      ListobjComplet:ListobjComplet ,
-  })
+    navigation.navigate("MenuObjet", { objet: item,ListobjComplet:ListobjComplet });
   };
-  
 
   const renderItem = ({ item }) => {
     const isTemperatureSensor = item.name === 'temperature_sensor';
@@ -123,7 +122,6 @@ export function ArdoiseScreen({ navigation, route }) {
           <View>
             <Text style={styles.itemName}>{item.name}</Text>
             <Text style={styles.itemStatus}>{status}</Text>
-            <Text>{item.location}</Text>
           </View>
         </View>
       </Pressable>
@@ -137,12 +135,15 @@ export function ArdoiseScreen({ navigation, route }) {
           <Text style={styles.errorText}>{error}</Text>
         </View>
       ) : (
-        <FlatList
-          data={objetsList}
+        <SectionList
+          sections={objetsList}
+          keyExtractor={(item, index) => item.name + index}
           renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
           refreshing={refreshing}
           onRefresh={onRefresh}
+          renderSectionHeader={({ section: { title } }) => (
+            <Text style={styles.sectionHeader}>{title}</Text>
+          )}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Text style={styles.emptyText}>No objects available.</Text>
@@ -150,22 +151,86 @@ export function ArdoiseScreen({ navigation, route }) {
           }
         />
       )}
-       {/* <SectionList
-      sections={objetsList}
-      keyExtractor={(item, index) => item + index}
-      renderItem={renderItem}
-      renderSectionHeader={({section: {title}}) => (
-        <Text style={styles.header}>{title}</Text>
-      )}
-    /> */}
     </SafeAreaView>
   );
 }
 
 
+
+
+
+const handleItemPress = (item) => {
+  console.log(item)
+  navigation.navigate("MenuObjet", {
+    objet:item,
+    ListobjComplet:ListobjComplet ,
+})
+};
+
+
+// const renderItem = ({ item }) => {
+//   const isTemperatureSensor = item.name === 'temperature_sensor';
+//   const status = isTemperatureSensor
+//     ? `Temp: ${item.status[0]}°C, Humidity: ${item.status[1]}%`
+//     : `Status: ${item.status}`;
+//   const icon = iconMap[item.name] || "question";
+
+//   return (
+//     <Pressable style={styles.item} onPress={() => handleItemPress(item)}>
+//       <View style={styles.itemContent}>
+//         <AntDesign name={icon} size={30} color="black" style={styles.icon} />
+//         <View>
+//           <Text style={styles.itemName}>{item.name}</Text>
+//           <Text style={styles.itemStatus}>{status}</Text>
+//           <Text>{item.location}</Text>
+//         </View>
+//       </View>
+//     </Pressable>
+//   );
+// };
+
+// return (
+//   <SafeAreaView style={[stylesCommuns.app, styles.container]}>
+//     {error ? (
+//       <View style={styles.errorContainer}>
+//         <Text style={styles.errorText}>{error}</Text>
+//       </View>
+//     ) : (
+//       <FlatList
+//         data={objetsList}
+//         renderItem={renderItem}
+//         keyExtractor={(item, index) => index.toString()}
+//         refreshing={refreshing}
+//         onRefresh={onRefresh}
+//         ListEmptyComponent={
+//           <View style={styles.emptyContainer}>
+//             <Text style={styles.emptyText}>No objects available.</Text>
+//           </View>
+//         }
+//       />
+//     )}
+//       <SectionList
+//       sections={locationlist}
+//       keyExtractor={(item, index) => item + index}
+//       renderItem={({item}) => (
+//         <View style={styles.item}>
+//           <Text style={styles.title}>{item}</Text>
+//         </View>
+//       )}
+//       renderSectionHeader={({section: {title}}) => (
+//         <Text style={styles.header}>{title}</Text>
+//       )}
+//     />
+
+
+
+
+
 ////////////////////
 //MenuObjectScreen//
 ///////////////////
+
+
 export function MenuObjetScreen({ route, navigation }) {
   const [NomPièce, setRoomName] = useState(null);
   const [errormsg, setErrorMsg] = useState(null);
