@@ -32,7 +32,7 @@ function CreerFamille(infoFamille){
     }
     if(nouvFamille != null){
         listeFamille.push(nouvFamille);
-        let resultat = users.AjouterUneFamilleAuUser(nouvFamille.ownerId,nouvFamille.idFamille)
+        let resultat = users.AjouterUneFamilleAuUser(nouvFamille.ownerId,nouvFamille.Id)
         if(resultat.erreur == 0){
             if(PostListeFamilles(listeFamille)){
                 return{erreur:0,msg:"Réussi"}
