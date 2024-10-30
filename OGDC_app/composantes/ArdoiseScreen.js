@@ -60,7 +60,7 @@ export function ArdoiseScreen({ navigation, route }) {
 
   useEffect(() => {
     fetchUser();
-    const intervalId = setInterval(fetchUser, 10000);
+    const intervalId = setInterval(fetchUser, 500);
     return () => clearInterval(intervalId);
   }, [route, usrId]);
 

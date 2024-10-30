@@ -11,7 +11,7 @@ import {
   TextInput,
 } from "react-native";
 import { useState, useEffect } from "react";
-import {creerNote,ObtenirNote,deleteNote } from "../utils";
+import {creerNote,ObtenirNote,deleteNote,obtenirUser } from "../utils";
 import stylesCommuns from "../styles";
 import { AntDesign } from "@expo/vector-icons";
 
@@ -27,8 +27,26 @@ export function NoteScreen({ navigation, route }) {
   const [errormsg, setErrorMsg] = useState(null);
   const [invalidbool, setInvalidbool] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [CurrentUser, setCurrentUser] = useState(null);
   const currentId = route.params.currentuser.Id;
 
+
+  useEffect(() => {
+    if (currentId) {
+      obtenirUser(currentId).then((user) => {
+
+        setCurrentUser(user);  
+      }).catch(err => {
+        console.error("Failed to fetch user:", err);
+      });
+    }
+  }, [currentId]);
+  
+  //simple log pour voir les infos du user actuel
+  useEffect(() => {
+    if(CurrentUser)
+    {console.log("Current user : ",CurrentUser)}
+  }, [CurrentUser]);
 
   function AjouterNote() {
     if (NomFamille!=null && /\S/.test(NomFamille)) {
@@ -49,7 +67,8 @@ export function NoteScreen({ navigation, route }) {
     }
   }
   const fetchNotes = () => {
-    ObtenirNote(route.params.currentuser.idFamille).then((notes) => setNotesFamille(notes));
+    if (CurrentUser)
+      { ObtenirNote(CurrentUser.idFamille).then((notes) => setNotesFamille(notes));}
   };
 
   useEffect(() => {
@@ -89,7 +108,6 @@ export function NoteScreen({ navigation, route }) {
 
   return (
     <View style={stylesCommuns.app}>
-      <Text>Page en dévelopement!</Text>
 
       <View style={styles.form}>
         <Text style={styles.subtitle}>
@@ -139,10 +157,6 @@ export function Tuile({ texte, onPress_cb, iconNom }) {
 }
 
 const styles = StyleSheet.create({
-  section_haut: {
-    flex: 1 / 3,
-    justifyContent: "center",
-  },
   section_bas: {
     flex: 1,
     alignItems: "center",
@@ -192,7 +206,7 @@ const styles = StyleSheet.create({
   form: {
     display: "flex",
     flexDirection: "column",
-    gap: 30,
+     
     textAlign: "center",
     justifyContent: "center",
   },
