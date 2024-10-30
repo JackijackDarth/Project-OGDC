@@ -19,7 +19,7 @@ function CreerCommande(id, nomCommande, nomObjet, numPin, nouvelleValeur) {
         Id: id,
         name: nomCommande,
         object: nomObjet,
-        pin: numPin,
+        pin: parseInt(numPin, 10),
         newValue: nouvelleValeur,
         date: now
     }
@@ -94,7 +94,7 @@ function EnvoyerCommande(infoObjet, nomCommande) {
 function EstUnePinValide(numPin) {
     const min_pin = 1
     const max_pin = 15
-    return !math.isInteger(numPin) || numPin < min_pin || numPin > max_pin ? false : true
+    return  numPin < min_pin || numPin > max_pin ? false : true
 }
 
 /**

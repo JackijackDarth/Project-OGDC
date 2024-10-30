@@ -10,7 +10,7 @@ const objetRoutes = require('./routes/listeObjets');
 const deconnexionRoutes = require('./routes/deconnexion');
 const commandesRoutes = require('./routes/commandes');
 const famillesRoutes = require('./routes/familles');
-const notesRoutes = require('./routes/')
+const notesRoutes = require('./routes/notes')
 
 const app = express();
 const { port } = config;
