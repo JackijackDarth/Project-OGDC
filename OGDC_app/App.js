@@ -5,7 +5,7 @@ import { AuthenScreen, SeConnecterScreen, AideScreen, CreeCompteScreen } from '.
 import {ArdoiseScreen, MenuObjetScreen} from './composantes/ArdoiseScreen';
 import PanierScreen from './composantes/PanierScreen';
 import CommandeScreen from './composantes/CommandeScreen';
-import CommandeInfoScreen from './composantes/CommandeInfoScreen';
+import {CommandeInfoScreen,MenuFamilleScreen} from './composantes/CommandeInfoScreen';
 import RestoInfoScreen from './composantes/RestoInfoScreen';
 import { AccueilScreen, AjoutRobotScreen,} from './composantes/AccueilScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -81,12 +81,17 @@ export default function App() {
         </Group>
 
         <Group screenOptions={{ presentation: 'modal' }}>
-          <Screen name="AjoutRobot" component={AjoutRobotScreen} options={{ title: "Ajouter un robot" }} />
-          
+          <Screen name="AjoutRobot" component={AjoutRobotScreen} options={{ title: "Ajouter un robot" }} /> 
         </Group>
+
         <Group screenOptions={{ presentation: 'modal' }}>
         <Screen name="MenuObjet" component={MenuObjetScreen} options={{ title: "Menu d'objet" }} />
         </Group>
+
+        <Group screenOptions={{ presentation: 'modal' }}>
+        <Screen name="MenuFamille" component={MenuFamilleScreen} options={{ title: "Menu de famille" }} />
+        </Group>
+
         <Screen name="Panier" component={PanierScreen} />
 
         <Screen name="Commandes" component={CommandeScreen} />
