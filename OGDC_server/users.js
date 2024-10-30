@@ -1,5 +1,5 @@
 const fs = require('fs');
-
+const familles = require('./familles');
 const usersFilePath = "./BD/users.json";
 
 /**
@@ -153,12 +153,18 @@ function Deconnexion(userId){
 /**
  * Ajoute un idFamille à un user dans la BD pour montrer la famille à laquelle il a rejoint
  * @param {int} idUser 
- * @param {int} idFamille 
+ * @param {string} nomFamille 
  * @returns \{erreur,msg}
  */
-function AjouterUneFamilleAuUser(idUser,idFamille){
+function AjouterUneFamilleAuUser(idUser,nomFamille){
     let listeUsager = GetListeUsers()
     let find = false;
+    let idFamille = null;
+    let liste_familles = familles.GetListeFamilles()
+    liste_familles.forEach((famille)=>{
+        if(famille.name == nomFamille)
+            idFamille = famille.Id;
+    })
     listeUsager.forEach((user)=>{
         if(user.Id == idUser){
             user.idFamille = idFamille

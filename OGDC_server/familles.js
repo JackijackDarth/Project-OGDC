@@ -102,14 +102,14 @@ function ObtenirMembreFamille(idFamille){
 
 /**
  * Fonction booléen qui vérifie si la famille existe ou non selon son id
- * @param {int} idFamille 
+ * @param {string} nomFamille 
  * @returns Un booléen
  */
-function EstFamilleExistante(idFamille){
+function EstFamilleExistante(nomFamille){
     liste_familles = GetListeFamilles();
     let find = false;
     liste_familles.forEach((famille)=>{
-        if(famille.Id == idFamille){
+        if(famille.name == nomFamille){
             find = true;
         }
     })
@@ -124,9 +124,9 @@ function EstFamilleExistante(idFamille){
  */
 function ConnexionUserAFamille(userId, infoConnexionFamille){
     //Vérifie ID famille est bon
-    if(EstFamilleExistante(infoConnexionFamille.idFamille)){
-        if(VérifierConnexionFamille(infoConnexionFamille.idFamille,infoConnexionFamille.passFamille)){
-            return users.AjouterUneFamilleAuUser(userId,infoConnexionFamille,idFamille)
+    if(EstFamilleExistante(infoConnexionFamille.nomFamille)){
+        if(VérifierConnexionFamille(infoConnexionFamille.nomFamille,infoConnexionFamille.passFamille)){
+            return users.AjouterUneFamilleAuUser(userId,infoConnexionFamille.nomFamille)
         }
         else{
             return{erreur:1,msg:"Les infos de connexion pour la famille sont inccorect"}
@@ -139,15 +139,15 @@ function ConnexionUserAFamille(userId, infoConnexionFamille){
 
 /**
  * Vérifie si les donnée fournie pour se connecter à la famille sont correct (autorisation)
- * @param {int} idFamille 
+ * @param {string} nomFamille 
  * @param {string} passFamille 
  * @returns Un booléen du status des données
  */
-function VérifierConnexionFamille(idFamille,passFamille){
+function VérifierConnexionFamille(nomFamille,passFamille){
     connexionReussi = false;
     liste_familles = GetListeFamilles();
     liste_familles.forEach((famille)=>{
-        if(famille.Id == idFamille){
+        if(famille.name == nomFamille){
             if(famille.password == passFamille){
                 connexionReussi = true;
             }
