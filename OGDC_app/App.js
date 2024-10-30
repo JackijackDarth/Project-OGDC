@@ -10,6 +10,7 @@ import RestoInfoScreen from './composantes/RestoInfoScreen';
 import { AccueilScreen, AjoutRobotScreen,} from './composantes/AccueilScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { AntDesign, MaterialCommunityIcons} from '@expo/vector-icons';
+import { NoteScreen } from './composantes/NoteScreen';
 const Tab = createBottomTabNavigator();
 const { Navigator, Screen, Group } = createNativeStackNavigator();
 
@@ -27,6 +28,9 @@ function MainTabNavigator({ route }) {
         }
         else if (route.name === 'Ardoise') {
           iconName = focused ? 'lightbulb-group' : 'lightbulb-group-outline';
+        }
+        else if (route.name === 'Notes') {
+          iconName = focused ? 'note' : 'note-outline';
         }
         else if (route.name === 'CommandeInfo') {
           iconName = focused ? 'cog' : 'cog-outline';
@@ -47,6 +51,12 @@ function MainTabNavigator({ route }) {
         name="Ardoise"
         component={ArdoiseScreen}
         options={{ title: "Page d'objet" }}
+        initialParams={{ currentuser }}  
+      />
+       <Tab.Screen
+        name="Notes"
+        component={NoteScreen}
+        options={{ title: "Notes"}}
         initialParams={{ currentuser }}  
       />
       <Tab.Screen

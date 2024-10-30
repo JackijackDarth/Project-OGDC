@@ -11,7 +11,7 @@ import {
   TextInput,
 } from "react-native";
 import { useState, useEffect } from "react";
-import { obtenirObjets, obtenirUser, creerFamille, joinFamille } from "../utils";
+import {creerNote,ObtenirNote,deleteNote } from "../utils";
 import stylesCommuns from "../styles";
 import { AntDesign } from "@expo/vector-icons";
 
@@ -21,34 +21,18 @@ import Button from "./Button";
 
 import { obtenirUneCommandeJSON, deconnexion } from "../utils";
 
-export function CommandeInfoScreen({ navigation, route }) {
+export function NoteScreen({ navigation, route }) {
   const [NomFamille, setFamilleNom] = useState(null);
-  const [MdpFamille, setMdpFamille] = useState(null);
+  const [NotesFamille, setNotesFamille] = useState([]);
   const [errormsg, setErrorMsg] = useState(null);
   const [invalidbool, setInvalidbool] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
   const currentId = route.params.currentuser.Id;
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <AntDesign
-          name="logout"
-          size={25}
-          color="blue"
-          onPress={() => {
-            {
-              deconnexion(route.params.currentuser.Id);
-              navigation.replace("Authen");
-            }
-          }}
-        />
-      ),
-    });
-  }, [navigation]);
 
 
-  function RejoindreFamille() {
+  function AjouterNote() {
     if (NomFamille!=null && /\S/.test(NomFamille)) {
-      joinFamille(currentId,{ nomFamille: NomFamille, passFamille: MdpFamille })
+      creerNote({idUser:currentId,message:NomFamille})
         .then((res) => {
           console.log("Join complette %s", res);
           setInvalidbool(false);
@@ -57,7 +41,6 @@ export function CommandeInfoScreen({ navigation, route }) {
         .catch((err) => {
           console.log(err);
           console.log("creation échec: %s", err);
-          setErrorMsg("Ce nom de famille n'est pas disponible");
           setInvalidbool(true);
         });
     } else {
@@ -65,94 +48,93 @@ export function CommandeInfoScreen({ navigation, route }) {
       setErrorMsg("Veuiller entrer quelque chose avant de procéder");
     }
   }
+  const fetchNotes = () => {
+    ObtenirNote(route.params.currentuser.idFamille).then((notes) => setNotesFamille(notes));
+  };
+
+  useEffect(() => {
+    fetchNotes();
+    const intervalId = setInterval(fetchNotes, 5000);
+    return () => clearInterval(intervalId);
+  }, [navigation,currentId,route]);
+
+  const Item = ({ item, onPress, backgroundColor, textColor }) => (
+    <View>
+      <Tuile texte={item.message} iconNom="solution1" onPress_cb={() => {Alert.alert('Suppression', 'Voulez vous supprimer cette note?', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      {text: 'OK', onPress: () => {deleteNote(item.Id); fetchNotes()}},
+    ]);}} />
+    </View>
+  );
+
+  const renderItem = ({ item }) => {
+    const backgroundColor = item.Id === selectedId ? '#6e3b6e' : '#f9c2ff';
+    const color = item.Id === selectedId ? 'white' : 'black';
+    return (
+      <Item
+        item={item}
+        onPress={() => console.log("La note!")}
+        backgroundColor={backgroundColor}
+        textColor={color}
+      />
+    );
+  };
+
+
+
 
   return (
     <View style={stylesCommuns.app}>
       <Text>Page en dévelopement!</Text>
-      <Pressable
-        style={styles.button}
-        onPress={() => navigation.navigate("MenuFamille", { usrid: currentId })}
-      >
-        <Text style={styles.buttonText}>Créer famille</Text>
-      </Pressable>
-      <View></View>
+
       <View style={styles.form}>
         <Text style={styles.subtitle}>
-          Rejoindre un groupe famille
+          Ajouter une note
         </Text>
         <TextInput
           style={styles.input}
           backgroundColor={invalidbool ? "rgba(255, 0, 0, 0.4)" : null}
-          placeholder="Nom de la famille"
+          placeholder="Message de la note"
           onChangeText={setFamilleNom}
-          value={NomFamille}
-        />
-        <TextInput
-          style={styles.input}
-          backgroundColor={invalidbool ? "rgba(255, 0, 0, 0.4)" : null}
-          placeholder="Mot de passe de la famille"
-          onChangeText={setMdpFamille}
-          value={MdpFamille}
         />
         <Text style={styles.msgerreur}>{errormsg}</Text>
-        <Pressable onPress={RejoindreFamille} style={styles.button}>
+        <Pressable onPress={AjouterNote} style={styles.button}>
           <Text style={styles.buttonText}>Confirmer</Text>
         </Pressable>
       </View>
+
+
+      <View style={styles}>
+        {/* <Text style={styles.bienvenue}>Welcome {currentuser.username}</Text>  */}
+      </View>
+      <Tuilerie>
+        <SafeAreaView style={styles.section_bas}>
+          <FlatList
+            data={NotesFamille}
+            numColumns={2}
+            renderItem={renderItem}
+            keyExtractor={item => item.Id}
+            extraData={selectedId}
+          />
+        </SafeAreaView>
+      </Tuilerie>
     </View>
   );
 }
-
-export function MenuFamilleScreen({ route, navigation }) {
-  const [NomFamille, setFamilleNom] = useState(null);
-  const [errormsg, setErrorMsg] = useState(null);
-  const [invalidbool, setInvalidbool] = useState(false);
-  const { usrid } = route.params;
-
-  function CreationFamille() {
-    if (NomFamille!=null && /\S/.test(NomFamille)) {
-      creerFamille({ name: NomFamille, idOwner: usrid })
-        .then((res) => {
-          console.log("creation réussi %s", res);
-          setInvalidbool(false);
-          setErrorMsg("");
-          navigation.goBack();
-        })
-        .catch((err) => {
-          console.log(err);
-          console.log("creation échec: %s", err);
-          setErrorMsg("Ce nom de famille n'est pas disponible");
-          setInvalidbool(true);
-        });
-    } else {
-      setInvalidbool(true);
-      setErrorMsg("Veuiller entrer quelque chose avant de procéder");
-    }
-  }
-
+export function Tuile({ texte, onPress_cb, iconNom }) {
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "position" : "padding"}
-      style={styles.formBox}
-      contentContainerStyle={styles.container}
-    >
-      <View style={styles.form}>
-        <Text style={styles.subtitle}>
-          Entrez un nom pour votre groupe famille
-        </Text>
-        <TextInput
-          style={styles.input}
-          backgroundColor={invalidbool ? "rgba(255, 0, 0, 0.4)" : null}
-          placeholder="Nom de la famille"
-          onChangeText={setFamilleNom}
-          value={NomFamille}
-        />
-        <Text style={styles.msgerreur}>{errormsg}</Text>
-        <Pressable onPress={CreationFamille} style={styles.button}>
-          <Text style={styles.buttonText}>Confirmer</Text>
-        </Pressable>
+    <Pressable style={styles.tuile} onPress={onPress_cb}>
+      <View style={styles.tuile_icon}>
+        <AntDesign name={iconNom} size={50} color="black" />
       </View>
-    </KeyboardAvoidingView>
+      <View style={styles.tuile_texte_box}>
+        <Text style={styles.tuile_texte}>{texte}</Text>
+      </View>
+    </Pressable>
   );
 }
 
@@ -162,7 +144,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   section_bas: {
-    flex: 2 / 3,
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },

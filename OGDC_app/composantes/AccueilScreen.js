@@ -39,7 +39,8 @@ export function AccueilScreen({ navigation, route }) {
   //simple log pour voir les infos du user actuel
   useEffect(() => {
     if(currentuser)
-    console.log("Current user : ",currentuser)
+    {console.log("Current user : ",currentuser)
+    route.params.currentuser = currentuser}
   }, [currentuser]);
 
 
@@ -48,7 +49,7 @@ export function AccueilScreen({ navigation, route }) {
     <View>
       <Tuile texte={item.username} iconNom="pluscircleo" onPress_cb={() => {navigation.navigate("AjoutRobot", {
           usrId: currentuser.Id,
-          rbtId: item.Id,
+          rbtId: item.Id
       })
      }} />
     </View>

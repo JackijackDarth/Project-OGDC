@@ -1,7 +1,7 @@
 let Username = "admin"
 let Password = "password"
 
-const serveur_ip = "192.168.2.247";
+const serveur_ip = "192.168.137.113";
 
 async function obtenirJSON_Get(ressource) {
     // console.log("username: %s", Username);
@@ -32,12 +32,21 @@ export function obtenirObjets(rbtId){
 export function UpdateObjet(lst){
     return ModifierJSON_Put(`liste_objets`,lst);
 }
+export function ObtenirNote(idfamille){
+    return obtenirJSON_Get(`notes/get/${idfamille}`);
+}
 
 export function getCommandeAsync(){
     return obtenirRessourceJSON("commandes");
 }
+export function deleteNote(noteid){
+    return supprimerRessourceJSON(`notes/delete/${noteid}`);
+}
 export function creerFamille(nomFamille){
     return créerJSON_Post("familles",nomFamille)
+}
+export function creerNote(senderid){
+    return créerJSON_Post("notes",senderid)
 }
 export function getMembresFamille(idFamille){
     return obtenirRessourceJSON("familles/${idFamille}")
@@ -83,7 +92,7 @@ async function ModifierJSON_Put(ressource, resInfo) {
 }
 
 async function supprimerRessourceJSON(ressource) {
-    let url = new URL(`http://${serveur_ip}:1883/cafehomer/$%7Bressource%7D/%60`);
+    let url = new URL(`http://${serveur_ip}:1883/cafehomer/${ressource}`);
     const res = await fetch(url, {
         method: "DELETE",
         headers: {
