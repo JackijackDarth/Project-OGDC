@@ -11,7 +11,7 @@ import {
   TextInput,
 } from "react-native";
 import { useState, useEffect } from "react";
-import { obtenirObjets, obtenirUser, creerFamille } from "../utils";
+import { obtenirObjets, obtenirUser, creerFamille, joinFamille } from "../utils";
 import stylesCommuns from "../styles";
 import { AntDesign } from "@expo/vector-icons";
 
@@ -22,6 +22,10 @@ import Button from "./Button";
 import { obtenirUneCommandeJSON, deconnexion } from "../utils";
 
 export function CommandeInfoScreen({ navigation, route }) {
+  const [NomFamille, setFamilleNom] = useState(null);
+  const [MdpFamille, setMdpFamille] = useState(null);
+  const [errormsg, setErrorMsg] = useState(null);
+  const [invalidbool, setInvalidbool] = useState(false);
   const currentId = route.params.currentuser.Id;
   useEffect(() => {
     navigation.setOptions({
@@ -41,6 +45,28 @@ export function CommandeInfoScreen({ navigation, route }) {
     });
   }, [navigation]);
 
+
+  function CreationFamille() {
+    if (NomFamille!=null && /\S/.test(NomFamille)) {
+      joinFamille(currentId,{ nomFamille: NomFamille, passFamille: MdpFamille })
+        .then((res) => {
+          console.log("Join complette %s", res);
+          setInvalidbool(false);
+          setErrorMsg("");
+          navigation.goBack();
+        })
+        .catch((err) => {
+          console.log(err);
+          console.log("creation échec: %s", err);
+          setErrorMsg("Ce nom de famille n'est pas disponible");
+          setInvalidbool(true);
+        });
+    } else {
+      setInvalidbool(true);
+      setErrorMsg("Veuiller entrer quelque chose avant de procéder");
+    }
+  }
+
   return (
     <View style={stylesCommuns.app}>
       <Text>Page en dévelopement!</Text>
@@ -50,6 +76,30 @@ export function CommandeInfoScreen({ navigation, route }) {
       >
         <Text style={styles.buttonText}>Créer famille</Text>
       </Pressable>
+      <View></View>
+      <View style={styles.form}>
+        <Text style={styles.subtitle}>
+          Rejoindre un groupe famille
+        </Text>
+        <TextInput
+          style={styles.input}
+          backgroundColor={invalidbool ? "rgba(255, 0, 0, 0.4)" : null}
+          placeholder="Nom de la famille"
+          onChangeText={setFamilleNom}
+          value={NomFamille}
+        />
+        <TextInput
+          style={styles.input}
+          backgroundColor={invalidbool ? "rgba(255, 0, 0, 0.4)" : null}
+          placeholder="Mot de passe de la famille"
+          onChangeText={setMdpFamille}
+          value={MdpFamille}
+        />
+        <Text style={styles.msgerreur}>{errormsg}</Text>
+        <Pressable onPress={CreationFamille} style={styles.button}>
+          <Text style={styles.buttonText}>Confirmer</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }

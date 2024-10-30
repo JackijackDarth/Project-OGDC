@@ -42,7 +42,9 @@ export function creerFamille(nomFamille){
 export function getMembresFamille(idFamille){
     return obtenirRessourceJSON("familles/${idFamille}")
 }
-
+export function joinFamille(usrId,infosfamille){
+    return ModifierJSON_Put(`familles/${usrId}`,infosfamille);
+}
 //Modif 21/10/2024
 export function lancerCommande(keyCommand,infoObject){
     return créerJSON_Post(`commandes/${keyCommand}`,infoObject);
