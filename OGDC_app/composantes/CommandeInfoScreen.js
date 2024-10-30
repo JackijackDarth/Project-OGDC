@@ -48,7 +48,7 @@ export function CommandeInfoScreen({ navigation, route }) {
         style={styles.button}
         onPress={() => navigation.navigate("MenuFamille", { usrid: currentId })}
       >
-        <Text style={styles.buttonText}>hello</Text>
+        <Text style={styles.buttonText}>Créer famille</Text>
       </Pressable>
     </View>
   );

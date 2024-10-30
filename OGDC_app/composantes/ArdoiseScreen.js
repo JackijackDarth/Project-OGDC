@@ -13,7 +13,7 @@ import {
   SectionList,
   StatusBar,
 } from "react-native";
-import { useState, useEffect, act } from "react";
+import { useState, useEffect } from "react";
 import {
   obtenirObjets,
   obtenirUser,
@@ -24,13 +24,13 @@ import stylesCommuns from "../styles";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 
 ///////////
-//ARDOISE//
+// ARDOISE //
 ///////////
 export function ArdoiseScreen({ navigation, route }) {
   const [objetsList, setObjetsList] = useState([]);
   const [ListobjComplet, setListobjComplet] = useState();
   const [error, setError] = useState(null);
-  const [refreshing, setRefreshing] = useState(false); // State for refreshing
+  const [refreshing, setRefreshing] = useState(false);
   const usrId = route.params.currentuser.Id;
   const [currentuser, setCurrentUser] = useState(null);
   const [locationlist, setLocationList] = useState([]);
@@ -45,6 +45,7 @@ export function ArdoiseScreen({ navigation, route }) {
     temperature_sensor: "enviromento",
   };
 
+  // Fetch user data based on user ID
   const fetchUser = () => {
     if (usrId) {
       obtenirUser(usrId)
@@ -63,6 +64,7 @@ export function ArdoiseScreen({ navigation, route }) {
     return () => clearInterval(intervalId);
   }, [route, usrId]);
 
+  // Set navigation title based on robot ID
   useEffect(() => {
     if (currentuser) {
       const robotName =
@@ -73,6 +75,7 @@ export function ArdoiseScreen({ navigation, route }) {
     }
   }, [currentuser, navigation]);
 
+  // Fetch objects for the current robot
   const fetchObjects = () => {
     if (currentuser && currentuser.idRobot != null) {
       obtenirObjets(currentuser.idRobot)
@@ -86,10 +89,7 @@ export function ArdoiseScreen({ navigation, route }) {
               pin: value.pin,
             })
           );
-          console.log("Liste objets : ", transformedObjets);
-          // console.log("Liste locations : ",transformedObjets.map(objet => objet.location))
-          // setLocationList(transformedObjets.map(objet => objet.location));
-          // setObjetsList(transformedObjets);
+
           const groupedByLocation = transformedObjets.reduce(
             (sections, item) => {
               const section = sections.find((s) => s.title === item.location);
@@ -102,9 +102,8 @@ export function ArdoiseScreen({ navigation, route }) {
             },
             []
           );
-          console.table("Objets par emplacements : ", groupedByLocation);
-          setObjetsList(groupedByLocation);
 
+          setObjetsList(groupedByLocation);
           setError(null);
         })
         .catch(() => {
@@ -118,18 +117,18 @@ export function ArdoiseScreen({ navigation, route }) {
 
   useEffect(() => {
     fetchObjects();
-    const intervalId = setInterval(fetchObjects, 300);
+    const intervalId = setInterval(fetchObjects, 30000);
     return () => clearInterval(intervalId);
   }, [route, usrId, currentuser, navigation]);
 
-  // J'ai trouver ça en fouillant en ligne. sert pas a grand chose mais c'est cool (:
+  // Refresh objects
   const onRefresh = () => {
     setRefreshing(true);
     fetchObjects();
     setRefreshing(false);
   };
 
-  //Selection dun objet//
+  // Handle item selection
   const handleItemPress = (item) => {
     navigation.navigate("MenuObjet", {
       objet: item,
@@ -137,6 +136,7 @@ export function ArdoiseScreen({ navigation, route }) {
     });
   };
 
+  // Render each object item
   const renderItem = ({ item }) => {
     const isTemperatureSensor = item.name === "temperature_sensor";
     const status = isTemperatureSensor
@@ -146,10 +146,11 @@ export function ArdoiseScreen({ navigation, route }) {
       item.name == "red_led" ||
       item.name == "green_led" ||
       item.name == "blue_led";
-    const ledIcon = item.status == 1 ? `toggle-on` : `toggle-off`;
+    const ledIcon = item.status == 1 ? "toggle-on" : "toggle-off";
     const isButton = item.name == "button";
     const buttonIcon = "bullseye";
     const icon = iconMap[item.name] || "question";
+
     return (
       <Pressable style={styles.item} onPress={() => handleItemPress(item)}>
         <View style={styles.itemContent}>
@@ -158,13 +159,13 @@ export function ArdoiseScreen({ navigation, route }) {
             <Text style={styles.itemName}>{item.name}</Text>
             <Text style={styles.itemStatus}>{status}</Text>
           </View>
-          {item.name != "temperature_sensor" &&
-          item.name != "camera" &&
-          item.name != "movement_sensor" ? (
+          {item.name !== "temperature_sensor" &&
+          item.name !== "camera" &&
+          item.name !== "movement_sensor" ? (
             <Pressable
               style={styles.objttgl}
               onPress={async () => {
-                lancerCommande(
+                await lancerCommande(
                   isLed ? "switchLed" : isButton ? "pressButton" : "erreur",
                   {
                     name: item.name,
@@ -221,70 +222,8 @@ export function ArdoiseScreen({ navigation, route }) {
   );
 }
 
-const handleItemPress = (item) => {
-  console.log(item);
-  navigation.navigate("MenuObjet", {
-    objet: item,
-    ListobjComplet: ListobjComplet,
-  });
-};
-
-// const renderItem = ({ item }) => {
-//   const isTemperatureSensor = item.name === 'temperature_sensor';
-//   const status = isTemperatureSensor
-//     ? `Temp: ${item.status[0]}°C, Humidity: ${item.status[1]}%`
-//     : `Status: ${item.status}`;
-//   const icon = iconMap[item.name] || "question";
-
-//   return (
-//     <Pressable style={styles.item} onPress={() => handleItemPress(item)}>
-//       <View style={styles.itemContent}>
-//         <AntDesign name={icon} size={30} color="black" style={styles.icon} />
-//         <View>
-//           <Text style={styles.itemName}>{item.name}</Text>
-//           <Text style={styles.itemStatus}>{status}</Text>
-//           <Text>{item.location}</Text>
-//         </View>
-//       </View>
-//     </Pressable>
-//   );
-// };
-
-// return (
-//   <SafeAreaView style={[stylesCommuns.app, styles.container]}>
-//     {error ? (
-//       <View style={styles.errorContainer}>
-//         <Text style={styles.errorText}>{error}</Text>
-//       </View>
-//     ) : (
-//       <FlatList
-//         data={objetsList}
-//         renderItem={renderItem}
-//         keyExtractor={(item, index) => index.toString()}
-//         refreshing={refreshing}
-//         onRefresh={onRefresh}
-//         ListEmptyComponent={
-//           <View style={styles.emptyContainer}>
-//             <Text style={styles.emptyText}>No objects available.</Text>
-//           </View>
-//         }
-//       />
-//     )}
-//       <SectionList
-//       sections={locationlist}
-//       keyExtractor={(item, index) => item + index}
-//       renderItem={({item}) => (
-//         <View style={styles.item}>
-//           <Text style={styles.title}>{item}</Text>
-//         </View>
-//       )}
-//       renderSectionHeader={({section: {title}}) => (
-//         <Text style={styles.header}>{title}</Text>
-//       )}
-//     />
-
 ////////////////////
-//MenuObjectScreen//
+// MENU OBJECT SCREEN //
 ///////////////////
 
 export function MenuObjetScreen({ route, navigation }) {
@@ -292,8 +231,9 @@ export function MenuObjetScreen({ route, navigation }) {
   const [errormsg, setErrorMsg] = useState(null);
   const [invalidbool, setInvalidbool] = useState(false);
   const { objet, ListobjComplet } = route.params;
+  const [temp, setTemp] = useState(null)
   const [selectedId, setSelectedId] = useState();
-  const isTemperatureSensor = objet.name == "temperature_sensor";
+  const isTemperatureSensor = objet.name === "temperature_sensor";
   const choixlocation = [
     "Chambre",
     "Cuisine",
@@ -301,9 +241,10 @@ export function MenuObjetScreen({ route, navigation }) {
     "Sous-sol",
     "Sale de jeux",
   ];
-
+   
+  // Update object location
   function EditObjet() {
-    newlist = ListobjComplet.listeObjets[objet.name].location = NomPièce;
+    ListobjComplet.listeObjets[objet.name].location = NomPièce != null ? NomPièce : objet.location;
     UpdateObjet(ListobjComplet)
       .then((res) => {
         console.log("Assignation de pièce réussi %s", res);
@@ -313,19 +254,37 @@ export function MenuObjetScreen({ route, navigation }) {
         console.log("Location change error: %s", err.msg);
         setInvalidbool(true);
       });
+      console.log(objet.name,objet.pin, temp)
+      if (temp != null){
+        lancerCommande(
+        "changeTemp",
+        {
+          name: objet.name,
+          pin: objet.pin,
+          value:temp,
+        }
+      )
+        .then((res) => {
+          console.log("commande Lancer %s", res);
+          fetchObjects();
+        })
+        .catch((err) => {
+          console.log("commande error: %s", err.msg);
+        });
+      }
+      
   }
 
+  // Item component for FlatList
   const Item = ({ item, onPress, backgroundColor, textColor }) => (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[styles.item, { backgroundColor }]}
-    >
+    <TouchableOpacity onPress={onPress} style={[styles.item, { backgroundColor }]}>
       <Text style={[styles.title, { color: textColor }]}>{item}</Text>
     </TouchableOpacity>
   );
 
+  // Render each location item
   const renderItem = ({ item }) => {
-    const backgroundColor = item === NomPièce ? "#6e3b6e" : "#f9c2ff";
+    const backgroundColor = item === NomPièce ? "#7393B3" : "#C0C0C0";
     const color = item === NomPièce ? "white" : "black";
 
     return (
@@ -345,43 +304,60 @@ export function MenuObjetScreen({ route, navigation }) {
       keyboardVerticalOffset={100}
       contentContainerStyle={styles.container}
     >
-      {isTemperatureSensor ? (
-          <View>
+      {isTemperatureSensor && (
+        <View>
           <Text style={styles.subtitle}>
-            Entrez l'emplacement désiré de l'objet
+            Entrez la température de l'objet
           </Text>
           <TextInput
             style={styles.input}
-            backgroundColor={invalidbool ? "rgba(255, 0, 0, 0.4)" : null}
-            placeholder="Nom de la pièce"
-            defaultValue={objet.value}
+            onChangeText={(text) => setTemp(text)}
+            placeholder="Température"
+            keyboardType="numeric"
+            maxLength={5}
           />
-         </View>
-      ) : null}
-      <View style={styles.form}>
-        <Text style={styles.subtitle}>
+         
+          {invalidbool && (
+            <Text style={styles.errorText}>
+              L'un des champs n'est pas valide
+            </Text>
+          )}
+        </View>
+      )}
+      
+      <Text style={styles.subtitle}>
           Entrez l'emplacement désiré de l'objet
         </Text>
-        <View style={styles.formContainer}>
-          <FlatList
-            data={choixlocation}
-            renderItem={renderItem}
-            keyExtractor={(item) => item}
-            extraData={NomPièce}
-          />
+       
           <TextInput
             style={styles.input}
-            backgroundColor={invalidbool ? "rgba(255, 0, 0, 0.4)" : null}
-            placeholder="Nom de la pièce"
-            onChangeText={setRoomName}
+            onChangeText={(text) => setRoomName(text)}
+            placeholder="Position"
+            maxLength={5}
             defaultValue={objet.location}
             value={NomPièce}
           />
-        </View>
-        <Text style={styles.msgerreur}>{errormsg}</Text>
-        <Pressable onPress={EditObjet} style={styles.button}>
-          <Text style={styles.buttonText}>Confirmer</Text>
-        </Pressable>
+           <Text style={styles.subtitle}>Ou choisissez une pièce</Text>
+      <FlatList
+      style={styles.lctslct}
+        data={choixlocation}
+        renderItem={renderItem}
+        keyExtractor={(item) => item}
+      />
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+              EditObjet();
+              setErrorMsg(null);
+              setInvalidbool(false);
+          }}
+        >
+          <Text style={styles.buttonText}>Modifier la pièce</Text>
+        </TouchableOpacity>
+        {errormsg && (
+          <Text style={styles.errorText}>{errormsg}</Text>
+        )}
       </View>
     </KeyboardAvoidingView>
   );
@@ -390,17 +366,12 @@ export function MenuObjetScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
   },
   item: {
-    backgroundColor: "#98de9c",
     padding: 20,
-    marginVertical: 10,
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3.84,
-    elevation: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
   },
   itemContent: {
     flexDirection: "row",
@@ -409,99 +380,65 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#000",
   },
   itemStatus: {
     fontSize: 14,
-    color: "gray",
+    color: "#555",
   },
   icon: {
     marginRight: 15,
   },
-  errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  sectionHeader: {
+    fontSize: 22,
+    fontWeight: "bold",
+    paddingVertical: 10,
+    backgroundColor: "#E4E0E1",
+  },
+  emptyContainer: {
     padding: 20,
+    alignItems: "center",
+  },
+  emptyText: {
+    fontSize: 16,
+    color: "#999",
+  },
+  errorContainer: {
+    padding: 20,
+    alignItems: "center",
   },
   errorText: {
     color: "red",
-    fontSize: 18,
   },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  buttonContainer: {
     padding: 20,
   },
-  emptyText: {
-    fontSize: 18,
-    color: "gray",
-  },
-  formBox: {
-    backgroundColor: "#f1f7fe",
-    overflow:"scroll",
-    borderRadius: 16,
-    color: "#010101",
-    alignSelf: `stretch`,
-    paddingVertical: 20,
-    paddingHorizontal: 30,
-    flex: 1,
-    justifyContent: "center",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 10,
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 20,
-  },
-  formContainer: {
-    borderRadius: 8,
-    backgroundColor: "#fff",
-    marginVertical: 0,
-    width: "100%",
-    padding: 10,
-  },
-  input: {
-    backgroundColor: "none",
-    borderWidth: 0,
-    outlineWidth: 0,
-    height: 44,
-    width: "100%",
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-    fontSize: 16,
-    paddingHorizontal: 15,
-    marginBottom: 0,
-  },
   button: {
-    backgroundColor: "#0066ff",
-    borderRadius: 24,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    fontSize: 16,
-    fontWeight: "600",
+    backgroundColor: "#007BFF",
+    padding: 15,
+    borderRadius: 5,
     alignItems: "center",
-    justifyContent: "flex-start",
   },
   buttonText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "bold",
   },
-  msgerreur: {
-    color: "red",
-    fontSize: 20,
-    marginTop: 10,
-  },
-  objttgl: {
+  subtitle: {
     fontSize: 16,
-    fontWeight: "600",
-    marginLeft: "auto",
+    marginVertical: 10,
   },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    padding: 10,
+    marginVertical: 5,
+  },
+  formBox: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 20,
+  },
+  objttgl:{
+    marginLeft:"auto"
+  }
 });
