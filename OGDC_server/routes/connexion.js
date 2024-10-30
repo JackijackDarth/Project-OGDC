@@ -27,16 +27,7 @@ connexionRoutes.get('/', (req, res) => {
     
     for (let user of users) {
         if (user.Id == res_authen.userId) {
-            res.json({
-                Id: user.Id,
-                prenom: user.prenom,
-                nom: user.nom,
-                mail: user.mail,
-                phone: user.phone,
-                rbtId: user.idRobot,
-                usrname: user.username,
-                isLogin: user.isLogin
-            });
+            res.json(user);
             return;
         }
     }

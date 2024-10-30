@@ -14,9 +14,9 @@ const liste_objets = Router();
  */
 liste_objets.route('/')
     .post((req, res) => {
-        console.log("Initialiser liste pour Robot");
+        //console.log("Initialiser liste pour Robot");
         const listeInfo = req.body;
-        console.table(listeInfo);
+        //console.table(listeInfo);
         const resultat = listeObjets.créerListe(listeInfo);
         if (resultat.erreur !== 0) {
             res.status(400).send(resultat.msg);
@@ -51,7 +51,7 @@ liste_objets.route('/')
  */
 liste_objets.route('/:id')
     .get((req, res) => {
-        console.log("Obtenir la liste d'objet pour robot %d", req.params.id);
+        console.log("Obtenir la liste d'objet pour robot %d", req.params.id) + " ------------------------------------------------";
         const resultat = listeObjets.obtenirObjets(req.params.id);
         //console.log("listobjt", resultat.items.listeObjets.camera)
         if (resultat.erreur !== 0)

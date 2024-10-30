@@ -11,7 +11,7 @@ const deconnexionRoutes = Router();
  */
 deconnexionRoutes.route('/:idUser')
     .get((req, res) => {
-        console.log("Déconnexion l'usager ", req.params.idUser);
+        console.log("Déconnexion l'usager ", req.params.idUser + " ---------------------------------------------");
         const resultat = user.Deconnexion(req.params.idUser);
         if (resultat.erreur !== 0) {
             res.status(401).send(resultat);

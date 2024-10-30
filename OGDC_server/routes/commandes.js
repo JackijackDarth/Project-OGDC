@@ -12,9 +12,9 @@ commandesRoutes.route('/')
      * Si la liste est vide ou null, retourne une erreur 401 avec le resultat
      */
     .get((req,res)=>{
-        console.log("Obtenir les commandes pour le robot ");
+        console.log("Obtenir les commandes pour le robot --------------------------------------------------------");
         const resultat = commandes.obtenirTouteCommandes();
-        console.log("Résultat de obtenirTouteCommandes:", resultat);
+        //console.log("Résultat de obtenirTouteCommandes:", resultat);
         
         if (resultat.erreur !== 0) {
             res.status(401).send(resultat);
@@ -31,7 +31,7 @@ commandesRoutes.route('/:param1')
      * Retourne status 201 + resultat | status 401 + resultat
      */
     .post((req, res) => {
-        console.log("Commande envoyer : ", req.params.param1);
+        console.log("Commande envoyer : ", req.params.param1 +" -----------------------------------------------------");
         let resultat = commandes.EnvoyerCommande(req.body,req.params.param1);
         console.log(resultat);
         if (resultat.erreur !== 0) {
@@ -46,7 +46,7 @@ commandesRoutes.route('/:param1')
      * Retourne status 201 | status 401
      */
     .delete((req,res)=>{
-        console.log("Commande delete : ", req.params.param1);
+        console.log("Commande delete : ", req.params.param1 + " -------------------------------------------------------");
         let resultat = commandes.SupprimerCommande(req.params.param1);
         console.log(resultat);
         if (resultat.erreur !== 0) {
