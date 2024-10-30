@@ -34,7 +34,7 @@ app.use('/cafehomer/liste_objets', objetRoutes);
 app.use('/cafehomer/deconnexion',deconnexionRoutes);
 app.use('/cafehomer/commandes',commandesRoutes);
 app.use('/cafehomer/familles/',famillesRoutes);
-// app.use('/cafehomer/notes/',notesRoutes);
+app.use('/cafehomer/notes/',notesRoutes);
 
 const server = http.createServer(app);
 

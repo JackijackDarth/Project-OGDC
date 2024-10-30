@@ -13,7 +13,7 @@ const robot_Connecter = Router();
  */
 robot_Connecter.route('/')
     .post((req, res) => {
-        console.log("Créer un robot");
+        console.log("Créer un robot --------------------------------------------");
         const robotInfo = req.body;
         console.table(robotInfo);
         const resultat = listeRobots.créerRobot(robotInfo);
@@ -28,7 +28,7 @@ robot_Connecter.route('/')
      * Retourne une liste de tout les robots existants donner par la fonction
      */
     .get(async (req, res) => {
-        console.log("Obtenir toutes les robots");
+        console.log("Obtenir toutes les robots ------------------------------------------------");
         res.json(listeRobots.obtenirRobots());
     })
 /**
@@ -40,7 +40,7 @@ robot_Connecter.route('/')
  */
 robot_Connecter.route('/:id')
     .post((req, res) => {
-        console.log("Connexions robots");
+        console.log("Connexions robots -------------------------------------------");
         const connexionInfo = req.body;
         const resultat = listeRobots.connexionRobots(connexionInfo);
         if (resultat.erreur !== 0) {

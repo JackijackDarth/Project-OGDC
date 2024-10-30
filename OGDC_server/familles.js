@@ -32,7 +32,7 @@ function CreerFamille(infoFamille){
     }
     if(nouvFamille != null){
         listeFamille.push(nouvFamille);
-        let resultat = users.AjouterUneFamilleAuUser(nouvFamille.ownerId,nouvFamille.Id)
+        let resultat = users.AjouterUneFamilleAuUser(nouvFamille.ownerId,nouvFamille.idFamille)
         if(resultat.erreur == 0){
             if(PostListeFamilles(listeFamille)){
                 return{erreur:0,msg:"Réussi"}
@@ -100,6 +100,16 @@ function ObtenirMembreFamille(idFamille){
     }
 }
 
+function AjouterUneFamilleAuUser(idUser,nomFamille){
+    let idFamille = null;
+    let liste_familles = GetListeFamilles()
+    liste_familles.forEach((famille)=>{
+        if(famille.name == nomFamille)
+            idFamille = famille.Id;
+    })
+    return users.AjouterUneFamilleAuUser(idUser,idFamille)
+}
+
 /**
  * Fonction booléen qui vérifie si la famille existe ou non selon son id
  * @param {string} nomFamille 
@@ -126,7 +136,7 @@ function ConnexionUserAFamille(userId, infoConnexionFamille){
     //Vérifie ID famille est bon
     if(EstFamilleExistante(infoConnexionFamille.nomFamille)){
         if(VérifierConnexionFamille(infoConnexionFamille.nomFamille,infoConnexionFamille.passFamille)){
-            return users.AjouterUneFamilleAuUser(userId,infoConnexionFamille.nomFamille)
+            return AjouterUneFamilleAuUser(userId,infoConnexionFamille.nomFamille)
         }
         else{
             return{erreur:1,msg:"Les infos de connexion pour la famille sont inccorect"}
@@ -200,4 +210,5 @@ module.exports = {
     ObtenirMembreFamille,
     GetFamille,
     ConnexionUserAFamille,
+    AjouterUneFamilleAuUser
 };

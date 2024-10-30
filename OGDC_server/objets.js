@@ -56,7 +56,7 @@ function obtenirObjets(robotId) {
 
     for (let listeItems of fichierListe) {
         if (listeItems.robotId == robotId) {
-            console.log("la liste youpi", listeItems);
+            //console.log("la liste youpi", listeItems);
             found = true;
             return { erreur: 0, msg: "Réussi", items: listeItems };
         }
