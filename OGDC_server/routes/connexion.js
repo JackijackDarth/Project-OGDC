@@ -36,7 +36,7 @@ connexionRoutes.get('/', (req, res) => {
 /**
  * connexionRoutes /GET/userPI
  * Obtiens l'usager connecter au robot
- * Si trouver dans la bse de donner retourne le user
+ * Si trouver dans la base de donner retourne le user ou la famille affilié
  * Si non trouver retourne une erreur
  */
 connexionRoutes.route('/:userPI')

@@ -183,6 +183,23 @@ function GetFamille(idFamille){
     return infoFamille;
 }
 
+function SupprimerMembreFamille(idUser){
+    liste_users = users.GetListeUsers()
+    let trouver = false;
+    liste_users.forEach((user)=>{
+        if(user.Id == idUser){
+            idUser.idFamille = null;
+            trouver = true;
+        }
+    })
+    if(trouver){
+        return {erreur:0,msg:'Réussi'}
+    }
+    else{
+        return {erreur:1,msg:'Id User inexistant'}
+    }
+}
+
 /**
  * Fonction retournant la liste de familles
  * @returns Un tableau JavaScript de la liste de familles dans le fichier JSON
@@ -211,5 +228,6 @@ module.exports = {
     ObtenirMembreFamille,
     GetFamille,
     ConnexionUserAFamille,
-    AjouterUneFamilleAuUser
+    AjouterUneFamilleAuUser,
+    SupprimerMembreFamille
 };

@@ -75,10 +75,33 @@ function connexionRobots(connexionInfo){
         const resultatAjout = users.ajouterRobot(connexionInfo.usrId, connexionInfo.rbtId);
         console.log("Résultat de l'ajout du robot à l'utilisateur :", resultatAjout);
 
-        return { erreur: 0, msg: "Réussi" };
+        if(resultatAjout.msg == "User" || resultatAjout.msg == "Famille"){
+            return { erreur: 0, msg: "Réussi" };
+        }
+        else{
+            return resultatAjout;
+        }
     }
 
     return { erreur: 1, msg: "Id ou password erroné" };
+}
+
+function DeconnexionRobots(idUser, idRobot){
+    let listeUsers = users.GetListeUsers()
+    let deconnecter = false;
+    listeUsers.forEach((user)=>{
+        if (user.Id == idUser)
+            if(user.idRobot == idRobot){
+                deconnecter = true;
+                user.idRobot = null;
+            }
+    })
+    if(deconnecter){
+        return {erreur:0,msg:"Réussi"}
+    }
+    else{
+        return {erreur:1,msg:"User id connecter à Robot id inexistant"};
+    }
 }
 
 /**
@@ -98,31 +121,31 @@ function obtenirUsagerSync(userPI) {
     if (idRobot != null) {
         const listeUsers = users.GetListeUsers();
         let usersEnvoyer = null;
-        // let familleEnvoyer = null;
+        let familleEnvoyer = null;
 
         listeUsers.forEach(user => {
             if (user.idRobot === idRobot) {
-                // if(user.idFamille != null){
-                //     familleEnvoyer = familles.GetFamille(user.idFamille);
-                // }
-                // else{
-                usersEnvoyer = user;
-                // }
+                if(user.idFamille != null){
+                    familleEnvoyer = familles.GetFamille(user.idFamille);
+                }
+                else{
+                    usersEnvoyer = user;
+                }
             }
         });
 
         if (usersEnvoyer != null) {
             return { erreur: 0, msg: "Réussi user trouver", user: usersEnvoyer, famille:null};
         }
-        // else if(familleEnvoyer != null) {
-        //     return { erreur: 0, msg: "Réussi famille trouver", user: null, famille:familleEnvoyer };
-        // }
+        else if(familleEnvoyer != null) {
+            return { erreur: 0, msg: "Réussi famille trouver", user: null, famille:familleEnvoyer };
+        }
         else{
-            return { erreur: 1, msg: "Robot non synchronisé", user: null };
+            return { erreur: 1, msg: "Robot non synchronisé", user: null, famille:null };
         }
     }
 
-    return { erreur: 1, msg: "Username robot inexistant", user: null };
+    return { erreur: 1, msg: "Username robot inexistant", user: null, famille:null };
 }
 
 
@@ -131,5 +154,6 @@ module.exports = {
     créerRobot,
     obtenirRobots,
     connexionRobots,
-    obtenirUsagerSync
+    obtenirUsagerSync,
+    DeconnexionRobots
 };
