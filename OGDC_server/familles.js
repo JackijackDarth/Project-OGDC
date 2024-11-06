@@ -155,7 +155,7 @@ function ConnexionUserAFamille(userId, infoConnexionFamille){
  */
 function VérifierConnexionFamille(nomFamille,passFamille){
     connexionReussi = false;
-    liste_familles = GetListeFamilles();
+    let liste_familles = GetListeFamilles();
     liste_familles.forEach((famille)=>{
         if(famille.name == nomFamille){
             if(famille.password == passFamille){
@@ -172,10 +172,11 @@ function VérifierConnexionFamille(nomFamille,passFamille){
  * @returns Un tableau de donnée pour la famille [ id, name, password ]
  */
 function GetFamille(idFamille){
-    liste_familles = GetListeFamilles()
+    let liste_familles = GetListeFamilles()
     let infoFamille = null
     liste_familles.forEach((famille)=>{
-        if(famille.idFamille == idFamille){
+        console.log(famille)
+        if(famille.Id == idFamille){
             infoFamille = famille
         }
     })

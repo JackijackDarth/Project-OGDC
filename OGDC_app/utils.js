@@ -1,7 +1,7 @@
 let Username = "admin"
 let Password = "password"
 
-const serveur_ip = "192.168.137.113";
+const serveur_ip = "192.168.2.247";
 
 async function obtenirJSON_Get(ressource) {
     // console.log("username: %s", Username);
@@ -38,6 +38,9 @@ export function ObtenirNote(idfamille){
 
 export function getCommandeAsync(){
     return obtenirRessourceJSON("commandes");
+}
+export function getInfosFamille(idfamille){
+    return obtenirJSON_Get(`familles/infoFamille/${idfamille}`);
 }
 export function deleteNote(noteid){
     return supprimerRessourceJSON(`notes/delete/${noteid}`);

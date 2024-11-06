@@ -45,7 +45,7 @@ export function ArdoiseScreen({ navigation, route }) {
     temperature_sensor: "enviromento",
   };
 
-  // Fetch user data based on user ID
+  // get le user avec id
   const fetchUser = () => {
     if (usrId) {
       obtenirUser(usrId)
@@ -64,7 +64,7 @@ export function ArdoiseScreen({ navigation, route }) {
     return () => clearInterval(intervalId);
   }, [route, usrId]);
 
-  // Set navigation title based on robot ID
+  // mettre le bon nom de robot dans lee tittre 
   useEffect(() => {
     if (currentuser) {
       const robotName =
@@ -75,7 +75,7 @@ export function ArdoiseScreen({ navigation, route }) {
     }
   }, [currentuser, navigation]);
 
-  // Fetch objects for the current robot
+  //get les objets du robot actuel et les classer selon leurs emplaceemnt
   const fetchObjects = () => {
     if (currentuser && currentuser.idRobot != null) {
       obtenirObjets(currentuser.idRobot)
@@ -121,14 +121,14 @@ export function ArdoiseScreen({ navigation, route }) {
     return () => clearInterval(intervalId);
   }, [route, usrId, currentuser, navigation]);
 
-  // Refresh objects
+  // Refresh les objet
   const onRefresh = () => {
     setRefreshing(true);
     fetchObjects();
     setRefreshing(false);
   };
 
-  // Handle item selection
+  // gerer la selection d<objeet
   const handleItemPress = (item) => {
     navigation.navigate("MenuObjet", {
       objet: item,
@@ -136,7 +136,7 @@ export function ArdoiseScreen({ navigation, route }) {
     });
   };
 
-  // Render each object item
+  // afficher les objets
   const renderItem = ({ item }) => {
     const isTemperatureSensor = item.name === "temperature_sensor";
     const status = isTemperatureSensor
@@ -242,7 +242,7 @@ export function MenuObjetScreen({ route, navigation }) {
     "Sale de jeux",
   ];
    
-  // Update object location
+  // update la positions de l'objet
   function EditObjet() {
     ListobjComplet.listeObjets[objet.name].location = NomPièce != null ? NomPièce : objet.location;
     UpdateObjet(ListobjComplet)
@@ -275,14 +275,14 @@ export function MenuObjetScreen({ route, navigation }) {
       
   }
 
-  // Item component for FlatList
+  // listes des emplacement par defaut 
   const Item = ({ item, onPress, backgroundColor, textColor }) => (
     <TouchableOpacity onPress={onPress} style={[styles.item, { backgroundColor }]}>
       <Text style={[styles.title, { color: textColor }]}>{item}</Text>
     </TouchableOpacity>
   );
 
-  // Render each location item
+  // afficher les emplacement
   const renderItem = ({ item }) => {
     const backgroundColor = item === NomPièce ? "#7393B3" : "#C0C0C0";
     const color = item === NomPièce ? "white" : "black";

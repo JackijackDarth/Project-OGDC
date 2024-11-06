@@ -10,7 +10,7 @@ import {
   Platform,
   TextInput,
 } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect,useCallback } from "react";
 import {creerNote,ObtenirNote,deleteNote,obtenirUser } from "../utils";
 import stylesCommuns from "../styles";
 import { AntDesign } from "@expo/vector-icons";
@@ -23,7 +23,7 @@ import { obtenirUneCommandeJSON, deconnexion } from "../utils";
 
 export function NoteScreen({ navigation, route }) {
   const [NomFamille, setFamilleNom] = useState(null);
-  const [NotesFamille, setNotesFamille] = useState([]);
+  const [NotesFamille, setNotesFamille] = useState(null);
   const [errormsg, setErrorMsg] = useState(null);
   const [invalidbool, setInvalidbool] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
@@ -32,15 +32,13 @@ export function NoteScreen({ navigation, route }) {
 
 
   useEffect(() => {
-    if (currentId) {
-      obtenirUser(currentId).then((user) => {
-
-        setCurrentUser(user);  
-      }).catch(err => {
-        console.error("Failed to fetch user:", err);
-      });
-    }
-  }, [currentId]);
+    const unsubscribe = navigation.addListener("focus", () => {
+      obtenirUser(currentId)
+        .then((user) => setCurrentUser(user))
+        .catch((err) => console.error("Failed to fetch user:", err));
+    });
+    return unsubscribe;
+  }, [navigation,route,currentId,NomFamille]);
   
   //simple log pour voir les infos du user actuel
   useEffect(() => {
@@ -66,16 +64,41 @@ export function NoteScreen({ navigation, route }) {
       setErrorMsg("Veuiller entrer quelque chose avant de procéder");
     }
   }
-  const fetchNotes = () => {
-    if (CurrentUser)
-      { ObtenirNote(CurrentUser.idFamille).then((notes) => setNotesFamille(notes));}
-  };
 
+  
   useEffect(() => {
-    fetchNotes();
+    const unsubscribe = navigation.addListener("focus", () => {
+      if (CurrentUser?.idFamille) {
+        ObtenirNote(CurrentUser.idFamille)
+          .then((notes) => setNotesFamille(notes))
+          .catch((err) => console.error("Error fetching notes:", err));
+      }
+      else{
+        setNotesFamille([])
+      }
+    });
+    return unsubscribe;
+  }, [navigation,route,currentId,NomFamille]);
+  
+  useEffect(() => {
+    if (CurrentUser?.idFamille) {
+      setNotesFamille([]); 
+      fetchNotes();
+    }
+  }, [CurrentUser,navigation,route]);   
+  
+  const fetchNotes = useCallback(() => {
+    if (CurrentUser?.idFamille) {
+      ObtenirNote(CurrentUser.idFamille)
+        .then((notes) => setNotesFamille(notes))
+        .catch((err) => console.error("Error fetching notes:", err));
+    }
+  }, [CurrentUser?.idFamille,navigation,route]);
+  
+  useEffect(() => {
     const intervalId = setInterval(fetchNotes, 5000);
     return () => clearInterval(intervalId);
-  }, [navigation,currentId,route]);
+  }, [navigation, currentId, route]);
 
   const Item = ({ item, onPress, backgroundColor, textColor }) => (
     <View>
