@@ -15,9 +15,7 @@ import { obtenirObjets, obtenirUser, creerFamille, joinFamille } from "../utils"
 import stylesCommuns from "../styles";
 import { AntDesign } from "@expo/vector-icons";
 
-import ItemMenu from "./ItemMenu";
 import Tuilerie from "./Tuilerie";
-import Button from "./Button";
 
 import { obtenirUneCommandeJSON, deconnexion } from "../utils";
 

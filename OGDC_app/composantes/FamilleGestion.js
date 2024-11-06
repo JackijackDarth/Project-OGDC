@@ -84,7 +84,7 @@ import {
   
 
     if (currentuser) {
-      if (currentuser.idFamille && InfosFamille) {
+      if (!currentuser.idFamille && InfosFamille) {
         return (
           <SafeAreaView style={stylesCommuns.app}>
             <View style={styles.section}>

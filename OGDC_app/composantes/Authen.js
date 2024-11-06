@@ -2,7 +2,7 @@ import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-na
 import { Text, View, Pressable, TextInput } from 'react-native';
 var validate = require("react-email-validator");
 import { useState, useEffect } from 'react';
-import { Bouton } from './BarreOutils'; // Assuming BarreOutils has a Bouton component
+
  
 import { connecterUtilisateur, creerUtilisateurJSON,obtenirUserUsrnm } from '../utils';
 

@@ -11,13 +11,10 @@ import {
   TextInput,
 } from "react-native";
 import { useState, useEffect,useCallback } from "react";
-import {creerNote,ObtenirNote,deleteNote,obtenirUser } from "../utils";
+import {creerNote,ObtenirNote,deleteNote,obtenirUser,getInfosFamille } from "../utils";
 import stylesCommuns from "../styles";
 import { AntDesign } from "@expo/vector-icons";
-
-import ItemMenu from "./ItemMenu";
 import Tuilerie from "./Tuilerie";
-import Button from "./Button";
 
 import { obtenirUneCommandeJSON, deconnexion } from "../utils";
 
@@ -27,6 +24,7 @@ export function NoteScreen({ navigation, route }) {
   const [errormsg, setErrorMsg] = useState(null);
   const [invalidbool, setInvalidbool] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [InfosFamille, setInfosFamille] = useState(null);
   const [CurrentUser, setCurrentUser] = useState(null);
   const currentId = route.params.currentuser.Id;
 
@@ -38,13 +36,19 @@ export function NoteScreen({ navigation, route }) {
         .catch((err) => console.error("Failed to fetch user:", err));
     });
     return unsubscribe;
-  }, [navigation,route,currentId,NomFamille]);
+  }, [navigation]);
+
   
-  //simple log pour voir les infos du user actuel
   useEffect(() => {
-    if(CurrentUser)
-    {console.log("Current user : ",CurrentUser)}
+    if (CurrentUser && CurrentUser.idFamille) {
+      getInfosFamille(CurrentUser.idFamille)
+        .then((famille) => setInfosFamille(famille))
+        .catch((err) => console.error("Failed to fetch famille:", err));
+    } else {
+      setInfosFamille(null);
+    }
   }, [CurrentUser]);
+
 
   function AjouterNote() {
     if (NomFamille!=null && /\S/.test(NomFamille)) {
@@ -78,14 +82,7 @@ export function NoteScreen({ navigation, route }) {
       }
     });
     return unsubscribe;
-  }, [navigation,route,currentId,NomFamille]);
-  
-  useEffect(() => {
-    if (CurrentUser?.idFamille) {
-      setNotesFamille([]); 
-      fetchNotes();
-    }
-  }, [CurrentUser,navigation,route]);   
+  }, [navigation,route,currentId,NomFamille]); 
   
   const fetchNotes = useCallback(() => {
     if (CurrentUser?.idFamille) {
@@ -93,7 +90,7 @@ export function NoteScreen({ navigation, route }) {
         .then((notes) => setNotesFamille(notes))
         .catch((err) => console.error("Error fetching notes:", err));
     }
-  }, [CurrentUser?.idFamille,navigation,route]);
+  }, [navigation]);
   
   useEffect(() => {
     const intervalId = setInterval(fetchNotes, 5000);
@@ -104,11 +101,11 @@ export function NoteScreen({ navigation, route }) {
     <View>
       <Tuile texte={item.message} iconNom="solution1" onPress_cb={() => {Alert.alert('Suppression', 'Voulez vous supprimer cette note?', [
       {
-        text: 'Cancel',
+        text: 'Annuler',
         onPress: () => console.log('Cancel Pressed'),
         style: 'cancel',
       },
-      {text: 'OK', onPress: () => {deleteNote(item.Id); fetchNotes()}},
+      {text: 'Ok', onPress: () => {deleteNote(item.Id); fetchNotes()}},
     ]);}} />
     </View>
   );
@@ -131,8 +128,10 @@ export function NoteScreen({ navigation, route }) {
 
   return (
     <View style={stylesCommuns.app}>
-
-      <View style={styles.form}>
+        <Text style={stylesnote.title}>
+          Ajouter une note
+        </Text>
+      <View style={stylesnote.section}>
         <Text style={styles.subtitle}>
           Ajouter une note
         </Text>
@@ -301,5 +300,83 @@ const styles = StyleSheet.create({
   itemStatus: {
     fontSize: 14,
     color: "gray",
+  },
+});
+
+const stylesnote = StyleSheet.create({
+  section: {
+    padding: 20,
+    backgroundColor: "#f1f7fe",
+    borderRadius: 12,
+    marginVertical: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 10,
+    color: "#333",
+  },
+  description: {
+    fontSize: 16,
+    textAlign: "center",
+    color: "#666",
+    marginBottom: 20,
+  },
+  subtitle: {
+    fontSize: 20,
+    fontWeight: "500",
+    textAlign: "center",
+    color: "#555",
+    marginBottom: 15,
+  },
+  formContainer: {
+    padding: 20,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    marginHorizontal: 20,
+    marginBottom: 20,
+    elevation: 3,
+  },
+  input: {
+    height: 48,
+    borderColor: "#ddd",
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    marginBottom: 15,
+    backgroundColor: "#f9f9f9",
+  },
+  inputError: {
+    borderColor: "rgba(255, 0, 0, 0.4)",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 14,
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  createFamilyButton: {
+    backgroundColor: "#4CAF50",
+    borderRadius: 24,
+    paddingVertical: 12,
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  createFamilyButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  confirmButton: {
+    backgroundColor: "#0066ff",
+    borderRadius: 24,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  confirmButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });

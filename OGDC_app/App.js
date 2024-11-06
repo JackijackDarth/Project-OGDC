@@ -1,16 +1,13 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-
 import { AuthenScreen, SeConnecterScreen, AideScreen, CreeCompteScreen } from './composantes/Authen';
-import {ArdoiseScreen, MenuObjetScreen} from './composantes/ArdoiseScreen';
-import PanierScreen from './composantes/PanierScreen';
-import {CommandeInfoScreen} from './composantes/CommandeInfoScreen';
-import RestoInfoScreen from './composantes/RestoInfoScreen';
-import { AccueilScreen, AjoutRobotScreen,} from './composantes/AccueilScreen';
+import {ArdoiseScreen, MenuObjetScreen} from './composantes/ObjetGestion';
+import {CommandeInfoScreen} from './composantes/Settings';
+import { AccueilScreen, AjoutRobotScreen,} from './composantes/RobotGestion';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { AntDesign, MaterialCommunityIcons} from '@expo/vector-icons';
-import { NoteScreen } from './composantes/NoteScreen';
-import { FamillymanageScreen,MenuFamilleScreen } from './composantes/CommandeScreen';
+import { NoteScreen } from './composantes/NotesGestion';
+import { FamillymanageScreen,MenuFamilleScreen } from './composantes/FamilleGestion';
 const Tab = createBottomTabNavigator();
 const { Navigator, Screen, Group } = createNativeStackNavigator();
 
@@ -55,7 +52,7 @@ function MainTabNavigator({ route }) {
        <Tab.Screen
         name="FamilyManage"
         component={FamillymanageScreen}
-        options={{ title: "Family Manage" }}
+        options={{ title: "Gestion famille" }}
         initialParams={{ currentuser }}
       />
       <Tab.Screen
@@ -107,12 +104,6 @@ export default function App() {
         <Screen name="MenuFamille" component={MenuFamilleScreen} options={{ title: "Menu de famille" }} />
         </Group>
 
-        <Screen name="Panier" component={PanierScreen} />
-
-        
-
-        <Screen name="RestoInfo" component={RestoInfoScreen}
-          options={{ title: "Nous joindre" }} />
       </Navigator>
     </NavigationContainer>
   );

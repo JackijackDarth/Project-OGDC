@@ -5,13 +5,11 @@ import {
   FlatList,
   SafeAreaView,
   Pressable,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   TextInput,
   TouchableOpacity,
   SectionList,
-  StatusBar,
 } from "react-native";
 import { useState, useEffect } from "react";
 import {

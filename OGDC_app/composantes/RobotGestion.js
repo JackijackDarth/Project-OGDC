@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react';
 import { AntDesign } from '@expo/vector-icons';
 import stylesCommuns from '../styles';
 import { nbItemPanier, obtenirPanier } from '../panier';
-import Tuilerie from './Tuilerie';
 import { obtenirRobotsJSON, ConnecterRobot, obtenirUser } from '../utils';
+import Tuilerie from "./Tuilerie";
 
 
 
