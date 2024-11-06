@@ -59,19 +59,44 @@ function créerUtilisateur(userInfo) {
  */
 function ajouterRobot(userId, robotId){
     let trouver = false;
+    let trouverFamille = false;
+    let famille = null;
+    let robotDejaConnecter = false;
     let users = JSON.parse(fs.readFileSync(usersFilePath));
     users.forEach(user => {
-        if (user.Id == userId){
-            user.idRobot = robotId;
-            trouver = true;
+        if(user.idRobot == robotId){
+            famille = user.idFamille;
+            robotDejaConnecter = true;
         }
     });
+    if(robotDejaConnecter){
+        users.forEach(user => {
+            if(user.Id == userId){
+                if(user.idFamille == famille && famille != null){
+                    trouverFamille = true
+                    user.idRobot = robotId;
+                }
+            }
+        });
+    }
+    else{
+        users.forEach(user => {
+            if(user.Id == userId){
+                trouver = true
+                user.idRobot = robotId;
+            }
+        });
+    }
     if(trouver){
         fs.writeFileSync(usersFilePath, JSON.stringify(users));
-
-        return { erreur: 0, msg: "Réussi" };
+        return { erreur: 0, msg: "User" };
     }
-    return {erreur: 1, msg: "Erreur: Users non trouvé"}
+    else if(trouverFamille){
+        fs.writeFileSync(usersFilePath, JSON.stringify(users));
+        return { erreur: 0, msg: "Famille" };
+
+    }
+    return {erreur: 1, msg: "User ou famille du user inexistant"}
 }
 
 /**
