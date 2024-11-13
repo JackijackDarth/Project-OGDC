@@ -22,16 +22,15 @@ import stylesCommuns from "../styles";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 
 ///////////
-// ARDOISE //
+// OBJETS //
 ///////////
-export function ArdoiseScreen({ navigation, route }) {
+export function ObjetsScreen({ navigation, route }) {
   const [objetsList, setObjetsList] = useState([]);
   const [ListobjComplet, setListobjComplet] = useState();
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const usrId = route.params.currentuser.Id;
   const [currentuser, setCurrentUser] = useState(null);
-  const [locationlist, setLocationList] = useState([]);
 
   const iconMap = {
     camera: "camera",
@@ -131,6 +130,7 @@ export function ArdoiseScreen({ navigation, route }) {
     navigation.navigate("MenuObjet", {
       objet: item,
       ListobjComplet: ListobjComplet,
+      usrId : usrId
     });
   };
 
@@ -169,6 +169,7 @@ export function ArdoiseScreen({ navigation, route }) {
                     name: item.name,
                     pin: item.pin,
                     value: item.status == 1 ? 0 : 1,
+                    userId : usrId 
                   }
                 )
                   .then((res) => {
@@ -228,8 +229,8 @@ export function MenuObjetScreen({ route, navigation }) {
   const [NomPièce, setRoomName] = useState(null);
   const [errormsg, setErrorMsg] = useState(null);
   const [invalidbool, setInvalidbool] = useState(false);
-  const { objet, ListobjComplet } = route.params;
-  const [temp, setTemp] = useState(null)
+  const { objet, ListobjComplet,usrId } = route.params;
+  const [temp, setTemp] = useState(null);
   const [selectedId, setSelectedId] = useState();
   const isTemperatureSensor = objet.name === "temperature_sensor";
   const choixlocation = [
@@ -260,6 +261,7 @@ export function MenuObjetScreen({ route, navigation }) {
           name: objet.name,
           pin: objet.pin,
           value:temp,
+          userId:usrId
         }
       )
         .then((res) => {
@@ -309,7 +311,7 @@ export function MenuObjetScreen({ route, navigation }) {
           </Text>
           <TextInput
             style={styles.input}
-            onChangeText={(text) => setTemp(text)}
+            onChangeText={(text) => setTemp(parseInt(text))}
             placeholder="Température"
             keyboardType="numeric"
             maxLength={5}
