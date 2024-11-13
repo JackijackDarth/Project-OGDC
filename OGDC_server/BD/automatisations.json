@@ -1,0 +1,18 @@
+[
+    {
+        "Id": 2,
+        "name": "Automatisation a partir d'une heure",
+        "condition": {
+            "heure": "17:11:22"
+        },
+        "commande": {
+            "Id": 2,
+            "name": "Allumer/Éteindre LED",
+            "object": "led_rouge",
+            "pin": 5,
+            "newValue": 1,
+            "date": "2024-11-12 23 h 05 min 25 s"
+        },
+        "date_creation": "2024-11-12 23 h 05 min 25 s"
+    }
+]
