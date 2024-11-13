@@ -19,7 +19,7 @@ import Tuilerie from "./Tuilerie";
 
 import { obtenirUneCommandeJSON, deconnexion } from "../utils";
 
-export function CommandeInfoScreen({ navigation, route }) {
+export function SettingsScreen({ navigation, route }) {
  
 
   return (

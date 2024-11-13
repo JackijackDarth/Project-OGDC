@@ -35,23 +35,12 @@ export function NoteScreen({ navigation, route }) {
   const currentId = route.params.currentuser.Id;
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
+    
       obtenirUser(currentId)
         .then((user) => setCurrentUser(user))
         .catch((err) => console.error("Failed to fetch user:", err));
-    });
-    return unsubscribe;
+  
   }, [navigation]);
-
-  useEffect(() => {
-    if (CurrentUser && CurrentUser.idFamille) {
-      getInfosFamille(CurrentUser.idFamille)
-        .then((famille) => setInfosFamille(famille))
-        .catch((err) => console.error("Failed to fetch famille:", err));
-    } else {
-      setInfosFamille(null);
-    }
-  }, [CurrentUser]);
 
   function AjouterNote() {
     if (NomFamille != null && /\S/.test(NomFamille)) {
@@ -73,7 +62,7 @@ export function NoteScreen({ navigation, route }) {
   }
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
+   
       if (CurrentUser?.idFamille) {
         ObtenirNote(CurrentUser.idFamille)
           .then((notes) => setNotesFamille(notes))
@@ -81,9 +70,7 @@ export function NoteScreen({ navigation, route }) {
       } else {
         setNotesFamille([]);
       }
-    });
-    return unsubscribe;
-  }, [navigation, route, currentId, NomFamille]);
+  }, [navigation, route, CurrentUser]);
 
   const fetchNotes = useCallback(() => {
     if (CurrentUser?.idFamille) {
@@ -91,10 +78,11 @@ export function NoteScreen({ navigation, route }) {
         .then((notes) => setNotesFamille(notes))
         .catch((err) => console.error("Error fetching notes:", err));
     }
-  }, [navigation]);
+  }, [navigation,InfosFamille,CurrentUser]);
 
   useEffect(() => {
     const intervalId = setInterval(fetchNotes, 5000);
+    fetchNotes()
     return () => clearInterval(intervalId);
   }, [navigation, currentId, route]);
 

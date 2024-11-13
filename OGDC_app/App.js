@@ -1,13 +1,14 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthenScreen, SeConnecterScreen, AideScreen, CreeCompteScreen } from './composantes/Authen';
-import {ArdoiseScreen, MenuObjetScreen} from './composantes/ObjetGestion';
-import {CommandeInfoScreen} from './composantes/Settings';
+import {ObjetsScreen, MenuObjetScreen} from './composantes/ObjetGestion';
+import {SettingsScreen} from './composantes/Settings';
 import { AccueilScreen, AjoutRobotScreen,} from './composantes/RobotGestion';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { AntDesign, MaterialCommunityIcons} from '@expo/vector-icons';
 import { NoteScreen } from './composantes/NotesGestion';
 import { FamillymanageScreen,MenuFamilleScreen } from './composantes/FamilleGestion';
+import { AutomateScreen } from './composantes/AutomateGestion';
 const Tab = createBottomTabNavigator();
 const { Navigator, Screen, Group } = createNativeStackNavigator();
 
@@ -29,6 +30,8 @@ function MainTabNavigator({ route }) {
           iconName = focused ? 'cog' : 'cog-outline';
         } else if (route.name === 'FamilyManage') {
           iconName = focused ? 'account-group' : 'account-group-outline';
+        } else if (route.name === 'Automate') {
+          iconName = focused ? 'timer-cog' : 'timer-cog-outline';
         }
 
         return <MaterialCommunityIcons name={iconName} size={30} color="black" />;
@@ -45,8 +48,14 @@ function MainTabNavigator({ route }) {
       />
       <Tab.Screen
         name="Ardoise"
-        component={ArdoiseScreen}
+        component={ObjetsScreen}
         options={{ title: "Page d'objet" }}
+        initialParams={{ currentuser }}  
+      />
+       <Tab.Screen
+        name="Automate"
+        component={AutomateScreen}
+        options={{ title: "Automatisations" }}
         initialParams={{ currentuser }}  
       />
        <Tab.Screen
@@ -63,10 +72,11 @@ function MainTabNavigator({ route }) {
       />
       <Tab.Screen
         name="CommandeInfo"
-        component={CommandeInfoScreen}
+        component={SettingsScreen}
         options={{ title: "Settings" }}
         initialParams={{ currentuser }}  
       />
+        
     </Tab.Navigator>
   );
 }

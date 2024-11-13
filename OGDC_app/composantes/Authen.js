@@ -1,4 +1,4 @@
-import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator} from 'react-native';
 import { Text, View, Pressable, TextInput } from 'react-native';
 var validate = require("react-email-validator");
 import { useState, useEffect } from 'react';
@@ -244,10 +244,12 @@ export function SeConnecterScreen({ navigation }) {
     const [password, setPassword] = useState("password");
     const [connectionmsg, setConnectionmsg] = useState(null);
     const [invalidbool, setInvalidbool] = useState(false);
+    const [loading, setLoading] = useState() 
  
 
-    function seConnecter() {
-        connecterUtilisateur(username, password).then((res) => {
+    async function seConnecter() {
+        setLoading(true);
+        await connecterUtilisateur(username, password).then((res) => {
             navigation.popToTop();
             navigation.dispatch({
                 type: 'REPLACE',
@@ -257,13 +259,24 @@ export function SeConnecterScreen({ navigation }) {
                         nom: res.nom, usrId : res.Id, currentuser : res
                   },
                 },
-              });
+              })
+              setLoading(false);
         })
             .catch(err => {
-                console.log("login failed: %s", err);
+                console.log("login failed: %s", err[1]);
+                if (err == "[TypeError: Network request timed out]"){
+                    setLoading(false);
+                setConnectionmsg("Une erreur est survenu. Nos services sont probablement hors-ligne!");
+                setInvalidbool(true);
+                }
+                else{
+                     setLoading(false);
                 setConnectionmsg("Mot de passe/nom d'utilisateur invalide!");
                 setInvalidbool(true);
+                }
+               
             });
+            setLoading(false);
     }
   
     useEffect(() => {
@@ -276,7 +289,15 @@ export function SeConnecterScreen({ navigation }) {
         });
     }, [navigation]);
 
-    return (
+    if (loading){
+        return (
+            <View style={[styles.container, styles.horizontal]}>
+                    <ActivityIndicator size="large" />
+                </View>
+        );
+    }
+    else{
+          return (
         <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={styles.formBox}
@@ -310,6 +331,8 @@ export function SeConnecterScreen({ navigation }) {
 
         </KeyboardAvoidingView>
     );
+    }
+  
 }
 
 export function AideScreen({ navigation }) {
@@ -413,5 +436,14 @@ const styles = StyleSheet.create({
     },
     boxerreur: {
         backgroundColor: 'red'
-    }
+    },
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+      },
+      horizontal: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        padding: 10,
+      },
 });
