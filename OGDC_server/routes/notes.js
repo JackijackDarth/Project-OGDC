@@ -33,7 +33,7 @@ notesRoutes.route('/:method/:param1')
         if(req.params.method == "get"){
             console.log("Obtenir les notes pour la famille : ",req.params.param1 + " ------------------------------------------");
             const resultat = notes.ObtenirNotesFamille(req.params.param1);
-            console.log("Résultat de obtenirTouteCommandes:", resultat);
+            //console.log("Résultat de ObtenirNotesFamille:", resultat);
             
             if (resultat.erreur !== 0) {
                 res.status(401).send(resultat);

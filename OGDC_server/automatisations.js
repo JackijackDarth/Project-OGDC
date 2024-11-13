@@ -87,6 +87,38 @@ function SupprimerAutomatisation(idAutomatisation){
     }
 }
 
+function ObtenirAutomatisationUser(idUser){
+    let liste_automatisations = GetListeAutomatisations()
+    let automatisations = []
+    liste_automatisations.forEach((automatisation)=>{
+        if(automatisation.commande.idUser == idUser){
+            automatisations.push(automatisation);
+        }
+    })
+    if (automatisations != null && automatisations.length > 0){
+        return{erreur:0,msg:"Réussi",automatisations: automatisations}
+    }
+    else{
+        return{erreur:1,msg:"Aucune automatisation appartenant au idUser"}
+    }
+}
+
+function ObtenirAutomatisationRobot(idRobot){
+    let liste_automatisations = GetListeAutomatisations()
+    let automatisations = []
+    liste_automatisations.forEach((automatisation)=>{
+        if(automatisation.commande.idRobot == idRobot){
+            automatisations.push(automatisation);
+        }
+    })
+    if (automatisations != null && automatisations.length > 0){
+        return{erreur:0,msg:"Réussi",automatisations: automatisations}
+    }
+    else{
+        return{erreur:1,msg:"Aucune automatisation appartenant au idUser", automatisations:null}
+    }
+}
+
 /**
  * Fonction retournant la liste de Automatisations
  * @returns Un tableau JavaScript de la liste de Automatisations dans le fichier JSON
@@ -112,4 +144,6 @@ function PostListeAutomatisations(listeAutomatisations){
 module.exports = {
     EnvoyerAutomatisation,
     SupprimerAutomatisation,
+    ObtenirAutomatisationUser,
+    ObtenirAutomatisationRobot,
 };

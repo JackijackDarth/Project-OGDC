@@ -80,12 +80,16 @@ function CréerObjetFamille(id,nameFamille,userId){
  */
 function ObtenirMembreFamille(idFamille){
     //Vérifie ID famille est bon
-    if(EstFamilleExistante(idFamille)){
+    if(EstFamilleExistanteId(idFamille)){
         let membres = []
         let listeUsers = users.GetListeUsers()
         listeUsers.forEach((user)=>{
             if(user.idFamille == idFamille){
-                membres.push(user.Id)
+                let newUser = {
+                    Id: user.Id,
+                    username: user.prenom + " " + user.nom
+                }
+                membres.push(newUser)
             }
         })
         if(membres.length > 0){
@@ -120,6 +124,17 @@ function EstFamilleExistante(nomFamille){
     let find = false;
     liste_familles.forEach((famille)=>{
         if(famille.name == nomFamille){
+            find = true;
+        }
+    })
+    return find;
+}
+
+function EstFamilleExistanteId(idFamille){
+    liste_familles = GetListeFamilles();
+    let find = false;
+    liste_familles.forEach((famille)=>{
+        if(famille.Id == idFamille){
             find = true;
         }
     })
@@ -175,7 +190,7 @@ function GetFamille(idFamille){
     let liste_familles = GetListeFamilles()
     let infoFamille = null
     liste_familles.forEach((famille)=>{
-        console.log(famille)
+        //console.log(famille)
         if(famille.Id == idFamille){
             infoFamille = famille
         }

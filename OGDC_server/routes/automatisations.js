@@ -27,15 +27,23 @@ automatisationsRoutes.route('/:param1')
             res.status(201).send(resultat);
         }
     })
+automatisationsRoutes.route('/:param1/:param2')
     .get((req,res)=>{
-        console.log("Obtenir les automatisations pour le user : ",req.params.param1 + " ------------------------------------------");
-        const resultat = automatisations.ObtenirAutomatisationUser(req.params.param1);
+        console.log("Obtenir les automatisations pour le " + req.params.param1 + " : " + req.params.param2 + " ------------------------------------------");
+        let resultat = {erreur:1,msg:"param1 incorrect"};
+        if(req.params.param1 == "idUser"){
+            resultat = automatisations.ObtenirAutomatisationUser(req.params.param2);
+            console.log(resultat);
+        }
+        else if(req.params.param1 == "idRobot"){
+            resultat = automatisations.ObtenirAutomatisationRobot(req.params.param2);
+        }
         console.log("Résultat de ObtenirAutomatisationUser:", resultat);
         
         if (resultat.erreur !== 0) {
             res.status(401).send(resultat);
         } else {
-            res.json(resultat.notes);
+            res.json(resultat.automatisations);
         }
     })
 

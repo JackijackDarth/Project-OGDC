@@ -6,13 +6,51 @@
             "heure": "17:11:22"
         },
         "commande": {
-            "Id": 2,
+            "Id": 4,
             "name": "Allumer/Éteindre LED",
             "object": "led_rouge",
             "pin": 5,
             "newValue": 1,
-            "date": "2024-11-12 23 h 05 min 25 s"
+            "idUser": 1,
+            "idRobot": 0,
+            "date": "2024-11-13 09 h 54 min 50 s"
         },
-        "date_creation": "2024-11-12 23 h 05 min 25 s"
+        "date_creation": "2024-11-13 09 h 54 min 50 s"
+    },
+    {
+        "Id": 3,
+        "name": "Automatisation a partir d'une heure",
+        "condition": {
+            "heure": "17:11:22"
+        },
+        "commande": {
+            "Id": 1,
+            "name": "Allumer/Éteindre LED",
+            "object": "led_rouge",
+            "pin": 5,
+            "newValue": 1,
+            "idUser": 2,
+            "idRobot": 0,
+            "date": "2024-11-13 11 h 44 min 38 s"
+        },
+        "date_creation": "2024-11-13 11 h 44 min 38 s"
+    },
+    {
+        "Id": 4,
+        "name": "Automatisation a partir d'une heure",
+        "condition": {
+            "heure": "17:11:22"
+        },
+        "commande": {
+            "Id": 1,
+            "name": "Allumer/Éteindre LED",
+            "object": "led_rouge",
+            "pin": 5,
+            "newValue": 1,
+            "idUser": 1,
+            "idRobot": 1,
+            "date": "2024-11-13 11 h 44 min 39 s"
+        },
+        "date_creation": "2024-11-13 11 h 44 min 39 s"
     }
 ]

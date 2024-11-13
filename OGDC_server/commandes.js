@@ -1,6 +1,6 @@
-const math = require('mathjs');
 const fs = require('fs');
 const commandesFilePath = "./BD/pilesCommandes.json";
+const users = require('./users.js')
 
 /**
  * Fonction permettant de créer des commandes (initier pareil)
@@ -12,17 +12,31 @@ const commandesFilePath = "./BD/pilesCommandes.json";
  * @param {int} nouvelleValeur
  * @returns Un objet JS qui représente une commande
  */
-function CreerCommande(id, nomCommande, nomObjet, numPin, nouvelleValeur) {
+function CreerCommande(id, nomCommande, idUser, nomObjet, numPin, nouvelleValeur) {
     let today = new Date();
     let now = today.toLocaleString();
-    return {
-        Id: id,
-        name: nomCommande,
-        object: nomObjet,
-        pin: parseInt(numPin, 10),
-        newValue: nouvelleValeur,
-        date: now
+    let user = null;
+    let resultat = {erreur:1,msg:'userId null'}
+    if(idUser != null){
+        resultat = users.obtenirUsager(idUser);
     }
+    console.log("User : ",resultat)
+    if(resultat.user != null && resultat.erreur == 0){
+        console.log("User.IdRobot : ",resultat.user.idRobot)
+        if(resultat.user.idRobot != null){
+            return {
+                Id: id,
+                name: nomCommande,
+                object: nomObjet,
+                pin: parseInt(numPin, 10),
+                newValue: nouvelleValeur,
+                idUser: idUser,
+                idRobot: resultat.user.idRobot,
+                date: now
+            }
+        }
+    }
+    return null;
 }
 
 /**
@@ -40,21 +54,23 @@ function EnvoyerCommande(infoObjet, nomCommande, returnCommande = false) {
     });
     if (infoObjet != null) {
         let nouvelleCommande = null;
+        infoObjet.value = parseInt(infoObjet.value,10);
+        console.log(infoObjet.value);
         switch (nomCommande) {
             case "switchLed":
                 if (EstUneLumiere(infoObjet))
-                    nouvelleCommande = CreerCommande(maxId + 1, "Allumer/Éteindre LED", infoObjet.name, infoObjet.pin, infoObjet.value)
+                    nouvelleCommande = CreerCommande(maxId + 1, "Allumer/Éteindre LED", infoObjet.userId, infoObjet.name, infoObjet.pin, infoObjet.value)
                 else
                     return { erreur: 1, msg: "Type Lumière non-valide" }
                 break;
             case "changeTemp":
                 if (EstUnChauffage(infoObjet))
-                    nouvelleCommande = CreerCommande(maxId + 1, "Changer temp. cible", infoObjet.name, infoObjet.pin, infoObjet.value)
+                    nouvelleCommande = CreerCommande(maxId + 1, "Changer temp. cible", infoObjet.userId, infoObjet.name, infoObjet.pin, infoObjet.value)
                 else
                     return { erreur: 1, msg: "Type Température non-valide" }
                 break;
             case "startCamera":
-                nouvelleCommande = CreerCommande(maxId + 1, "Lancement caméra", infoObjet.name, infoObjet.pin, infoObjet.value)
+                nouvelleCommande = CreerCommande(maxId + 1, "Lancement caméra", infoObjet.userId, infoObjet.name, infoObjet.pin, infoObjet.value)
                 break;  // Vérifier Camera ? Besoin plus D'info
             //case "captureMovement":
             //    if (EstUneDemandeDeMouvement(infoObjet))
@@ -64,7 +80,7 @@ function EnvoyerCommande(infoObjet, nomCommande, returnCommande = false) {
             //    break;
             case "pressButton":
                 if (EstUnBouton(infoObjet))
-                    nouvelleCommande = CreerCommande(maxId + 1, "Appuyer sur bouton principal", infoObjet.name, infoObjet.pin, infoObjet.value)
+                    nouvelleCommande = CreerCommande(maxId + 1, "Appuyer sur bouton principal", infoObjet.userId, infoObjet.name, infoObjet.pin, infoObjet.value)
                 else
                     return { erreur: 1, msg: "Type Bouton non-vslide" }
                 break;
@@ -169,18 +185,23 @@ function EstUnChauffage(infoChauffage) {
     if (infoChauffage.pin == null || !EstUnePinValide(infoChauffage))
         donneeValide = false;
     if (infoChauffage.value == null || infoChauffage.value < minValTemp || infoChauffage.value > maxValTemp)
-        donneValide = false;
+        donneeValide = false;
     return donneeValide;
 }
 
 /**
- * Fonction qui retourne toute les commandes en cours dans le fichier JSON
+ * Fonction qui retourne toute les commandes en cours pour un type de robot dans le fichier JSON
  * @returns un tuple avec le status de la requete et la liste de commandes {erreur,msg,commandes}
  */
-function obtenirTouteCommandes() {
+function obtenirTouteCommandesPourRobot(idRobot) {
     listeCommandes = GetListeCommandes()
-    if (listeCommandes != null || listeCommandes.length > 0)
-        return { erreur: 0, msg: "Réussi", commandes: listeCommandes }
+    commandes = []
+    listeCommandes.forEach((commande)=>{
+        if(commande.idRobot == idRobot)
+            commandes.push(commande);
+    })
+    if (commandes != null || commandes.length > 0)
+        return { erreur: 0, msg: "Réussi", commandes: commandes }
     else
         return { erreur: 1, msg: "La liste est vide ou inexistante", commandes: null }
 }
@@ -241,7 +262,7 @@ function PostListeCommandes(listeCommandes){
 
 module.exports = {
     EnvoyerCommande,
-    obtenirTouteCommandes,
+    obtenirTouteCommandesPourRobot,
     SupprimerCommande,
     CreerCommande,
 };

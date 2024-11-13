@@ -5,23 +5,7 @@ const commandesRoutes = Router();
 
 
 commandesRoutes.route('/')
-    /**
-     * commandesRoutes  /GET/
-     * Obtiens toute les commandes enregistrer dans la BD
-     * Retourne une liste de toute les commandes en attente
-     * Si la liste est vide ou null, retourne une erreur 401 avec le resultat
-     */
-    .get((req,res)=>{
-        console.log("Obtenir les commandes pour le robot --------------------------------------------------------");
-        const resultat = commandes.obtenirTouteCommandes();
-        //console.log("Résultat de obtenirTouteCommandes:", resultat);
-        
-        if (resultat.erreur !== 0) {
-            res.status(401).send(resultat);
-        } else {
-            res.json(resultat.commandes);
-        }
-    })
+
 commandesRoutes.route('/:param1')
     /**
      * commandesRoutes  /POST/nomCommande/
@@ -53,6 +37,24 @@ commandesRoutes.route('/:param1')
             res.status(401).send(resultat);
         } else {
             res.status(201).send(resultat);
+        }
+    })
+
+    /**
+     * commandesRoutes  /GET/idRobot
+     * Obtiens toute les commandes enregistrer dans la BD
+     * Retourne une liste de toute les commandes en attente
+     * Si la liste est vide ou null, retourne une erreur 401 avec le resultat
+     */
+    .get((req,res)=>{
+        console.log("Obtenir les commandes pour le robot " + req.params.param1 + " --------------------------------------------------------");
+        const resultat = commandes.obtenirTouteCommandesPourRobot(req.params.param1);
+        //console.log("Résultat de obtenirTouteCommandes:", resultat);
+        
+        if (resultat.erreur !== 0) {
+            res.status(401).send(resultat);
+        } else {
+            res.json(resultat.commandes);
         }
     })
 
