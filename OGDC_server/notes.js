@@ -2,8 +2,6 @@ const fs = require('fs');
 const users = require('./users');
 const notesFilePath = "./BD/listeNotes.json";
 
-//TODO
-//FONCTION NOTE
 
 function SupprimerNote(idNote){
     let liste_notes = GetListeNotes()
