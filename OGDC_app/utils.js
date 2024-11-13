@@ -7,7 +7,7 @@ async function obtenirJSON_Get(ressource) {
     // console.log("username: %s", Username);
     // console.log("password: %s", Password);
 
-    let url = new URL(`http://${serveur_ip}:1883/cafehomer/${ressource}`);
+    let url = new URL(`http://${serveur_ip}:1883/ogdc/${ressource}`);
     const res = await fetch(url, {
         headers: {
             "Authorization": `Basic ${Username}:${Password}`,
@@ -66,7 +66,7 @@ export function deconnexion(usrId){
     return obtenirJSON_Get(`deconnexion/${usrId}`);
 }
 async function créerJSON_Post(ressource, resInfo) {
-    let url = new URL(`http://${serveur_ip}:1883/cafehomer/${ressource}`);
+    let url = new URL(`http://${serveur_ip}:1883/ogdc/${ressource}`);
     const res = await fetch(url, {
         method: "POST",
         headers: {
@@ -80,7 +80,7 @@ async function créerJSON_Post(ressource, resInfo) {
     return { res };
 }
 async function ModifierJSON_Put(ressource, resInfo) {
-    let url = new URL(`http://${serveur_ip}:1883/cafehomer/${ressource}`);
+    let url = new URL(`http://${serveur_ip}:1883/ogdc/${ressource}`);
     const res = await fetch(url, {
         method: "PUT",
         headers: {
@@ -95,7 +95,7 @@ async function ModifierJSON_Put(ressource, resInfo) {
 }
 
 async function supprimerRessourceJSON(ressource) {
-    let url = new URL(`http://${serveur_ip}:1883/cafehomer/${ressource}`);
+    let url = new URL(`http://${serveur_ip}:1883/ogdc/${ressource}`);
     const res = await fetch(url, {
         method: "DELETE",
         headers: {

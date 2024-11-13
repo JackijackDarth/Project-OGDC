@@ -2,8 +2,6 @@ const fs = require('fs');
 const users = require('./users');
 const notesFilePath = "./BD/listeNotes.json";
 
-//TODO
-//FONCTION NOTE
 
 function SupprimerNote(idNote){
     let liste_notes = GetListeNotes()
@@ -50,10 +48,17 @@ function CreerNotes(infoNote){
 }
 
 function CreerObjetNote(idNote, idUser, message){
+    const minIdFamille = 1000;
     let today = new Date();
     let now = today.toLocaleString();
-    let resultat = users.obtenirUsager(idUser)
-    let idFamille = resultat.user.idFamille
+    let idFamille = null;
+    if(idUser >= minIdFamille){
+        idFamille = idUser  // Le message vient de la famille et est adresser à la famille (Quand c'est le robot)
+    }
+    else if(idUser < minIdFamille && idUser >= 0){
+        let resultat = users.obtenirUsager(idUser)
+        idFamille = resultat.user.idFamille
+    }
     return {
         Id: idNote,
         message: message,

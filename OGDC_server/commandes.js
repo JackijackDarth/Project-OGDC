@@ -32,7 +32,7 @@ function CreerCommande(id, nomCommande, nomObjet, numPin, nouvelleValeur) {
  * @param {string} nomCommande 
  * @returns 201 + "Réussi" | Error:1,msg:""
  */
-function EnvoyerCommande(infoObjet, nomCommande) {
+function EnvoyerCommande(infoObjet, nomCommande, returnCommande = false) {
     let pilesCommandes = GetListeCommandes()
     let maxId = 0
     pilesCommandes.forEach(commande => {
@@ -69,10 +69,13 @@ function EnvoyerCommande(infoObjet, nomCommande) {
                     return { erreur: 1, msg: "Type Bouton non-vslide" }
                 break;
             default:
-                return { error: 1, msg: "Nom de commande incorrect ou inconnu" }
+                return { erreur: 1, msg: "Nom de commande incorrect ou inconnu" }
 
         }
         if (nouvelleCommande != null) {
+            if(returnCommande){
+                return {erreur: 0, commande: nouvelleCommande};
+            }
             pilesCommandes.push(nouvelleCommande)
             PostListeCommandes(pilesCommandes)
             return { erreur: 0, msg: "Création de la commande réussi" };
@@ -106,7 +109,7 @@ function EstUneLumiere(infoLED) {
     const minValLum = 0;
     const maxValLum = 1;
     let donneeValide = true
-    console.log(infoLED);
+    console.log("InfoLED: ",infoLED);
     if (infoLED.name == null || !infoLED.name.includes("led"))
         donneeValide = false;
     if (infoLED.pin == null || !EstUnePinValide(infoLED.pin))
@@ -194,7 +197,6 @@ function SupprimerCommande(idCommande){
     let index = null;
     listeCommandes.forEach(commande =>{
         if (commande.Id == idCommande) {
-            indexTrouver = index;
             index = listeCommandes.indexOf(commande);
             find = true;
         }
@@ -241,4 +243,5 @@ module.exports = {
     EnvoyerCommande,
     obtenirTouteCommandes,
     SupprimerCommande,
+    CreerCommande,
 };
