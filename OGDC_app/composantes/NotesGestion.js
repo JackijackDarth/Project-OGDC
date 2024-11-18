@@ -7,22 +7,18 @@ import {
   Pressable,
   Alert,
   KeyboardAvoidingView,
-  Platform,
   TextInput,
+  Platform,
+  Keyboard
 } from "react-native";
 import { useState, useEffect, useCallback } from "react";
+import { AntDesign } from "@expo/vector-icons";
 import {
   creerNote,
   ObtenirNote,
   deleteNote,
   obtenirUser,
-  getInfosFamille,
 } from "../utils";
-import stylesCommuns from "../styles";
-import { AntDesign } from "@expo/vector-icons";
-import Tuilerie from "./Tuilerie";
-
-import { obtenirUneCommandeJSON, deconnexion } from "../utils";
 
 export function NoteScreen({ navigation, route }) {
   const [NomFamille, setFamilleNom] = useState(null);
@@ -36,187 +32,194 @@ export function NoteScreen({ navigation, route }) {
 
   useEffect(() => {
     
-      obtenirUser(currentId)
-        .then((user) => setCurrentUser(user))
-        .catch((err) => console.error("Failed to fetch user:", err));
-  
-  }, [navigation]);
+    obtenirUser(currentId)
+      .then((user) => setCurrentUser(user))
+      .catch((err) => console.error("Failed to fetch user:", err));
 
-  function AjouterNote() {
-    if (NomFamille != null && /\S/.test(NomFamille)) {
-      creerNote({ idUser: currentId, message: NomFamille })
-        .then((res) => {
-          console.log("Join complette %s", res);
-          setInvalidbool(false);
-          setErrorMsg("");
-        })
-        .catch((err) => {
-          console.log(err);
-          console.log("creation échec: %s", err);
-          setInvalidbool(true);
-        });
-    } else {
-      setInvalidbool(true);
-      setErrorMsg("Veuiller entrer quelque chose avant de procéder");
-    }
+}, [navigation]);
+function AjouterNote() {
+  if (NomFamille != null && /\S/.test(NomFamille)) {
+    creerNote({ idUser: currentId, message: NomFamille })
+      .then((response) => {
+        setInvalidbool(false);
+        setErrorMsg("");
+        setFamilleNom("");
+        Keyboard.dismiss();
+      })
+      .catch((err) => {
+        console.log("Erreur dans la création de la note:", err);
+        setInvalidbool(true);
+      });
+  }else {
+    setInvalidbool(true);
+    setErrorMsg("Veuiller entrer quelque chose avant de procéder");
   }
+}
 
-  useEffect(() => {
-   
-      if (CurrentUser?.idFamille) {
-        ObtenirNote(CurrentUser.idFamille)
-          .then((notes) => setNotesFamille(notes))
-          .catch((err) => console.error("Error fetching notes:", err));
-      } else {
-        setNotesFamille([]);
-      }
-  }, [navigation, route, CurrentUser]);
 
-  const fetchNotes = useCallback(() => {
+useEffect(() => {
+ 
     if (CurrentUser?.idFamille) {
       ObtenirNote(CurrentUser.idFamille)
         .then((notes) => setNotesFamille(notes))
         .catch((err) => console.error("Error fetching notes:", err));
+    } else {
+      setNotesFamille([]);
     }
-  }, [navigation,InfosFamille,CurrentUser]);
+}, [navigation, route, CurrentUser]);
 
-  useEffect(() => {
-    const intervalId = setInterval(fetchNotes, 5000);
-    fetchNotes()
-    return () => clearInterval(intervalId);
-  }, [navigation, currentId, route]);
+const fetchNotes = useCallback(() => {
+  if (CurrentUser?.idFamille) {
+    ObtenirNote(CurrentUser.idFamille)
+      .then((notes) => setNotesFamille(notes))
+      .catch((err) => console.error("Error fetching notes:", err));
+  }
+}, [navigation,InfosFamille,CurrentUser]);
 
-  const Item = ({ item, onPress, backgroundColor, textColor }) => (
-    <View>
-      <Tuile
-        texte={item.message}
-        iconNom="solution1"
-        onPress_cb={() => {
-          Alert.alert("Suppression", "Voulez vous supprimer cette note?", [
-            {
-              text: "Annuler",
-              onPress: () => console.log("Cancel Pressed"),
-              style: "cancel",
-            },
-            {
-              text: "Ok",
-              onPress: () => {
-                deleteNote(item.Id);
-                fetchNotes();
-              },
-            },
-          ]);
-        }}
-      />
-    </View>
+useEffect(() => {
+  const intervalId = setInterval(fetchNotes, 500);
+  fetchNotes()
+  return () => clearInterval(intervalId);
+}, [navigation, currentId, route]);
+
+  const renderItem = ({ item }) => (
+    <Pressable
+      style={styles.noteTile}
+      onLongPress={() =>
+        Alert.alert("Supprimer", "Voulez-vous supprimer cette note ?", [
+          { text: "Annuler", style: "cancel" },
+          { text: "Supprimer", onPress: () => deleteNote(item.Id).then(fetchNotes) },
+        ])
+      }
+    >
+      <AntDesign name="filetext1" size={40} color="#555" />
+      <Text style={styles.noteText}>{item.message}</Text>
+    </Pressable>
   );
 
-  const renderItem = ({ item }) => {
-    const backgroundColor = item.Id === selectedId ? "#6e3b6e" : "#f9c2ff";
-    const color = item.Id === selectedId ? "white" : "black";
-    return (
-      <Item
-        item={item}
-        onPress={() => console.log("La note!")}
-        backgroundColor={backgroundColor}
-        textColor={color}
-      />
-    );
-  };
-
   return (
-    <View style={styles.card}>
-      <Text style={styles.title}>Les notes</Text>
+     
+    <KeyboardAvoidingView
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    style={styles.container}
+    keyboardVerticalOffset={80} // Adjust this offset as per your header height
+  >
+      <Text style={styles.title}>Les Notes</Text>
 
-      <View style={styles}>
-        {/* <Text style={styles.bienvenue}>Welcome {currentuser.username}</Text>  */}
-      </View>
-      <Tuilerie>
-        <SafeAreaView  style={styles.notes}>
-          <FlatList
-            data={NotesFamille}
-            numColumns={2}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.Id}
-            extraData={selectedId}
-          />
-        </SafeAreaView>
-      </Tuilerie>
+      <FlatList
+  style={styles.notesList}
+  data={NotesFamille.slice().reverse()}  // Create a new reversed array
+  numColumns={2}
+  renderItem={renderItem}
+  keyExtractor={(item) => item.Id.toString()}
+  ListEmptyComponent={<Text style={styles.emptyList}>Aucune note pour le moment.</Text>}
+/>
 
-      <View style={styles}>
-        <Text style={styles}>Ajouter une note</Text>
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Ajouter une note</Text>
         <TextInput
-          style={styles}
-          backgroundColor={invalidbool ? "rgba(255, 0, 0, 0.4)" : null}
+          style={[
+            styles.input,
+            invalidbool && { borderColor: "red", backgroundColor: "#ffe6e6" },
+          ]}
           placeholder="Message de la note"
+          value={NomFamille}
           onChangeText={setFamilleNom}
         />
-        <Text style={styles}>{errormsg}</Text>
-        <Pressable onPress={AjouterNote} style={styles}>
-          <Text style={styles}>Confirmer</Text>
+        {invalidbool && <Text style={styles.errorText}>{errormsg}</Text>}
+        <Pressable style={styles.addButton} onPress={AjouterNote }>
+          <Text style={styles.addButtonText}>Ajouter</Text>
         </Pressable>
       </View>
-    </View>
-  );
-}
-export function Tuile({ texte, onPress_cb, iconNom }) {
-  return (
-    <Pressable style={styles.tuile} onPress={onPress_cb}>
-      <View style={styles}>
-        <AntDesign name={iconNom} size={50} color="black" />
-      </View>
-      <View style={styles.tuile_texte_box}>
-        <Text style={styles.tuile_texte}>{texte}</Text>
-      </View>
-    </Pressable>
+      </KeyboardAvoidingView>
+     
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    width: 450,
-    height: "100%",
-    backgroundColor: "white",
-    alignContent:'center'
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: "#f9f9f9",
   },
   title: {
-    display:'flex',
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 10,
     color: "#333",
-    backgroundColor:"red"
+    marginBottom: 16,
+    textAlign: "center",
   },
-  notes:{
-    backgroundColor:'green'
-  },
-  tuile: {
+  notesList: {
     flex: 1,
-    height: 150,
-    width: 150,
-    margin: 10,
-    // backgroundColor: "#e0e0e0",
-    backgroundColor:'orange',
-    borderRadius: 20,
+    marginVertical: 8,
+  },
+  emptyList: {
+    fontSize: 16,
+    color: "#888",
+    textAlign: "center",
+    marginTop: 20,
+  },
+  noteTile: {
+    flex: 1,
+    margin: 8,
+    padding: 16,
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 5,
-    justifyContent:'center'
+    elevation: 3,
   },
-  tuile_icon: {
-    flex: 3,
-    justifyContent: "center",
+  noteText: {
+    marginTop: 8,
+    fontSize: 16,
+    color: "#333",
+    textAlign: "center",
+  },
+  inputContainer: {
+    marginTop: 16,
+    padding: 16,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  inputLabel: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 8,
+    color: "#555",
+  },
+  input: {
+    height: 40,
+    borderColor: "#ddd",
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    marginBottom: 8,
+    backgroundColor: "#f9f9f9",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 14,
+    marginBottom: 8,
+  },
+  addButton: {
+    backgroundColor: "#4caf50",
+    padding: 10,
+    borderRadius: 8,
     alignItems: "center",
   },
-  tuile_texte_box: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  addButtonText: {
+    fontSize: 16,
+    color: "#fff",
+    fontWeight: "bold",
   },
-  tuile_texte: {
-    fontSize: 22,
-  },
-
 });

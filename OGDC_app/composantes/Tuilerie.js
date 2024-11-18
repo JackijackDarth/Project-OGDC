@@ -1,10 +1,11 @@
-import { StyleSheet, ScrollView, View } from 'react-native';
+import { StyleSheet, ScrollView, View,Text } from 'react-native';
 
 export default function Tuilerie({ children }) {
     return (
        
         <View style={styles.tuilerie}>
-          {children}
+           {children}
+         
         </View>
     
     );

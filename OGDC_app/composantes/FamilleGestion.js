@@ -10,7 +10,8 @@ import {
   FlatList,
   StatusBar,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
+  Clipboard
 } from "react-native";
 import { useState, useEffect } from "react";
 import {
@@ -32,9 +33,10 @@ export function FamillymanageScreen({ navigation, route }) {
   const [invalidbool, setInvalidbool] = useState(false);
   const [currentuser, setCurrentUser] = useState(route.params.currentuser);
   const currentId = route.params.currentuser.Id;
-  const [selectedId, setSelectedId] = useState();
+  const [selectedId, setSelectedId] = useState(null);
   const [FamilleUsrList, setFamilleUsrList] = useState(null);
-  const [loading, setLoading] = useState() 
+  const [loading, setLoading] = useState(true) 
+  const [codefamille, setcodefamillet] = useState(""); // State for displaying the family code or message
 
   //du fouiller en ligne pomal pour trouver comment refresh apres join une famille
   useEffect(() => {
@@ -44,6 +46,7 @@ export function FamillymanageScreen({ navigation, route }) {
         .then((user) => {setCurrentUser(user); setLoading(false);})
         .catch((err) => console.error("Failed to fetch user:", err));
     });
+    
     return unsubscribe;
   }, [navigation]);
 
@@ -60,7 +63,7 @@ export function FamillymanageScreen({ navigation, route }) {
   useEffect(() => {
     if (currentuser?.idFamille) {
       getInfosFamille(currentuser.idFamille)
-        .then((famille) => setInfosFamille(famille))
+        .then((famille) => {setInfosFamille(famille); setcodefamillet(famille.password);})
         .catch((err) => console.error("Failed to fetch famille:", err));
     } else {
       setInfosFamille(null);
@@ -110,29 +113,46 @@ export function FamillymanageScreen({ navigation, route }) {
     }
   }
 
-  const Item = ({ item, onPress, backgroundColor, textColor }) => (
-    <TouchableOpacity
-      onPress={onPress}
+  const copyFamilyCode = () => {
+    if (InfosFamille){
+      Clipboard.setString(InfosFamille.password); 
+      setcodefamillet("Code copié !"); 
+      
+      
+      setTimeout(() => {
+        setcodefamillet(InfosFamille.password);
+      }, 3000);
+    }
+   
+  };
+  useEffect(() => {
+    setSelectedId(null)
+  }, [navigation]);
+  const renderItem = ({ item }) => {
+    const backgroundColor = item.Id === selectedId ? "#4CAF50" : "#ffffff";
+  const color = item.Id === selectedId ? "white" : "#333333";
+    return (
+      <TouchableOpacity
+      onPress={() => setSelectedId(item.Id)}
       style={[styles.item, { backgroundColor }]}
     >
-      <Text style={[styles.title, { color: textColor }]}>{item.username}</Text>
+       
+  <View style={styles.textContainer}>
+    <Text style={styles.name}>{item.username}</Text>
+    <Text style={styles.email}>{item.email}</Text>
+  </View>
+  
+  <AntDesign name="user" style={styles.icon} />
+
     </TouchableOpacity>
-  );
-  const renderItem = ({ item }) => {
-    const backgroundColor = item.Id === selectedId ? "#6e3b6e" : "#f9c2ff";
-    const color = item.Id === selectedId ? "white" : "black";
-    return (
-      <Item
-        item={item}
-        onPress={() => setSelectedId(item.Id)}
-        backgroundColor={backgroundColor}
-        textColor={color}
-      />
     );
   };
+  if (loading) {
+    return <ActivityIndicator size={20} />
+  }
   if (currentuser) {
-    if (loading){
-      <ActivityIndicator size="large" />
+    if (loading) {
+      return <ActivityIndicator size={20} />
     }
     else if (InfosFamille) {
       return (
@@ -145,9 +165,15 @@ export function FamillymanageScreen({ navigation, route }) {
           <FlatList
             data={FamilleUsrList}
             renderItem={renderItem}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.Id}
             extraData={selectedId}
           />
+          <View style={styles.codeContainer}>
+            <Text style={styles.codeText}>Code famille :</Text>
+            <Pressable onPress={copyFamilyCode} style={styles.copyButton}>
+              <Text style={styles.copyButtonText}>{codefamille}</Text>
+            </Pressable>
+          </View>
         </SafeAreaView>
       );
   
@@ -179,7 +205,7 @@ export function FamillymanageScreen({ navigation, route }) {
                 <Text style={styles.confirmButtonText}>Confirmer</Text>
               </Pressable>
             </View>
-            <Text style={styles.title}> OU </Text>
+            <Text  style={styles.title} > OU </Text>
             <View style={styles.formContainer}>
               <Text style={styles.subtitle}>Créer une Famille</Text>
               <Pressable
@@ -253,41 +279,35 @@ export function MenuFamilleScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   section: {
     padding: 20,
-    backgroundColor: "#f1f7fe",
+    backgroundColor: "#f1f7fe",  
     borderRadius: 12,
     marginVertical: 10,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 10,
-    color: "#333",
   },
   description: {
     fontSize: 16,
     textAlign: "center",
-    color: "#666",
+    color: "#666", 
     marginBottom: 20,
   },
   subtitle: {
     fontSize: 20,
     fontWeight: "500",
     textAlign: "center",
-    color: "#555",
+    color: "#555",  
     marginBottom: 15,
   },
   formContainer: {
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#fff",  
     borderRadius: 12,
     marginHorizontal: 20,
     marginBottom: 20,
+    marginTop: 20,
     elevation: 3,
   },
   input: {
     height: 48,
-    borderColor: "#ddd",
+    borderColor: "#eee",
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 15,
@@ -295,34 +315,34 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9f9f9",
   },
   inputError: {
-    borderColor: "rgba(255, 0, 0, 0.4)",
+    borderColor: "rgba(255, 0, 0, 0.4)", 
   },
   errorText: {
-    color: "red",
+    color: "red", 
     fontSize: 14,
     marginBottom: 10,
     textAlign: "center",
   },
   createFamilyButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#4CAF50",  
     borderRadius: 24,
     paddingVertical: 12,
     alignItems: "center",
     marginBottom: 15,
   },
   createFamilyButtonText: {
-    color: "#fff",
+    color: "#fff",  
     fontSize: 16,
     fontWeight: "bold",
   },
   confirmButton: {
-    backgroundColor: "#0066ff",
+    backgroundColor: "#0066ff",  
     borderRadius: 24,
     paddingVertical: 12,
     alignItems: "center",
   },
   confirmButtonText: {
-    color: "#fff",
+    color: "#fff", 
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -331,11 +351,79 @@ const styles = StyleSheet.create({
     marginTop: StatusBar.currentHeight || 0,
   },
   item: {
-    padding: 20,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
     marginVertical: 8,
     marginHorizontal: 16,
+    borderRadius: 10,
+    backgroundColor: "#ffffff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    flexDirection: "row",  
+    alignItems: "center",  
+    justifyContent: "space-between",  
+  },
+  textContainer: {
+    flex: 1, 
+  },
+  name: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  email: {
+    fontSize: 14,
+    color: "#555",  
+  },
+  icon: {
+    fontSize: 24,  
+    color: "#555", 
   },
   title: {
-    fontSize: 32,
+    fontSize: 29,
+    fontWeight:"600",
+    textAlign: "center",
+    marginBottom: 10,
+    color: "#010101", 
+  },
+  codeContainer: {
+    position: "absolute",
+    bottom: 40,
+    left: 20,
+    right: 20,
+    backgroundColor: "#f9f9f9", 
+    padding: 15,
+    borderRadius: 10,
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    
+  },
+  codeText: {
+    fontSize: 18,
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  copyButton: {
+    backgroundColor: "#007BFF",  
+    borderRadius: 8,
+    padding: 10,
+    marginTop: 10,
+  },
+  copyButtonText: {
+    color: "#fff",  
+    textAlign: "center",
+  },
+  copyMessage: {
+    fontSize: 16,
+    color: "#28a745",   
+    textAlign: "center",
+    marginTop: 10,
   },
 });
+

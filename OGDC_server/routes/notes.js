@@ -12,7 +12,7 @@ notesRoutes.route('/')
         if (resultat.erreur !== 0) {
             res.status(401).send(resultat);
         } else {
-            res.status(201);
+            res.status(201).send(resultat);
         }
     });
 

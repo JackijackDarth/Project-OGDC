@@ -206,6 +206,7 @@ export function ObjetsScreen({ navigation, route }) {
           keyExtractor={(item, index) => item.name + index}
           renderItem={renderItem}
           refreshing={refreshing}
+          
           onRefresh={onRefresh}
           renderSectionHeader={({ section: { title } }) => (
             <Text style={styles.sectionHeader}>{title}</Text>
@@ -366,12 +367,20 @@ export function MenuObjetScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f9f9f9",
+    padding: 10,
   },
   item: {
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    flex: 1,
+    backgroundColor: "#ffffff",
+    borderRadius: 10,
+    padding: 15,
+    margin: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   itemContent: {
     flexDirection: "row",
@@ -380,6 +389,7 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 18,
     fontWeight: "bold",
+    color: "#333",
   },
   itemStatus: {
     fontSize: 14,
@@ -387,6 +397,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 15,
+    color: "#007BFF",
   },
   sectionHeader: {
     fontSize: 22,
@@ -410,28 +421,34 @@ const styles = StyleSheet.create({
     color: "red",
   },
   buttonContainer: {
-    padding: 20,
+    padding: 10,
   },
   button: {
-    backgroundColor: "#007BFF",
-    padding: 15,
-    borderRadius: 5,
-    alignItems: "center",
+    backgroundColor: "#4CAF50",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginBottom:30,
   },
   buttonText: {
-    color: "#fff",
     fontSize: 16,
+    color: "#fff",
+    fontWeight: "bold",
+    textAlign:'center'
   },
   subtitle: {
     fontSize: 16,
-    marginVertical: 10,
+    color: "#444",
+    marginBottom: 8,
   },
   input: {
-    borderWidth: 1,
+    height: 40,
     borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 10,
-    marginVertical: 5,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    backgroundColor: "#fff",
   },
   formBox: {
     flex: 1,

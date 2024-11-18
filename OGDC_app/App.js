@@ -9,6 +9,7 @@ import { AntDesign, MaterialCommunityIcons} from '@expo/vector-icons';
 import { NoteScreen } from './composantes/NotesGestion';
 import { FamillymanageScreen,MenuFamilleScreen } from './composantes/FamilleGestion';
 import { AutomateScreen } from './composantes/AutomateGestion';
+import { StrictMode } from 'react';
 const Tab = createBottomTabNavigator();
 const { Navigator, Screen, Group } = createNativeStackNavigator();
 
@@ -16,29 +17,34 @@ const { Navigator, Screen, Group } = createNativeStackNavigator();
 function MainTabNavigator({ route }) {
   const currentuser = route.params.currentuser;  
   return (
-    <Tab.Navigator screenOptions={({ route }) => ({
-      tabBarIcon: ({ focused, color, size }) => {
-        let iconName;
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
 
-        if (route.name === 'Accueil') {
-          iconName = focused ? 'robot' : 'robot-outline';
-        } else if (route.name === 'Ardoise') {
-          iconName = focused ? 'lightbulb-group' : 'lightbulb-group-outline';
-        } else if (route.name === 'Notes') {
-          iconName = focused ? 'note' : 'note-outline';
-        } else if (route.name === 'CommandeInfo') {
-          iconName = focused ? 'cog' : 'cog-outline';
-        } else if (route.name === 'FamilyManage') {
-          iconName = focused ? 'account-group' : 'account-group-outline';
-        } else if (route.name === 'Automate') {
-          iconName = focused ? 'timer-cog' : 'timer-cog-outline';
-        }
+          if (route.name === 'Accueil') {
+            iconName = focused ? 'robot' : 'robot-outline';
+          } else if (route.name === 'Ardoise') {
+            iconName = focused ? 'lightbulb-group' : 'lightbulb-group-outline';
+          } else if (route.name === 'Notes') {
+            iconName = focused ? 'note' : 'note-outline';
+          } else if (route.name === 'CommandeInfo') {
+            iconName = focused ? 'cog' : 'cog-outline';
+          } else if (route.name === 'FamilyManage') {
+            iconName = focused ? 'account-group' : 'account-group-outline';
+          } else if (route.name === 'Automate') {
+            iconName = focused ? 'timer-cog' : 'timer-cog-outline';
+          }
 
-        return <MaterialCommunityIcons name={iconName} size={30} color="black" />;
-      },
-      tabBarActiveTintColor: 'tomato',
-      tabBarInactiveTintColor: 'gray',
-    })}
+          return <MaterialCommunityIcons name={iconName} size={30} color={color} />;
+        },
+        tabBarActiveTintColor: 'tomato',  
+        tabBarInactiveTintColor: 'gray',  
+        tabBarStyle: {
+          backgroundColor: '#1e1e1e',  
+          borderTopWidth: 0,  
+        },
+      })}
     >
       <Tab.Screen
         name="Accueil"
@@ -52,13 +58,13 @@ function MainTabNavigator({ route }) {
         options={{ title: "Page d'objet" }}
         initialParams={{ currentuser }}  
       />
-       <Tab.Screen
+      <Tab.Screen
         name="Automate"
         component={AutomateScreen}
         options={{ title: "Automatisations" }}
         initialParams={{ currentuser }}  
       />
-       <Tab.Screen
+      <Tab.Screen
         name="FamilyManage"
         component={FamillymanageScreen}
         options={{ title: "Gestion famille" }}
@@ -76,18 +82,19 @@ function MainTabNavigator({ route }) {
         options={{ title: "Settings" }}
         initialParams={{ currentuser }}  
       />
-        
     </Tab.Navigator>
   );
 }
 
 
+
 export default function App() {
   return (
+    <StrictMode>
     <NavigationContainer>
       <Navigator initialRouteName="Authen" screenOptions={{ headerTitleAlign: "center" }}>
 
-        {/* Wrap the Tab Navigator within a Screen component */}
+        
         <Screen name="MainTabs" component={MainTabNavigator} options={{ headerShown: false }} />
 
         <Screen name="Aide" component={AideScreen} />
@@ -116,5 +123,6 @@ export default function App() {
 
       </Navigator>
     </NavigationContainer>
+    </StrictMode>
   );
 }

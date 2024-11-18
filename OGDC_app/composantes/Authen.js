@@ -156,11 +156,6 @@ export function CreeCompteScreen({ route, navigation }) {
                   }).catch(err => {
                     console.error("Failed to fetch user:", err);
                   });
-                
-                    
-                
-               
-                // navigation.replace("Accueil", { nom: res.nom, usrId : res.Id});
             }).catch(err => {
                 console.log("creation échec: %s", err.msg);
                 setInvalidbool(true);
@@ -292,7 +287,7 @@ export function SeConnecterScreen({ navigation }) {
     if (loading){
         return (
             <View style={[styles.container, styles.horizontal]}>
-                    <ActivityIndicator size="large" />
+                    <ActivityIndicator size={20} />
                 </View>
         );
     }

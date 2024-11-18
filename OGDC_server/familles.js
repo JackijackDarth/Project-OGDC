@@ -87,7 +87,8 @@ function ObtenirMembreFamille(idFamille){
             if(user.idFamille == idFamille){
                 let newUser = {
                     Id: user.Id,
-                    username: user.prenom + " " + user.nom
+                    username: user.prenom + " " + user.nom,
+                    email:user.mail
                 }
                 membres.push(newUser)
             }
