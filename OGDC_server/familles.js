@@ -204,11 +204,12 @@ function SupprimerMembreFamille(idUser){
     let trouver = false;
     liste_users.forEach((user)=>{
         if(user.Id == idUser){
-            idUser.idFamille = null;
+            user.idFamille = null;
             trouver = true;
         }
     })
     if(trouver){
+        users.PostListeUsager(liste_users);
         return {erreur:0,msg:'Réussi'}
     }
     else{
