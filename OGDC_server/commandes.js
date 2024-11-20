@@ -1,6 +1,7 @@
 const fs = require('fs');
 const commandesFilePath = "./BD/pilesCommandes.json";
-const users = require('./users.js')
+const historiques = require('./historiques.js');
+const users = require('./users.js');
 
 /**
  * Fonction permettant de créer des commandes (initier pareil)
@@ -92,8 +93,12 @@ function EnvoyerCommande(infoObjet, nomCommande, returnCommande = false) {
             if(returnCommande){
                 return {erreur: 0, commande: nouvelleCommande};
             }
+            //
             pilesCommandes.push(nouvelleCommande)
             PostListeCommandes(pilesCommandes)
+            //
+            historiques.EnregistrerHistorique()
+            //
             return { erreur: 0, msg: "Création de la commande réussi" };
         }
         else {

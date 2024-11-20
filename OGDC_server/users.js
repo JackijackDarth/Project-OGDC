@@ -213,6 +213,7 @@ module.exports = {
     ajouterRobot,
     obtenirUsager,
     GetListeUsers,
+    PostListeUsager,
     obtenirUsagerUsername,
     Deconnexion,
     AjouterUneFamilleAuUser

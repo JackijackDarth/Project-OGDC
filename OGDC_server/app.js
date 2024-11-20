@@ -12,6 +12,7 @@ const commandesRoutes = require('./routes/commandes');
 const famillesRoutes = require('./routes/familles');
 const notesRoutes = require('./routes/notes')
 const automatisationsRoutes = require('./routes/automatisations');
+const historiqueRoutes = require('./routes/historiques');
 
 const app = express();
 const { port } = config;
@@ -36,7 +37,8 @@ app.use('/ogdc/deconnexion',deconnexionRoutes);
 app.use('/ogdc/commandes',commandesRoutes);
 app.use('/ogdc/familles/',famillesRoutes);
 app.use('/ogdc/notes/',notesRoutes);
-app.use('/ogdc/automatisation',automatisationsRoutes)
+app.use('/ogdc/automatisation',automatisationsRoutes);
+app.use('/ogdc/historique',historiqueRoutes);
 
 const server = http.createServer(app);
 
