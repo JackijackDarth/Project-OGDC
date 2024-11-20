@@ -95,12 +95,8 @@ function ObtenirAutomatisationUser(idUser){
             automatisations.push(automatisation);
         }
     })
-    if (automatisations != null && automatisations.length > 0){
-        return{erreur:0,msg:"Réussi",automatisations: automatisations}
-    }
-    else{
-        return{erreur:1,msg:"Aucune automatisation appartenant au idUser"}
-    }
+    return{erreur:0,msg:"Réussi",automatisations: automatisations}
+    
 }
 
 function ObtenirAutomatisationRobot(idRobot){
@@ -111,12 +107,8 @@ function ObtenirAutomatisationRobot(idRobot){
             automatisations.push(automatisation);
         }
     })
-    if (automatisations != null && automatisations.length > 0){
-        return{erreur:0,msg:"Réussi",automatisations: automatisations}
-    }
-    else{
-        return{erreur:1,msg:"Aucune automatisation appartenant au idUser", automatisations:null}
-    }
+    return{erreur:0,msg:"Réussi",automatisations: automatisations}
+    
 }
 
 /**

@@ -42,7 +42,7 @@ function ObtenirHistoriqueFamilleUsager(idUser){
     }
 }
 
-function EnregistrerHistorique(){
+function EnregistrerHistorique(nouvelleCommande){
     let maxId = 0
     historiques = GetListeHistoriques();
     historiques.forEach(historique => {

@@ -97,7 +97,7 @@ function EnvoyerCommande(infoObjet, nomCommande, returnCommande = false) {
             pilesCommandes.push(nouvelleCommande)
             PostListeCommandes(pilesCommandes)
             //
-            historiques.EnregistrerHistorique()
+            historiques.EnregistrerHistorique(nouvelleCommande)
             //
             return { erreur: 0, msg: "Création de la commande réussi" };
         }
