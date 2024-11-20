@@ -20,7 +20,22 @@ import Tuilerie from "./Tuilerie";
 import { obtenirUneCommandeJSON, deconnexion } from "../utils";
 
 export function SettingsScreen({ navigation, route }) {
- 
+  useEffect(() => {
+    navigation.setOptions({
+      title: "Gestion de la Famille",
+      headerRight: () => (
+        <AntDesign
+          name="logout"
+          size={25}
+          color="blue"
+          onPress={() => {
+            deconnexion(route.params.currentuser.Id);
+            navigation.replace("Authen");
+          }}
+        />
+      ),
+    });
+  }, [navigation]);
 
   return (
     <View style={stylesCommuns.app}>
