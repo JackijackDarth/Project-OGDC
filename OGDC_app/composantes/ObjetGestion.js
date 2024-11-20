@@ -259,27 +259,40 @@ export function MenuObjetScreen({ route, navigation }) {
    
   // update la positions de l'objet
   function EditObjet() {
-    ListobjComplet.listeObjets[objet.name].location = NomPièce != null ? NomPièce : objet.location;
-    UpdateObjet(ListobjComplet)
+    console.log(ListobjComplet);
+  
+    // Clone the object to update
+    const updatedListeObjets = {
+      ...ListobjComplet.listeObjets,
+      [objet.name]: {
+        ...ListobjComplet.listeObjets[objet.name],
+        location: NomPièce != null ? NomPièce : objet.location,
+      },
+    };
+  
+    // Replace the old list with the updated one
+    const updatedListobjComplet = {
+      ...ListobjComplet,
+      listeObjets: updatedListeObjets,
+    };
+  
+    UpdateObjet(updatedListobjComplet)
       .then((res) => {
         console.log("Assignation de pièce réussi %s", res);
-        navigation.navigate("Ardoise");
+        navigation.goBack();
       })
       .catch((err) => {
         console.log("Location change error: %s", err.msg);
         setInvalidbool(true);
       });
-      console.log(objet.name,objet.pin, temp)
-      if (temp != null){
-        lancerCommande(
-        "changeTemp",
-        {
-          name: objet.name,
-          pin: objet.pin,
-          value:temp,
-          userId:usrId
-        }
-      )
+  
+    if (temp != null) {
+      lancerCommande("changeTemp", {
+        name: objet.name,
+        pin: objet.pin,
+        value: temp,
+        userId: usrId,
+      })
         .then((res) => {
           console.log("commande Lancer %s", res);
           fetchObjects();
@@ -287,9 +300,9 @@ export function MenuObjetScreen({ route, navigation }) {
         .catch((err) => {
           console.log("commande error: %s", err.msg);
         });
-      }
-      
+    }
   }
+  
 
   // listes des emplacement par defaut 
   const Item = ({ item, onPress, backgroundColor, textColor }) => (

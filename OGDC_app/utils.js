@@ -50,6 +50,9 @@ export function getCommandeAsync(){
 export function getInfosFamille(idfamille){
     return obtenirJSON_Get(`familles/infoFamille/${idfamille}`);
 }
+export function getHistoFamille(idusr){
+    return obtenirJSON_Get(`historique/${idusr}`);
+}
 export function deleteNote(noteid){
     return supprimerRessourceJSON(`notes/delete/${noteid}`);
 }

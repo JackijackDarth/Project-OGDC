@@ -107,7 +107,7 @@ export function AutomateScreen({ navigation, route }) {
   if (AutoFamille) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={styles.title}>Les Auto</Text>
+        <Text style={styles.title}>Les Automatisations</Text>
 
         <FlatList
           style={styles.autoList}
@@ -116,7 +116,7 @@ export function AutomateScreen({ navigation, route }) {
           renderItem={renderItem}
           keyExtractor={(item) => item.Id.toString()}
           ListEmptyComponent={
-            <Text style={styles.emptyList}>Aucune note pour le moment.</Text>
+            <Text style={styles.emptyList}>Aucune automatisation pour le moment.</Text>
           }
         />
 
@@ -185,7 +185,7 @@ export function AutoCreationScreen({ route }) {
   );
   //#endregion
 
-  // #region fonction pour ajouter une note au serveur
+  // #region fonction pour ajouter une auto au serveur
   function AjouterNote() {
     if (!selectedobjValue) {
       setErrorMsg("Veuillez sélectionner un objet.");
@@ -236,14 +236,22 @@ export function AutoCreationScreen({ route }) {
         heure: selectedDate.toLocaleTimeString("en-GB", { hour12: false }),
       },
     };
-    CreeAutomate(newauto);
+    CreeAutomate(newauto).then(() => {
+      navigation.goBack();
+      fetchData()
+    })
+    .catch((err) => {
+      console.log(err);
+      setErrorMsg("Quelque chose ne marche pas!");
+      setInvalidbool(true);
+    });;
 
     console.log("auto", newauto);
 
     setSelectedValue(null);
     setSelected(null);
   }
-  // #endregion
+// #endregion
 
   //#region ON/OFF button manager
   function ToggleButtons() {

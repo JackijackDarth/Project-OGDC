@@ -22,7 +22,8 @@ import {
   getInfosFamille,
   deconnexion,
   getMembresFamille,
-  leaveFamille
+  leaveFamille,
+  getHistoFamille
 } from "../utils";
 import { AntDesign } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -113,7 +114,7 @@ export function FamillymanageScreen({ navigation, route }) {
           size={25}
           color="blue"
           onPress={() => {
-            Alert.alert("Historique", "Voici l'historique.");
+            navigation.navigate("Historique", { usrid: currentId })
           }}
           style={{ marginLeft: 15 }}
         />
@@ -149,7 +150,7 @@ export function FamillymanageScreen({ navigation, route }) {
   const copyFamilyCode = () => {
     if (InfosFamille){
       //le nouveau clipboard marche juste pas donc je prend ça pour le moment
-      Clipboard.setString(InfosFamille.password); 
+      Clipboard.setString(InfosFamille.password + " "+InfosFamille.name); 
       setcodefamillet("Code copié !"); 
       
       
@@ -167,8 +168,7 @@ export function FamillymanageScreen({ navigation, route }) {
   const renderItem = ({ item }) => {
     const backgroundColor = item.Id === selectedId ? "#4CAF50" : "#ffffff";
     const color = item.Id === selectedId ? "white" : "#333333";
-  
-    const handleDelete = (userId) => {
+    const handleDelete = (item) => {
       Alert.alert(
         "Confirmation",
         `Êtes-vous sûr de vouloir supprimer ${item.username} de la famille ?`,
@@ -182,8 +182,9 @@ export function FamillymanageScreen({ navigation, route }) {
             style: "destructive",
             onPress: async () => {
               try {
-                await leaveFamille(userId); // Call your API function
-                fetchData(); // Refresh the data
+                console.log(item)
+                await leaveFamille(item.Id);
+                fetchData();
               } catch (error) {
                 console.error("Error deleting user:", error);
               }
@@ -204,7 +205,7 @@ export function FamillymanageScreen({ navigation, route }) {
         </View>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <AntDesign name="user" style={styles.icon} />
-        { InfosFamille.ownerId === currentId &&  <TouchableOpacity onPress={handleDelete} style={{ marginLeft: 10 }}>
+        { InfosFamille.ownerId === currentId && currentId != item.Id &&  <TouchableOpacity onPress={handleDelete} style={{ marginLeft: 10 }}>
             <AntDesign name="delete" size={24} color="#f44336" />
           </TouchableOpacity>}
         </View>
@@ -338,6 +339,153 @@ export function MenuFamilleScreen({ route, navigation }) {
     </KeyboardAvoidingView>
   );
 }
+
+
+export function FamHistoryScreen({ route, navigation }) {
+  const [NomFamille, setFamilleNom] = useState(null);
+  const [InfosFamille, setInfosFamille] = useState(null);
+  const [HistoFamille, setHistoFamille] = useState(null);
+  const [MdpFamille, setMdpFamille] = useState(null);
+  const [errormsg, setErrorMsg] = useState(null);
+  const [invalidbool, setInvalidbool] = useState(false);
+  const [currentuser, setCurrentUser] = useState();
+  const currentId = route.params.usrid;
+  const [selectedId, setSelectedId] = useState(null);
+  const [FamilleUsrList, setFamilleUsrList] = useState(null);
+  const [loading, setLoading] = useState(true) 
+  const [codefamille, setcodefamillet] = useState(""); 
+
+  const fetchData =useCallback( async () => {
+    try {
+      setLoading(true);
+
+      const user = await obtenirUser(currentId);
+      setCurrentUser(user);
+
+      if (user?.idFamille) {
+        const [familleDetails, familleHistory, familleMembers] = await Promise.all([
+          getInfosFamille(user.idFamille),
+          getHistoFamille(user.Id),
+          getMembresFamille(user.idFamille),
+        ]);
+        setInfosFamille(familleDetails);
+        setHistoFamille(familleHistory);
+        setcodefamillet(familleDetails.password);
+
+        setFamilleUsrList(familleMembers);
+      } else {
+        setInfosFamille(null);
+        setFamilleUsrList(null);
+        setHistoFamille(null);
+      }
+    } catch (err) {
+      console.error("Error fetching data:", err);
+    } finally {
+      setLoading(false);
+    }
+  },[route]);
+  
+  useFocusEffect(
+    useCallback(() => {
+      const unsubscribe = navigation.addListener("focus", fetchData);
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 5000);
+  
+    return () => {
+      clearInterval(intervalId);
+      unsubscribe();
+    };
+    }, [fetchData])
+  );
+  
+  
+  
+
+  function RejoindreFamille() {
+    if (NomFamille && /\S/.test(NomFamille)) {
+      joinFamille(currentId, {
+        nomFamille: NomFamille,
+        passFamille: MdpFamille,
+      })
+        .then(() => {
+          setInvalidbool(false);
+          setErrorMsg("");
+          fetchData()
+        })
+        .catch((err) => {
+          console.log(err);
+          setErrorMsg("Ce nom de famille n'est pas disponible");
+          setInvalidbool(true);
+        });
+    } else {
+      setInvalidbool(true);
+      setErrorMsg("Veuillez entrer un nom de famille avant de procéder");
+    }
+  }
+
+  const copyFamilyCode = () => {
+    if (InfosFamille){
+      //le nouveau clipboard marche juste pas donc je prend ça pour le moment
+      Clipboard.setString(InfosFamille.password + " "+InfosFamille.name); 
+      setcodefamillet("Code copié !"); 
+      
+      
+      setTimeout(() => {
+        setcodefamillet(InfosFamille.password);
+      }, 3000);
+    }
+   
+  };
+  useEffect(() => {
+    setSelectedId(null)
+  }, [navigation,route]);
+
+  
+  const renderItem = ({ item }) => {
+    const backgroundColor = item.Id === selectedId ? "#4CAF50" : "#ffffff";
+    const color = item.Id === selectedId ? "white" : "#333333";
+  
+    return (
+      <TouchableOpacity
+        onPress={() => setSelectedId(item.Id)}
+        style={[styles.item, { backgroundColor }]}
+      >
+        <View style={styles.textContainer}>
+          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.email}>{item.action}</Text>
+          <Text style={styles.email}>{item.date}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+  
+ 
+  if (currentuser) {
+    if (currentuser.idFamille) {
+      if(InfosFamille){
+        return (
+        <SafeAreaView style={stylesCommuns.app}>
+          <View style={styles.section}>
+            <Text style={styles.title}>
+             Historique de la famille {InfosFamille.name}
+            </Text>
+          </View>
+          <FlatList
+            data={HistoFamille}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.Id}
+            extraData={selectedId}
+          />
+        </SafeAreaView>
+      );
+      }
+    }
+  }else{
+    return <ActivityIndicator size={20} />
+  }
+}
+
 
 const styles = StyleSheet.create({
   section: {
