@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   SectionList,
 } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   obtenirObjets,
   obtenirUser,
@@ -19,7 +19,10 @@ import {
   lancerCommande,
 } from "../utils";
 import stylesCommuns from "../styles";
-import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { useFocusEffect } from "@react-navigation/native";
+
+import { AntDesign, FontAwesome5,MaterialCommunityIcons } from "@expo/vector-icons";
 
 ///////////
 // OBJETS //
@@ -43,7 +46,7 @@ export function ObjetsScreen({ navigation, route }) {
   };
 
   // get le user avec id
-  const fetchUser = () => {
+  useEffect(() => {
     if (usrId) {
       obtenirUser(usrId)
         .then((user) => {
@@ -53,13 +56,7 @@ export function ObjetsScreen({ navigation, route }) {
           console.error("Failed to fetch user:", err);
         });
     }
-  };
-
-  useEffect(() => {
-    fetchUser();
-    const intervalId = setInterval(fetchUser, 500);
-    return () => clearInterval(intervalId);
-  }, [route, usrId]);
+  }, [route, usrId, navigation]);
 
   // mettre le bon nom de robot dans lee tittre 
   useEffect(() => {
@@ -73,7 +70,7 @@ export function ObjetsScreen({ navigation, route }) {
   }, [currentuser, navigation]);
 
   //get les objets du robot actuel et les classer selon leurs emplaceemnt
-  const fetchObjects = () => {
+  const fetchObjects = useCallback(() => {
     if (currentuser && currentuser.idRobot != null) {
       obtenirObjets(currentuser.idRobot)
         .then((items) => {
@@ -110,13 +107,15 @@ export function ObjetsScreen({ navigation, route }) {
     } else {
       setError("Vous n'avez pas de robot!");
     }
-  };
+  },[currentuser]);
 
-  useEffect(() => {
-    fetchObjects();
-    const intervalId = setInterval(fetchObjects, 30000);
-    return () => clearInterval(intervalId);
-  }, [route, usrId, currentuser, navigation]);
+  useFocusEffect(
+    useCallback(() => {
+      const intervalId = setInterval(fetchObjects, 500);
+      fetchObjects();
+      return () => clearInterval(intervalId);
+    }, [fetchObjects])
+  );
 
   // Refresh les objet
   const onRefresh = () => {
@@ -124,6 +123,22 @@ export function ObjetsScreen({ navigation, route }) {
     fetchObjects();
     setRefreshing(false);
   };
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: "Gestion de la Famille",
+      headerRight: () => (
+        <MaterialCommunityIcons
+          name="shape-plus"
+          size={25}
+          color="blue"
+          onPress={() => {
+            navigation.replace("Authen");
+          }}
+        />
+      ),
+    });
+  }, [navigation]);
 
   // gerer la selection d<objeet
   const handleItemPress = (item) => {

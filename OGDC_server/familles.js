@@ -204,7 +204,8 @@ function SupprimerMembreFamille(idUser){
     let trouver = false;
     liste_users.forEach((user)=>{
         if(user.Id == idUser){
-            idUser.idFamille = null;
+            console.log(user.idFamille);
+            user.idFamille = null;
             trouver = true;
         }
     })

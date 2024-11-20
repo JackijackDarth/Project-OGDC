@@ -8,7 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { AntDesign, MaterialCommunityIcons} from '@expo/vector-icons';
 import { NoteScreen } from './composantes/NotesGestion';
 import { FamillymanageScreen,MenuFamilleScreen } from './composantes/FamilleGestion';
-import { AutomateScreen } from './composantes/AutomateGestion';
+import { AutomateScreen,AutoCreationScreen } from './composantes/AutomateGestion';
 import { StrictMode } from 'react';
 const Tab = createBottomTabNavigator();
 const { Navigator, Screen, Group } = createNativeStackNavigator();
@@ -115,6 +115,10 @@ export default function App() {
 
         <Group screenOptions={{ presentation: 'modal' }}>
         <Screen name="MenuObjet" component={MenuObjetScreen} options={{ title: "Menu d'objet" }} />
+        </Group>
+
+        <Group screenOptions={{ presentation: 'modal' }}>
+        <Screen name="AutoCreation" component={AutoCreationScreen} options={{ title: "Création d'automatisation" }} />
         </Group>
 
         <Group screenOptions={{ presentation: 'modal' }}>

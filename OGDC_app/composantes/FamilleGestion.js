@@ -13,7 +13,7 @@ import {
   ActivityIndicator,
   Clipboard
 } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback} from "react";
 import {
   obtenirUser,
   creerFamille,
@@ -21,8 +21,10 @@ import {
   getInfosFamille,
   deconnexion,
   getMembresFamille,
+  leaveFamille
 } from "../utils";
 import { AntDesign } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import stylesCommuns from "../styles";
 
 export function FamillymanageScreen({ navigation, route }) {
@@ -36,39 +38,48 @@ export function FamillymanageScreen({ navigation, route }) {
   const [selectedId, setSelectedId] = useState(null);
   const [FamilleUsrList, setFamilleUsrList] = useState(null);
   const [loading, setLoading] = useState(true) 
-  const [codefamille, setcodefamillet] = useState(""); // State for displaying the family code or message
+  const [codefamille, setcodefamillet] = useState(""); 
 
-  //du fouiller en ligne pomal pour trouver comment refresh apres join une famille
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", async () => {
+  const fetchData =useCallback( async () => {
+    try {
       setLoading(true);
-      await obtenirUser(currentId)
-        .then((user) => {setCurrentUser(user); setLoading(false);})
-        .catch((err) => console.error("Failed to fetch user:", err));
-    });
-    
-    return unsubscribe;
-  }, [navigation]);
 
-  useEffect(() => {
-    if (currentuser?.idFamille) {
-      getMembresFamille(currentuser.idFamille)
-        .then((famille) => setFamilleUsrList(famille))
-        .catch((err) => console.error("Failed to fetch famille:", err));
-    } else {
-      setFamilleUsrList(null);
-    }
-  }, [currentuser]);
+      const user = await obtenirUser(currentId);
+      setCurrentUser(user);
 
-  useEffect(() => {
-    if (currentuser?.idFamille) {
-      getInfosFamille(currentuser.idFamille)
-        .then((famille) => {setInfosFamille(famille); setcodefamillet(famille.password);})
-        .catch((err) => console.error("Failed to fetch famille:", err));
-    } else {
-      setInfosFamille(null);
+      if (user?.idFamille) {
+        const [familleDetails, familleMembers] = await Promise.all([
+          getInfosFamille(user.idFamille),
+          getMembresFamille(user.idFamille),
+        ]);
+
+        setInfosFamille(familleDetails);
+        setcodefamillet(familleDetails.password);
+        setFamilleUsrList(familleMembers);
+      } else {
+        setInfosFamille(null);
+        setFamilleUsrList(null);
+      }
+    } catch (err) {
+      console.error("Error fetching data:", err);
+    } finally {
+      setLoading(false);
     }
-  }, [currentuser]);
+  },[route]);
+  
+  useFocusEffect(
+    useCallback(() => {
+      const unsubscribe = navigation.addListener("focus", fetchData);
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 5000);
+  
+    return () => {
+      clearInterval(intervalId);
+      unsubscribe();
+    };
+    }, [fetchData])
+  );
 
   useEffect(() => {
     navigation.setOptions({
@@ -79,14 +90,14 @@ export function FamillymanageScreen({ navigation, route }) {
           size={25}
           color="blue"
           onPress={() => {
-            deconnexion(route.params.currentuser.Id);
-            navigation.replace("Authen");
+            leaveFamille(currentId);
           }}
         />
       ),
     });
   }, [navigation]);
-
+  
+  
   function RejoindreFamille() {
     if (NomFamille && /\S/.test(NomFamille)) {
       joinFamille(currentId, {
@@ -96,11 +107,7 @@ export function FamillymanageScreen({ navigation, route }) {
         .then(() => {
           setInvalidbool(false);
           setErrorMsg("Vous avez rejoint la famille " + NomFamille);
-          obtenirUser(currentId)
-            .then((user) => setCurrentUser(user))
-            .catch((err) =>
-              console.error("Failed to fetch updated user:", err)
-            );
+          fetchData()
         })
         .catch((err) => {
           console.log(err);
@@ -115,6 +122,7 @@ export function FamillymanageScreen({ navigation, route }) {
 
   const copyFamilyCode = () => {
     if (InfosFamille){
+      //le nouveau clipboard marche juste pas donc je prend ça pour le moment
       Clipboard.setString(InfosFamille.password); 
       setcodefamillet("Code copié !"); 
       
@@ -127,7 +135,7 @@ export function FamillymanageScreen({ navigation, route }) {
   };
   useEffect(() => {
     setSelectedId(null)
-  }, [navigation]);
+  }, [navigation,route]);
   const renderItem = ({ item }) => {
     const backgroundColor = item.Id === selectedId ? "#4CAF50" : "#ffffff";
   const color = item.Id === selectedId ? "white" : "#333333";
@@ -147,15 +155,11 @@ export function FamillymanageScreen({ navigation, route }) {
     </TouchableOpacity>
     );
   };
-  if (loading) {
-    return <ActivityIndicator size={20} />
-  }
+ 
   if (currentuser) {
-    if (loading) {
-      return <ActivityIndicator size={20} />
-    }
-    else if (InfosFamille) {
-      return (
+    if (currentuser.idFamille) {
+      if(InfosFamille){
+        return (
         <SafeAreaView style={stylesCommuns.app}>
           <View style={styles.section}>
             <Text style={styles.title}>
@@ -176,7 +180,7 @@ export function FamillymanageScreen({ navigation, route }) {
           </View>
         </SafeAreaView>
       );
-  
+      }
     } else {
       return (
         <SafeAreaView style={stylesCommuns.app}>
@@ -223,6 +227,8 @@ export function FamillymanageScreen({ navigation, route }) {
         </SafeAreaView>
       );
     }
+  }else{
+    return <ActivityIndicator size={20} />
   }
 }
 

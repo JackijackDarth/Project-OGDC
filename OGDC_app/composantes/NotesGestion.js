@@ -9,16 +9,13 @@ import {
   KeyboardAvoidingView,
   TextInput,
   Platform,
-  Keyboard
+  Keyboard,
+  ActivityIndicator
 } from "react-native";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
-import {
-  creerNote,
-  ObtenirNote,
-  deleteNote,
-  obtenirUser,
-} from "../utils";
+import { creerNote, ObtenirNote, deleteNote, obtenirUser } from "../utils";
 
 export function NoteScreen({ navigation, route }) {
   const [NomFamille, setFamilleNom] = useState(null);
@@ -31,12 +28,41 @@ export function NoteScreen({ navigation, route }) {
   const currentId = route.params.currentuser.Id;
 
   useEffect(() => {
-    
     obtenirUser(currentId)
       .then((user) => setCurrentUser(user))
       .catch((err) => console.error("Failed to fetch user:", err));
+  }, [navigation]);
+  
+  
 
-}, [navigation]);
+  useEffect(() => {
+    if (CurrentUser?.idFamille) {
+      ObtenirNote(CurrentUser.idFamille)
+        .then((notes) => setNotesFamille(notes))
+        .catch((err) => console.error("Error fetching notes:", err));
+    } else {
+      setNotesFamille([]);
+    }
+  }, [navigation, route, CurrentUser]);
+
+
+  const fetchNotes = useCallback(() => {
+    if (CurrentUser?.idFamille) {
+      ObtenirNote(CurrentUser.idFamille)
+        .then((notes) => setNotesFamille(notes))
+        .catch((err) => console.error("Error fetching notes:", err));
+    }
+  }, [CurrentUser?.idFamille]);
+  
+  useFocusEffect(
+  useCallback(() => {
+    const intervalId = setInterval(fetchNotes, 500);
+    fetchNotes();
+    return () => clearInterval(intervalId);
+  }, [fetchNotes])
+);
+
+
 function AjouterNote() {
   if (NomFamille != null && /\S/.test(NomFamille)) {
     creerNote({ idUser: currentId, message: NomFamille })
@@ -50,37 +76,12 @@ function AjouterNote() {
         console.log("Erreur dans la création de la note:", err);
         setInvalidbool(true);
       });
-  }else {
+  } else {
     setInvalidbool(true);
     setErrorMsg("Veuiller entrer quelque chose avant de procéder");
   }
 }
 
-
-useEffect(() => {
- 
-    if (CurrentUser?.idFamille) {
-      ObtenirNote(CurrentUser.idFamille)
-        .then((notes) => setNotesFamille(notes))
-        .catch((err) => console.error("Error fetching notes:", err));
-    } else {
-      setNotesFamille([]);
-    }
-}, [navigation, route, CurrentUser]);
-
-const fetchNotes = useCallback(() => {
-  if (CurrentUser?.idFamille) {
-    ObtenirNote(CurrentUser.idFamille)
-      .then((notes) => setNotesFamille(notes))
-      .catch((err) => console.error("Error fetching notes:", err));
-  }
-}, [navigation,InfosFamille,CurrentUser]);
-
-useEffect(() => {
-  const intervalId = setInterval(fetchNotes, 500);
-  fetchNotes()
-  return () => clearInterval(intervalId);
-}, [navigation, currentId, route]);
 
   const renderItem = ({ item }) => (
     <Pressable
@@ -88,7 +89,10 @@ useEffect(() => {
       onLongPress={() =>
         Alert.alert("Supprimer", "Voulez-vous supprimer cette note ?", [
           { text: "Annuler", style: "cancel" },
-          { text: "Supprimer", onPress: () => deleteNote(item.Id).then(fetchNotes) },
+          {
+            text: "Supprimer",
+            onPress: () => deleteNote(item.Id).then(fetchNotes),
+          },
         ])
       }
     >
@@ -97,24 +101,25 @@ useEffect(() => {
     </Pressable>
   );
 
-  return (
-     
+  if (NotesFamille){
+     return (
     <KeyboardAvoidingView
-    behavior={Platform.OS === "ios" ? "padding" : "height"}
-    style={styles.container}
-    keyboardVerticalOffset={80} // Adjust this offset as per your header height
-  >
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+      keyboardVerticalOffset={80}
+    >
       <Text style={styles.title}>Les Notes</Text>
 
       <FlatList
-  style={styles.notesList}
-  data={NotesFamille.slice().reverse()}  // Create a new reversed array
-  numColumns={2}
-  renderItem={renderItem}
-  keyExtractor={(item) => item.Id.toString()}
-  ListEmptyComponent={<Text style={styles.emptyList}>Aucune note pour le moment.</Text>}
-/>
-
+        style={styles.notesList}
+        data={NotesFamille.slice().reverse()}
+        numColumns={2}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.Id.toString()}
+        ListEmptyComponent={
+          <Text style={styles.emptyList}>Aucune note pour le moment.</Text>
+        }
+      />
 
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Ajouter une note</Text>
@@ -128,13 +133,16 @@ useEffect(() => {
           onChangeText={setFamilleNom}
         />
         {invalidbool && <Text style={styles.errorText}>{errormsg}</Text>}
-        <Pressable style={styles.addButton} onPress={AjouterNote }>
+        <Pressable style={styles.addButton} onPress={AjouterNote}>
           <Text style={styles.addButtonText}>Ajouter</Text>
         </Pressable>
       </View>
-      </KeyboardAvoidingView>
-     
+    </KeyboardAvoidingView>
   );
+  }else{
+    return <ActivityIndicator size={20} />
+  }
+ 
 }
 
 const styles = StyleSheet.create({

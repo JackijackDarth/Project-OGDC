@@ -35,7 +35,15 @@ export function UpdateObjet(lst){
 export function ObtenirNote(idfamille){
     return obtenirJSON_Get(`notes/get/${idfamille}`);
 }
-
+export function ObtenirAutomate(usrId){
+    return obtenirJSON_Get(`automatisation/idUser/${usrId}`);
+}
+export function CreeAutomate(infoAuto){
+    return créerJSON_Post(`automatisation`,infoAuto);
+}
+export function deleteAutomate(autoid){
+    return supprimerRessourceJSON(`automatisation/${autoid}`);
+}
 export function getCommandeAsync(){
     return obtenirRessourceJSON("commandes");
 }
@@ -55,7 +63,10 @@ export function getMembresFamille(idFamille){
     return obtenirJSON_Get(`familles/${idFamille}`)
 }
 export function joinFamille(usrId,infosfamille){
-    return ModifierJSON_Put(`familles/${usrId}`,infosfamille);
+    return ModifierJSON_Put(`familles/${usrId}`);
+}
+export function leaveFamille(usrId){
+    return supprimerRessourceJSON(`familles/${usrId}`);
 }
 //Modif 21/10/2024
 export function lancerCommande(keyCommand,infoObject){
