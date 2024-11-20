@@ -99,7 +99,7 @@ export function NoteScreen({ navigation, route }) {
       }
     >
       <AntDesign name="filetext1" size={40} color="#555" />
-      <Text style={styles.noteText}>{item.message}</Text>
+      <Text style={styles.noteText}>{item.name} : {item.message}</Text>
     </Pressable>
   );
 

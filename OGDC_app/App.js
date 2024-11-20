@@ -7,7 +7,7 @@ import { AccueilScreen, AjoutRobotScreen,} from './composantes/RobotGestion';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { AntDesign, MaterialCommunityIcons} from '@expo/vector-icons';
 import { NoteScreen } from './composantes/NotesGestion';
-import { FamillymanageScreen,MenuFamilleScreen } from './composantes/FamilleGestion';
+import { FamillymanageScreen,MenuFamilleScreen,FamHistoryScreen } from './composantes/FamilleGestion';
 import { AutomateScreen,AutoCreationScreen } from './composantes/AutomateGestion';
 import { StrictMode } from 'react';
 const Tab = createBottomTabNavigator();
@@ -119,6 +119,10 @@ export default function App() {
 
         <Group screenOptions={{ presentation: 'modal' }}>
         <Screen name="AutoCreation" component={AutoCreationScreen} options={{ title: "Création d'automatisation" }} />
+        </Group>
+
+        <Group screenOptions={{ presentation: 'modal' }}>
+        <Screen name="Historique" component={FamHistoryScreen} options={{ title: "Historique de famille" }} />
         </Group>
 
         <Group screenOptions={{ presentation: 'modal' }}>
