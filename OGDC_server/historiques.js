@@ -1,40 +1,45 @@
 const fs = require('fs');
-const users = require('users.js');
-const familles = require('familles.js');
+const users = require('./users.js');
+const familles = require('./familles.js');
 const historiquesFilePath = "./BD/historiques.json";
 
 function ObtenirHistoriqueFamilleUsager(idUser){
-    let user = users.obtenirUsager(idUser);
+    let user = users.obtenirUsager(idUser).user;
     let famille = familles.GetFamille(user.idFamille);
-    if(famille.ownerId == user.Id){
-        let historiques = GetHistoriquesPourUnRobot(famille.idRobot);
-        if(historiques.length > 0){
-            let historiqueModifier = [];
-            historiques.forEach(historique => {
-                let userHistorique = users.obtenirUsager(historique.idUser);
-                let nouvelleHistorique = {
-                    Id:historique.Id,
-                    name: userHistorique.prenom + " " + userHistorique.nom,
-                    action:historique.action,
-                    date:historique.date
+    if(famille != null){
+        if(famille.ownerId == user.Id){
+            let historiques = GetHistoriquesPourUnRobot(user.idRobot);
+            if(historiques.length > 0){
+                let historiqueModifier = [];
+                historiques.forEach(historique => {
+                    let userHistorique = users.obtenirUsager(historique.idUser).user;
+                    let nouvelleHistorique = {
+                        Id:historique.Id,
+                        name: userHistorique.prenom + " " + userHistorique.nom,
+                        action:historique.action,
+                        date:historique.date
+                    }
+                    historiqueModifier.push(nouvelleHistorique);
+                });
+                if(historiqueModifier.length > 0){
+                    return{erreur:0,msg:"Réussi",historiques:historiqueModifier}
                 }
-                historiqueModifier.push(nouvelleHistorique);
-            });
-            if(historiqueModifier.length > 0){
-                return{erreur:0,msg:"Réussi",historiques:historiqueModifier}
+                else{
+                    return{erreur:1,msg:"Erreur dans les données de l'historique",historiques:null}
+                }
             }
             else{
-                return{erreur:1,msg:"Erreur dans les données de l'historique",historiques:null}
+                return{erreur:1,msg:"Aucune historique trouver pour ce robot",historiques:null}
             }
+    
         }
         else{
-            return{erreur:1,msg:"Aucune historique trouver pour ce robot",historiques:null}
-        }
-
+            return{erreur:1,msg:"L'usager n'est pas l'admin de la famille",historiques:null}
+        }    
     }
     else{
-        return{erreur:1,msg:"L'usager n'est pas l'admin de la famille",historiques:null}
-    }    
+        return{erreur:1,msg:"Famille du user inexistante",historiques:null}
+    }
 }
 
 function EnregistrerHistorique(){
