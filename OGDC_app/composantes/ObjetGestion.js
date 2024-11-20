@@ -133,7 +133,7 @@ export function ObjetsScreen({ navigation, route }) {
           size={25}
           color="blue"
           onPress={() => {
-            navigation.replace("Authen");
+            navigation.navigate("Accueil");
           }}
         />
       ),

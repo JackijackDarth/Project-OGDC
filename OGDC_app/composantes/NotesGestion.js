@@ -31,7 +31,7 @@ export function NoteScreen({ navigation, route }) {
     obtenirUser(currentId)
       .then((user) => setCurrentUser(user))
       .catch((err) => console.error("Failed to fetch user:", err));
-  }, [navigation]);
+  }, [navigation,route]);
 
   useEffect(() => {
     if (CurrentUser?.idFamille) {
@@ -48,7 +48,10 @@ export function NoteScreen({ navigation, route }) {
       ObtenirNote(CurrentUser.idFamille)
         .then((notes) => setNotesFamille(notes))
         .catch((err) => console.error("Error fetching notes:", err));
+    }else {
+      setNotesFamille([]);
     }
+    
   }, [CurrentUser?.idFamille]);
 
   useFocusEffect(
