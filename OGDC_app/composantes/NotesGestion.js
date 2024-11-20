@@ -10,9 +10,9 @@ import {
   TextInput,
   Platform,
   Keyboard,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
-import { useState, useEffect, useCallback, } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import { creerNote, ObtenirNote, deleteNote, obtenirUser } from "../utils";
@@ -32,8 +32,6 @@ export function NoteScreen({ navigation, route }) {
       .then((user) => setCurrentUser(user))
       .catch((err) => console.error("Failed to fetch user:", err));
   }, [navigation]);
-  
-  
 
   useEffect(() => {
     if (CurrentUser?.idFamille) {
@@ -45,7 +43,6 @@ export function NoteScreen({ navigation, route }) {
     }
   }, [navigation, route, CurrentUser]);
 
-
   const fetchNotes = useCallback(() => {
     if (CurrentUser?.idFamille) {
       ObtenirNote(CurrentUser.idFamille)
@@ -53,35 +50,37 @@ export function NoteScreen({ navigation, route }) {
         .catch((err) => console.error("Error fetching notes:", err));
     }
   }, [CurrentUser?.idFamille]);
-  
+
   useFocusEffect(
-  useCallback(() => {
-    const intervalId = setInterval(fetchNotes, 500);
-    fetchNotes();
-    return () => clearInterval(intervalId);
-  }, [fetchNotes])
-);
+    useCallback(() => {
+      const intervalId = setInterval(fetchNotes, 500);
+      fetchNotes();
+      return () => clearInterval(intervalId);
+    }, [fetchNotes])
+  );
 
-
-function AjouterNote() {
-  if (NomFamille != null && /\S/.test(NomFamille)) {
-    creerNote({ idUser: currentId, message: NomFamille })
-      .then((response) => {
-        setInvalidbool(false);
-        setErrorMsg("");
-        setFamilleNom("");
-        Keyboard.dismiss();
-      })
-      .catch((err) => {
-        console.log("Erreur dans la création de la note:", err);
-        setInvalidbool(true);
-      });
-  } else {
-    setInvalidbool(true);
-    setErrorMsg("Veuiller entrer quelque chose avant de procéder");
+  function AjouterNote() {
+    if(CurrentUser.idFamille){
+    if (NomFamille != null && /\S/.test(NomFamille)) {
+      creerNote({ idUser: currentId, message: NomFamille })
+        .then((response) => {
+          setInvalidbool(false);
+          setErrorMsg("");
+          setFamilleNom("");
+          Keyboard.dismiss();
+        })
+        .catch((err) => {
+          console.log("Erreur dans la création de la note:", err);
+          setInvalidbool(true);
+        });
+    } else {
+      setInvalidbool(true);
+      setErrorMsg("Veuiller entrer quelque chose avant de procéder");
+    }}else{
+      setInvalidbool(true);
+      setErrorMsg("Vous ne faite pas parti d'une famille!");
+    }
   }
-}
-
 
   const renderItem = ({ item }) => (
     <Pressable
@@ -101,48 +100,47 @@ function AjouterNote() {
     </Pressable>
   );
 
-  if (NotesFamille){
-     return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
-      keyboardVerticalOffset={80}
-    >
-      <Text style={styles.title}>Les Notes</Text>
+  if (NotesFamille) {
+    return (
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+        keyboardVerticalOffset={80}
+      >
+        <Text style={styles.title}>Les Notes</Text>
 
-      <FlatList
-        style={styles.notesList}
-        data={NotesFamille.slice().reverse()}
-        numColumns={2}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.Id.toString()}
-        ListEmptyComponent={
-          <Text style={styles.emptyList}>Aucune note pour le moment.</Text>
-        }
-      />
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>Ajouter une note</Text>
-        <TextInput
-          style={[
-            styles.input,
-            invalidbool && { borderColor: "red", backgroundColor: "#ffe6e6" },
-          ]}
-          placeholder="Message de la note"
-          value={NomFamille}
-          onChangeText={setFamilleNom}
+        <FlatList
+          style={styles.notesList}
+          data={NotesFamille.slice().reverse()}
+          numColumns={2}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.Id.toString()}
+          ListEmptyComponent={
+            <Text style={styles.emptyList}>Aucune note pour le moment.</Text>
+          }
         />
-        {invalidbool && <Text style={styles.errorText}>{errormsg}</Text>}
-        <Pressable style={styles.addButton} onPress={AjouterNote}>
-          <Text style={styles.addButtonText}>Ajouter</Text>
-        </Pressable>
-      </View>
-    </KeyboardAvoidingView>
-  );
-  }else{
-    return <ActivityIndicator size={20} />
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>Ajouter une note</Text>
+          <TextInput
+            style={[
+              styles.input,
+              invalidbool && { borderColor: "red", backgroundColor: "#ffe6e6" },
+            ]}
+            placeholder="Message de la note"
+            value={NomFamille}
+            onChangeText={setFamilleNom}
+          />
+          {invalidbool && <Text style={styles.errorText}>{errormsg}</Text>}
+          <Pressable style={styles.addButton} onPress={AjouterNote}>
+            <Text style={styles.addButtonText}>Ajouter</Text>
+          </Pressable>
+        </View>
+      </KeyboardAvoidingView>
+    );
+  } else {
+    return <ActivityIndicator size={20} />;
   }
- 
 }
 
 const styles = StyleSheet.create({

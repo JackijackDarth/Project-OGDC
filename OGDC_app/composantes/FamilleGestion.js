@@ -11,7 +11,8 @@ import {
   StatusBar,
   TouchableOpacity,
   ActivityIndicator,
-  Clipboard
+  Clipboard,
+  Alert
 } from "react-native";
 import { useState, useEffect, useCallback} from "react";
 import {
@@ -52,7 +53,6 @@ export function FamillymanageScreen({ navigation, route }) {
           getInfosFamille(user.idFamille),
           getMembresFamille(user.idFamille),
         ]);
-
         setInfosFamille(familleDetails);
         setcodefamillet(familleDetails.password);
         setFamilleUsrList(familleMembers);
@@ -80,7 +80,6 @@ export function FamillymanageScreen({ navigation, route }) {
     };
     }, [fetchData])
   );
-
   useEffect(() => {
     navigation.setOptions({
       title: "Gestion de la Famille",
@@ -90,14 +89,41 @@ export function FamillymanageScreen({ navigation, route }) {
           size={25}
           color="blue"
           onPress={() => {
-            leaveFamille(currentId);
+            if (InfosFamille?.ownerId === currentId) {
+              Alert.alert(
+                "Action impossible",
+                "Vous ne pouvez pas quitter la famille car vous en êtes le propriétaire.",
+                [{ text: "OK", style: "cancel" }]
+              );
+            } else {
+              leaveFamille(currentId)
+                .then(() => {
+                  fetchData();
+                })
+                .catch((err) => {
+                  console.error("Error leaving family:", err);
+                });
+            }
           }}
         />
       ),
+      headerLeft: () => (
+        <AntDesign
+          name="clockcircleo"
+          size={25}
+          color="blue"
+          onPress={() => {
+            Alert.alert("Historique", "Voici l'historique.");
+          }}
+          style={{ marginLeft: 15 }}
+        />
+      ),
     });
-  }, [navigation]);
+  }, [navigation, InfosFamille, currentId]);
   
   
+  
+
   function RejoindreFamille() {
     if (NomFamille && /\S/.test(NomFamille)) {
       joinFamille(currentId, {
@@ -106,7 +132,7 @@ export function FamillymanageScreen({ navigation, route }) {
       })
         .then(() => {
           setInvalidbool(false);
-          setErrorMsg("Vous avez rejoint la famille " + NomFamille);
+          setErrorMsg("");
           fetchData()
         })
         .catch((err) => {
@@ -136,25 +162,56 @@ export function FamillymanageScreen({ navigation, route }) {
   useEffect(() => {
     setSelectedId(null)
   }, [navigation,route]);
+
+  
   const renderItem = ({ item }) => {
     const backgroundColor = item.Id === selectedId ? "#4CAF50" : "#ffffff";
-  const color = item.Id === selectedId ? "white" : "#333333";
+    const color = item.Id === selectedId ? "white" : "#333333";
+  
+    const handleDelete = (userId) => {
+      Alert.alert(
+        "Confirmation",
+        `Êtes-vous sûr de vouloir supprimer ${item.username} de la famille ?`,
+        [
+          {
+            text: "Annuler",
+            style: "cancel",
+          },
+          {
+            text: "Supprimer",
+            style: "destructive",
+            onPress: async () => {
+              try {
+                await leaveFamille(userId); // Call your API function
+                fetchData(); // Refresh the data
+              } catch (error) {
+                console.error("Error deleting user:", error);
+              }
+            },
+          },
+        ]
+      );
+    };
+  
     return (
       <TouchableOpacity
-      onPress={() => setSelectedId(item.Id)}
-      style={[styles.item, { backgroundColor }]}
-    >
-       
-  <View style={styles.textContainer}>
-    <Text style={styles.name}>{item.username}</Text>
-    <Text style={styles.email}>{item.email}</Text>
-  </View>
-  
-  <AntDesign name="user" style={styles.icon} />
-
-    </TouchableOpacity>
+        onPress={() => setSelectedId(item.Id)}
+        style={[styles.item, { backgroundColor }]}
+      >
+        <View style={styles.textContainer}>
+          <Text style={styles.name}>{item.username}</Text>
+          <Text style={styles.email}>{item.email}</Text>
+        </View>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <AntDesign name="user" style={styles.icon} />
+        { InfosFamille.ownerId === currentId &&  <TouchableOpacity onPress={handleDelete} style={{ marginLeft: 10 }}>
+            <AntDesign name="delete" size={24} color="#f44336" />
+          </TouchableOpacity>}
+        </View>
+      </TouchableOpacity>
     );
   };
+  
  
   if (currentuser) {
     if (currentuser.idFamille) {

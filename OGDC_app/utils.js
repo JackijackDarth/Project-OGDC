@@ -63,7 +63,7 @@ export function getMembresFamille(idFamille){
     return obtenirJSON_Get(`familles/${idFamille}`)
 }
 export function joinFamille(usrId,infosfamille){
-    return ModifierJSON_Put(`familles/${usrId}`);
+    return ModifierJSON_Put(`familles/${usrId}`,infosfamille);
 }
 export function leaveFamille(usrId){
     return supprimerRessourceJSON(`familles/${usrId}`);
