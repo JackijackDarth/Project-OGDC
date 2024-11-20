@@ -73,7 +73,13 @@ function ObtenirNotesFamille(idFamille){
     let notes = []
     liste_notes.forEach(note=>{
         if(note.idFamille == idFamille)
-            notes.push(note);
+            var userNote = users.obtenirUsager(note.idOwner).user;
+            noteModifier = {
+                Id:note.Id,
+                message:note.message,
+                name:userNote.prenom
+            }
+            notes.push(noteModifier);
     })
     if(notes.length > 0){
         return{erreur:0,msg:"Réussi",notes:notes}

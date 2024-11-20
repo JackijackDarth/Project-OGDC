@@ -55,7 +55,7 @@ famillesRoutes.route('/:param1')
         }
     })
     .delete((req,res) =>{
-        console.log("Supprimer un membre de la famille ------------------------------------------------------")
+        console.log("Supprimer un membre de la famille "+ req.params.param1 +" ------------------------------------------------------")
         let resultat = familles.SupprimerMembreFamille(req.params.param1);
         console.log(resultat);
         if (resultat.erreur !== 0) {

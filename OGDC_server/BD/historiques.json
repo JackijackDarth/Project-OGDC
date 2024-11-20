@@ -26,5 +26,229 @@
         "idUser": 3,
         "idRobot": 0,
         "date": "2024-11-19 21 h 09 min 36 s"
+    },
+    {
+        "Id": 5,
+        "action": "Changer temp. cible",
+        "idUser": 1,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 13 min 32 s"
+    },
+    {
+        "Id": 6,
+        "action": "Changer temp. cible",
+        "idUser": 1,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 13 min 34 s"
+    },
+    {
+        "Id": 7,
+        "action": "Changer temp. cible",
+        "idUser": 1,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 13 min 38 s"
+    },
+    {
+        "Id": 8,
+        "action": "Changer temp. cible",
+        "idUser": 1,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 13 min 57 s"
+    },
+    {
+        "Id": 9,
+        "action": "Changer temp. cible",
+        "idUser": 1,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 13 min 57 s"
+    },
+    {
+        "Id": 10,
+        "action": "Changer temp. cible",
+        "idUser": 1,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 14 min 15 s"
+    },
+    {
+        "Id": 11,
+        "action": "Changer temp. cible",
+        "idUser": 1,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 14 min 40 s"
+    },
+    {
+        "Id": 12,
+        "action": "Allumer/Éteindre LED",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 19 min 50 s"
+    },
+    {
+        "Id": 13,
+        "action": "Allumer/Éteindre LED",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 19 min 59 s"
+    },
+    {
+        "Id": 14,
+        "action": "Allumer/Éteindre LED",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 20 min 09 s"
+    },
+    {
+        "Id": 15,
+        "action": "Allumer/Éteindre LED",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 21 min 08 s"
+    },
+    {
+        "Id": 16,
+        "action": "Allumer/Éteindre LED",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 22 min 53 s"
+    },
+    {
+        "Id": 17,
+        "action": "Allumer/Éteindre LED",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 36 min 33 s"
+    },
+    {
+        "Id": 18,
+        "action": "Allumer/Éteindre LED",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 38 min 39 s"
+    },
+    {
+        "Id": 19,
+        "action": "Allumer/Éteindre LED",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 38 min 45 s"
+    },
+    {
+        "Id": 20,
+        "action": "Allumer/Éteindre LED",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 38 min 48 s"
+    },
+    {
+        "Id": 21,
+        "action": "Allumer/Éteindre LED",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 39 min 01 s"
+    },
+    {
+        "Id": 22,
+        "action": "Allumer/Éteindre LED",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 39 min 03 s"
+    },
+    {
+        "Id": 23,
+        "action": "Allumer/Éteindre LED",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 39 min 08 s"
+    },
+    {
+        "Id": 24,
+        "action": "Changer temp. cible",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 39 min 17 s"
+    },
+    {
+        "Id": 25,
+        "action": "Changer temp. cible",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 39 min 27 s"
+    },
+    {
+        "Id": 26,
+        "action": "Changer temp. cible",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 40 min 39 s"
+    },
+    {
+        "Id": 27,
+        "action": "Changer temp. cible",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 41 min 37 s"
+    },
+    {
+        "Id": 28,
+        "action": "Appuyer sur bouton principal",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 42 min 17 s"
+    },
+    {
+        "Id": 29,
+        "action": "Appuyer sur bouton principal",
+        "idUser": 1,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 42 min 54 s"
+    },
+    {
+        "Id": 30,
+        "action": "Appuyer sur bouton principal",
+        "idUser": 1,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 43 min 04 s"
+    },
+    {
+        "Id": 31,
+        "action": "Appuyer sur bouton principal",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 43 min 11 s"
+    },
+    {
+        "Id": 32,
+        "action": "Allumer/Éteindre LED",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 43 min 22 s"
+    },
+    {
+        "Id": 33,
+        "action": "Allumer/Éteindre LED",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 44 min 17 s"
+    },
+    {
+        "Id": 34,
+        "action": "Allumer/Éteindre LED",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 44 min 47 s"
+    },
+    {
+        "Id": 35,
+        "action": "Allumer/Éteindre LED",
+        "idUser": 2,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 45 min 20 s"
+    },
+    {
+        "Id": 36,
+        "action": "Allumer/Éteindre LED",
+        "idUser": 1,
+        "idRobot": 0,
+        "date": "2024-11-20 09 h 56 min 59 s"
     }
 ]
