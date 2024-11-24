@@ -168,7 +168,8 @@ export function FamillymanageScreen({ navigation, route }) {
   const renderItem = ({ item }) => {
     const backgroundColor = item.Id === selectedId ? "#4CAF50" : "#ffffff";
     const color = item.Id === selectedId ? "white" : "#333333";
-    const handleDelete = (item) => {
+  
+    const handleDelete = () => {
       Alert.alert(
         "Confirmation",
         `Êtes-vous sûr de vouloir supprimer ${item.username} de la famille ?`,
@@ -182,9 +183,9 @@ export function FamillymanageScreen({ navigation, route }) {
             style: "destructive",
             onPress: async () => {
               try {
-                console.log(item)
+                console.log(item.Id)
                 await leaveFamille(item.Id);
-                fetchData();
+                
               } catch (error) {
                 console.error("Error deleting user:", error);
               }
@@ -342,18 +343,11 @@ export function MenuFamilleScreen({ route, navigation }) {
 
 
 export function FamHistoryScreen({ route, navigation }) {
-  const [NomFamille, setFamilleNom] = useState(null);
   const [InfosFamille, setInfosFamille] = useState(null);
   const [HistoFamille, setHistoFamille] = useState(null);
-  const [MdpFamille, setMdpFamille] = useState(null);
-  const [errormsg, setErrorMsg] = useState(null);
-  const [invalidbool, setInvalidbool] = useState(false);
   const [currentuser, setCurrentUser] = useState();
   const currentId = route.params.usrid;
   const [selectedId, setSelectedId] = useState(null);
-  const [FamilleUsrList, setFamilleUsrList] = useState(null);
-  const [loading, setLoading] = useState(true) 
-  const [codefamille, setcodefamillet] = useState(""); 
 
   const fetchData =useCallback( async () => {
     try {
@@ -399,44 +393,6 @@ export function FamHistoryScreen({ route, navigation }) {
     }, [fetchData])
   );
   
-  
-  
-
-  function RejoindreFamille() {
-    if (NomFamille && /\S/.test(NomFamille)) {
-      joinFamille(currentId, {
-        nomFamille: NomFamille,
-        passFamille: MdpFamille,
-      })
-        .then(() => {
-          setInvalidbool(false);
-          setErrorMsg("");
-          fetchData()
-        })
-        .catch((err) => {
-          console.log(err);
-          setErrorMsg("Ce nom de famille n'est pas disponible");
-          setInvalidbool(true);
-        });
-    } else {
-      setInvalidbool(true);
-      setErrorMsg("Veuillez entrer un nom de famille avant de procéder");
-    }
-  }
-
-  const copyFamilyCode = () => {
-    if (InfosFamille){
-      //le nouveau clipboard marche juste pas donc je prend ça pour le moment
-      Clipboard.setString(InfosFamille.password + " "+InfosFamille.name); 
-      setcodefamillet("Code copié !"); 
-      
-      
-      setTimeout(() => {
-        setcodefamillet(InfosFamille.password);
-      }, 3000);
-    }
-   
-  };
   useEffect(() => {
     setSelectedId(null)
   }, [navigation,route]);
