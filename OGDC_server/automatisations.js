@@ -5,6 +5,11 @@ const automatisationFilePath = './BD/automatisations.json';
 
 const typeAutomatisation = ['heure', '']
 
+/**
+ * Envoie une automatisation au serveur et la publier dans la BD
+ * @param {Array} infoAutomatisation 
+ * @returns \{erreur,msg}
+ */
 function EnvoyerAutomatisation(infoAutomatisation){
     // infoAutomatisation = automatisation et commande dedans
     if(infoAutomatisation != null){
@@ -34,6 +39,13 @@ function EnvoyerAutomatisation(infoAutomatisation){
     }
 }
 
+/**
+ * Creer une automatisation et la retourne si elle est valide
+ * @param {int} id Id de l'automatisation
+ * @param {Array} automatisation Dictionnaire [condition:valeur]
+ * @param {Object} commande Un objet commande COMPLET et déja VÉRIFIÉ
+ * @returns Une automatisation ou null en cas d'erreur
+ */
 function CreerAutomatisation(id, automatisation, commande) {
     let today = new Date();
     let now = today.toLocaleString();
@@ -59,6 +71,11 @@ function CreerAutomatisation(id, automatisation, commande) {
     }
 }
 
+/**
+ * Supprime une automatisation de la BD
+ * @param {int} idAutomatisation 
+ * @returns \{erreur,msg}
+ */
 function SupprimerAutomatisation(idAutomatisation){
     liste_automatisations = GetListeAutomatisations();
     let find = false;
@@ -87,6 +104,11 @@ function SupprimerAutomatisation(idAutomatisation){
     }
 }
 
+/**
+ * Obtiens les automatisations pour un user à l'aide de son ID
+ * @param {int} idUser 
+ * @returns \{erreur:0,msg:"Réussi",automatisations:(liste automatisations)}
+ */
 function ObtenirAutomatisationUser(idUser){
     let liste_automatisations = GetListeAutomatisations()
     let automatisations = []
@@ -99,6 +121,11 @@ function ObtenirAutomatisationUser(idUser){
     
 }
 
+/**
+ * Obtiens les automatisations pour un robot à l'aide de son ID
+ * @param {int} idRobot 
+ * @returns \{erreur:0,msg:"Réussi",automatisations:(liste automatisations)}
+ */
 function ObtenirAutomatisationRobot(idRobot){
     let liste_automatisations = GetListeAutomatisations()
     let automatisations = []

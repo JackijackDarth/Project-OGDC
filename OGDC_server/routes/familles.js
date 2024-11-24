@@ -54,6 +54,11 @@ famillesRoutes.route('/:param1')
             res.status(201).send(resultat);
         }
     })
+    /** 
+     * delete /idUser/
+     * Enlever un membre de la famille selon son ID
+     * Return status 201 | 401
+     */
     .delete((req,res) =>{
         console.log("Supprimer un membre de la famille "+ req.params.param1 +" ------------------------------------------------------")
         let resultat = familles.SupprimerMembreFamille(req.params.param1);
@@ -67,11 +72,11 @@ famillesRoutes.route('/:param1')
 
 famillesRoutes.route('/:param1/:param2')
     /**
-         * familles /GET/infoFamille/idFamille
-         * Retourne les infos de la famille associé à l'ID donner
-         * Si trouver elle retourne les infos de la famille en JSON
-         * Sinon retourne status 401
-         */
+     * familles /GET/infoFamille/idFamille
+     * Retourne les infos de la famille associé à l'ID donner
+     * Si trouver elle retourne les infos de la famille en JSON
+     * Sinon retourne status 401
+     */
     .get((req,res)=>{
         if(req.params.param1 == "infoFamille"){
             console.log("Obtenir les infos de la famille ",req.params.param2 + " ------------------------------------------");
@@ -85,6 +90,11 @@ famillesRoutes.route('/:param1/:param2')
         }
     })
 
+    /** 
+     * put /userIdOwner/userIdTarget
+     * Modifie le propriétaire d'une famille selon l'id de l'admin et de l'autre membre
+     * Return status {erreur,msg} | 401
+     */
     .put((req,res)=>{
         console.log("Changer l'admin de la famille du user ",req.params.param1 + " pour "+ req.params.param2 + " ------------------------------------------");
         const resultat = familles.ChangerAdminFamille(req.params.param1,req.params.param2);

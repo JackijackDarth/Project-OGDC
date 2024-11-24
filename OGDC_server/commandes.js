@@ -8,6 +8,7 @@ const users = require('./users.js');
  * Attention: Commande créer mais pas enregistrer dans la BD
  * @param {int} id 
  * @param {string} nomCommande 
+ * @param {int} idUser
  * @param {string} nomObjet 
  * @param {int} numPin 
  * @param {int} nouvelleValeur
@@ -45,6 +46,7 @@ function CreerCommande(id, nomCommande, idUser, nomObjet, numPin, nouvelleValeur
  * Appelle une autre fonction pour vérifier que les infos fournies sont correcte avec le style de commande due
  * @param {Array} infoObjet 
  * @param {string} nomCommande 
+ * @param {boolean} returnCommande Par défaut est False, mettre a True si on veut avoir la commande
  * @returns 201 + "Réussi" | Error:1,msg:""
  */
 function EnvoyerCommande(infoObjet, nomCommande, returnCommande = false) {
@@ -195,7 +197,8 @@ function EstUnChauffage(infoChauffage) {
 }
 
 /**
- * Fonction qui retourne toute les commandes en cours pour un type de robot dans le fichier JSON
+ * Fonction qui retourne toute les commandes en cours pour un ID de robot dans le fichier JSON
+ * @param {int} idRobot
  * @returns un tuple avec le status de la requete et la liste de commandes {erreur,msg,commandes}
  */
 function obtenirTouteCommandesPourRobot(idRobot) {

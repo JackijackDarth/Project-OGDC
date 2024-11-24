@@ -5,6 +5,11 @@ const notesRoutes = Router();
 
 
 notesRoutes.route('/')
+    /** 
+     * post /
+     * Création d'une note
+     * Return status 201 | 401
+     */
     .post((req, res) => {
         console.log("Création note -----------------------------------------------------");
         const resultat = notes.CreerNotes(req.body);
@@ -17,6 +22,11 @@ notesRoutes.route('/')
     });
 
 notesRoutes.route('/:method/:param1')
+    /** 
+     * delete /delete/idNote/
+     * Supprimer une note selon son id
+     * Return status 201 | 401
+     */
     .delete((req,res)=>{
         if(req.params.method == "delete"){
             console.log("Commande delete : ", req.params.param1 + " ------------------------------------------------");
@@ -29,6 +39,11 @@ notesRoutes.route('/:method/:param1')
             }
         }
     })
+    /** 
+     * get /get/idFamille
+     * Obtiens les notes selon la famille donner (id)
+     * Return notes en JSON | 401
+     */
     .get((req,res)=>{
         if(req.params.method == "get"){
             console.log("Obtenir les notes pour la famille : ",req.params.param1 + " ------------------------------------------");
