@@ -2,7 +2,8 @@ const math = require('mathjs');
 const fs = require('fs');
 const famillesFilePath = "./BD/listeFamilles.json";
 const users = require("./users")
-const utils = require("./utils")
+const utils = require("./utils");
+const { info } = require('console');
 
 /**
  * Envoie les données a fonction pour créer l'objet famille et ensuite enregistre dans la BD la nouvelle famille si elle est conforme
@@ -217,6 +218,29 @@ function SupprimerMembreFamille(idUser){
     }
 }
 
+function ChangerAdminFamille(userIdOwner, userIdTarget){
+    let infoUserOwner = users.obtenirUsager(userIdOwner).user;
+    let famille = GetFamille(infoUserOwner.idFamille);
+    if(famille.ownerId == userIdOwner){
+        let liste_familles = GetListeFamilles();
+        let infoUserTarget = users.obtenirUsager(userIdTarget).user;
+        if(infoUserTarget.idFamille == infoUserOwner.idFamille){
+            liste_familles.forEach((famille)=>{
+                if(famille.Id == infoUserOwner.idFamille){
+                    famille.ownerId = infoUserTarget.Id;
+                }
+            })
+            PostListeFamilles(liste_familles);
+            return {erreur:0,msg:"Réussi"}
+        }
+        else{
+            return{erreur:1,msg:"L'admin et le membre ne sont pas dans la même famille!"}
+        }
+    }
+    return {erreur:1,msg:"L'usager n'est pas l'admin de la famille"}
+    
+}
+
 /**
  * Fonction retournant la liste de familles
  * @returns Un tableau JavaScript de la liste de familles dans le fichier JSON
@@ -246,5 +270,6 @@ module.exports = {
     GetFamille,
     ConnexionUserAFamille,
     AjouterUneFamilleAuUser,
-    SupprimerMembreFamille
+    SupprimerMembreFamille,
+    ChangerAdminFamille,
 };

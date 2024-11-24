@@ -85,4 +85,15 @@ famillesRoutes.route('/:param1/:param2')
         }
     })
 
+    .put((req,res)=>{
+        console.log("Changer l'admin de la famille du user ",req.params.param1 + " pour "+ req.params.param2 + " ------------------------------------------");
+        const resultat = familles.ChangerAdminFamille(req.params.param1,req.params.param2);
+        console.log("Résultat de ChangerAdminFamille:", resultat);
+        if (resultat.erreur != 0) {
+            res.status(401).send(resultat);
+        } else {
+            res.json(resultat);
+        }
+    })
+
 module.exports = famillesRoutes;
