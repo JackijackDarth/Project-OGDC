@@ -136,6 +136,7 @@ export function ObjetsScreen({ navigation, route }) {
           name="shape-plus"
           size={25}
           color="blue"
+          style={{ marginRight: 15 }}
           onPress={() => {
             navigation.navigate('Accueil', { usrId });
           }}

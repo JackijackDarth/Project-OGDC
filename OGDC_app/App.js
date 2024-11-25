@@ -92,7 +92,7 @@ export default function App() {
   return (
     <StrictMode>
     <NavigationContainer>
-      <Navigator initialRouteName="Authen" screenOptions={{ headerTitleAlign: "center" }}>
+      <Navigator initialRouteName="Authen" screenOptions={{ headerTitleAlign: "center", }}>
 
         
         <Screen name="MainTabs" component={MainTabNavigator} options={{ headerShown: false }} />

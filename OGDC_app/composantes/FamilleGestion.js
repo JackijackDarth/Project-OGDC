@@ -604,7 +604,7 @@ const styles = StyleSheet.create({
   codeContainer: {
     marginBottom:5,
     padding: 16,
-    width:350,
+    width:370,
     alignSelf:"center",
     marginBottom:15,
     backgroundColor: "#fff",
