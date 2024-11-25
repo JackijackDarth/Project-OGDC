@@ -144,24 +144,54 @@ export function NoteScreen({ navigation, route }) {
           </Pressable>
         </View>
         <Modal
-        visible={!!selectedNote}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setSelectedNote(null)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>{selectedNote?.name}</Text>
-            <Text style={styles.modalText}>{selectedNote?.message}</Text>
-            <TouchableOpacity
-              style={styles.modalCloseButton}
-              onPress={() => setSelectedNote(null)}
-            >
-              <Text style={styles.modalCloseButtonText}>Fermer</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+  visible={!!selectedNote}
+  transparent={true}
+  animationType="fade"
+  onRequestClose={() => setSelectedNote(null)}
+>
+  <View style={styles.modalContainer}>
+    <View style={styles.modalContent}>
+      <Text style={styles.modalTitle}>{selectedNote?.name}</Text>
+      <Text style={styles.modalText}>{selectedNote?.message}</Text>
+      <View style={styles.modalButtonContainer}>
+        <TouchableOpacity
+          style={styles.modalDeleteButton}
+          onPress={() => {
+            Alert.alert(
+              "Supprimer",
+              "Voulez-vous supprimer cette note ?",
+              [
+                { text: "Annuler", style: "cancel" },
+                {
+                  text: "Supprimer",
+                  style: "destructive",
+                  onPress: () => {
+                    deleteNote(selectedNote.Id)
+                      .then(() => {
+                        setSelectedNote(null); // Close modal
+                        fetchNotes(); // Refresh notes
+                      })
+                      .catch((err) => console.error("Erreur suppression:", err));
+                  },
+                },
+              ]
+            );
+          }}
+        >
+          <Text style={styles.modalDeleteButtonText}>Supprimer</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.modalCloseButton}
+          onPress={() => setSelectedNote(null)}
+        >
+          <Text style={styles.modalCloseButtonText}>Fermer</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </View>
+</Modal>
+
+
       </KeyboardAvoidingView>
     );
   } else {
@@ -286,13 +316,37 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },
+  modalButtonContainer: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    marginTop: 20,
+    width: "100%",
+  },
+  modalDeleteButton: {
+    backgroundColor: "#f44336",
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    marginLeft: 10,
+    alignItems: "center",
+  },
+  modalDeleteButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
+  },
   modalCloseButton: {
     backgroundColor: "#4caf50",
     padding: 10,
     borderRadius: 5,
+    flex: 1,
+    marginRight: 10,
+    alignItems: "center",
   },
   modalCloseButtonText: {
     color: "#fff",
     fontSize: 16,
+    textAlign: "center",
   },
+  
 });

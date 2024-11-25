@@ -346,6 +346,7 @@ export function MenuFamilleScreen({ route, navigation }) {
   const [NomFamille, setFamilleNom] = useState(null);
   const [errormsg, setErrorMsg] = useState(null);
   const [invalidbool, setInvalidbool] = useState(false);
+  
   const { usrid } = route.params;
 
   function CreationFamille() {
@@ -396,6 +397,7 @@ export function FamHistoryScreen({ route, navigation }) {
   const [InfosFamille, setInfosFamille] = useState(null);
   const [HistoFamille, setHistoFamille] = useState(null);
   const [currentuser, setCurrentUser] = useState();
+  const [loading, setLoading] = useState(true);
   const currentId = route.params.usrid;
   const [selectedId, setSelectedId] = useState(null);
 
@@ -415,12 +417,8 @@ export function FamHistoryScreen({ route, navigation }) {
           ]);
         setInfosFamille(familleDetails);
         setHistoFamille(familleHistory);
-        setcodefamillet(familleDetails.password);
-
-        setFamilleUsrList(familleMembers);
       } else {
         setInfosFamille(null);
-        setFamilleUsrList(null);
         setHistoFamille(null);
       }
     } catch (err) {
@@ -604,19 +602,18 @@ const styles = StyleSheet.create({
     color: "#010101",
   },
   codeContainer: {
-    position: "absolute",
-    bottom: 40,
-    left: 20,
-    right: 20,
-    backgroundColor: "#f9f9f9",
-    padding: 15,
+    marginBottom:5,
+    padding: 16,
+    width:350,
+    alignSelf:"center",
+    marginBottom:15,
+    backgroundColor: "#fff",
     borderRadius: 10,
-    justifyContent: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 5,
+    elevation: 3,
   },
   codeText: {
     fontSize: 18,
