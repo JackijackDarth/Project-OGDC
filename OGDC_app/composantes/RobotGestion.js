@@ -159,17 +159,6 @@ export function AjoutRobotScreen({ route, navigation }) {
 
 
 
-export function Thumbnail({ Nom, thumb_cb }) {
-  function onClick_cb(e) {
-    if (thumb_cb !== null && thumb_cb !== undefined)
-      thumb_cb();
-  }
-  return (
-    <Pressable style={styles.thumbnail} onPress={onClick_cb}>
-      <Text>{Nom}</Text>
-    </Pressable>
-  );
-}
 
 export function Tuile({ texte, onPress_cb, iconNom }) {
   return (
