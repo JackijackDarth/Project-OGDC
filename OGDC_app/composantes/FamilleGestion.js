@@ -86,7 +86,6 @@ export function FamillymanageScreen({ navigation, route }) {
   );
   useEffect(() => {
     navigation.setOptions({
-      title: "Gestion de la Famille",
       headerRight: () => (
         <AntDesign
           name="logout"

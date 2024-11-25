@@ -28,6 +28,7 @@ import { AntDesign, FontAwesome5,MaterialCommunityIcons } from "@expo/vector-ico
 // OBJETS //
 ///////////
 export function ObjetsScreen({ navigation, route }) {
+  console.log(route)
   const [objetsList, setObjetsList] = useState([]);
   const [ListobjComplet, setListobjComplet] = useState();
   const [error, setError] = useState(null);
@@ -46,17 +47,20 @@ export function ObjetsScreen({ navigation, route }) {
   };
 
   // get le user avec id
-  useEffect(() => {
-    if (usrId) {
-      obtenirUser(usrId)
-        .then((user) => {
-          setCurrentUser(user);
-        })
-        .catch((err) => {
-          console.error("Failed to fetch user:", err);
-        });
-    }
-  }, [route, usrId, navigation]);
+  useFocusEffect(
+    useCallback(() => {
+      if (usrId) {
+        obtenirUser(usrId)
+          .then((user) => {
+            setCurrentUser(user);
+          })
+          .catch((err) => {
+            console.error("Failed to fetch user:", err);
+          });
+      }
+    }, [usrId])
+  );
+  
 
   // mettre le bon nom de robot dans lee tittre 
   useEffect(() => {
@@ -133,7 +137,7 @@ export function ObjetsScreen({ navigation, route }) {
           size={25}
           color="blue"
           onPress={() => {
-            navigation.navigate("Accueil");
+            navigation.navigate('Accueil', { usrId });
           }}
         />
       ),

@@ -15,10 +15,9 @@ import Tuilerie from "./Tuilerie";
 export function AccueilScreen({ navigation, route }) {
   const [menuJSON, setMenu] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
-  console.log(route)
-  const usrId = route.params.currentuser.Id; 
+  const usrId = route.params.usrId; 
   const [currentuser, setCurrentUser] = useState(null); 
-  
+  console.log(currentuser)
    //Get les robot//
   useEffect(() => {
     obtenirRobotsJSON().then((menu) => setMenu(menu));
@@ -35,23 +34,21 @@ export function AccueilScreen({ navigation, route }) {
       });
     }
   }, [usrId]);
-  
-  //simple log pour voir les infos du user actuel
-  useEffect(() => {
-    if(currentuser)
-    {console.log("Current user : ",currentuser)
-    route.params.currentuser = currentuser}
-  }, [currentuser]);
 
 
 //renderItem ou Item a supprimer. ne pas toucher pour le moment
   const Item = ({ item, onPress, backgroundColor, textColor }) => (
     <View>
-      <Tuile texte={item.username} iconNom="pluscircleo" onPress_cb={() => {navigation.navigate("AjoutRobot", {
-          usrId: currentuser.Id,
-          rbtId: item.Id
-      })
-     }} />
+      <Tuile texte={item.username} iconNom={currentuser?.idRobot === item.Id ? "checkcircleo" : "pluscircleo"} onPress_cb={() => {if (currentuser.idRobot != item.Id) {
+          navigation.navigate("AjoutRobot", {
+            usrId: currentuser.Id,
+            currentuser:currentuser,
+            rbtId: item.Id,
+          });
+        } else {
+          alert("Ce robot vous est déjà associé!");
+        }
+      }}/>
     </View>
   );
 
@@ -63,6 +60,7 @@ export function AccueilScreen({ navigation, route }) {
         item={item}
         onPress={() => navigation.navigate("AjoutRobot", {
           usrId: usrId,
+          currentuser:currentuser,
           rbtId: item.Id,
         })}
         backgroundColor={backgroundColor}
@@ -76,7 +74,6 @@ export function AccueilScreen({ navigation, route }) {
   return (
     <View style={stylesCommuns.app}>
       <View style={styles.section_haut}>
-        {/* <Text style={styles.bienvenue}>Welcome {currentuser.username}</Text>  */}
       </View>
       <Tuilerie>
         <SafeAreaView style={styles.section_bas}>
@@ -103,18 +100,26 @@ export function AjoutRobotScreen({ route, navigation }) {
   const [MdpRbt, setPassword] = useState(null);
   const [connectionmsg, setConnectionmsg] = useState(null);
   const [invalidbool, setInvalidbool] = useState(false);
-  const { rbtId, usrId } = route.params;
-
+  const { rbtId,currentuser,usrId } = route.params;
+  console.log(route)
   //Actions qui se produit quand on clique sur connect//
   function ConnectionRobot() {
     if (MdpRbt) {
       ConnecterRobot(usrId, rbtId, MdpRbt).then((res) => {
-        console.log("Creation réussi %s", route.params);
+        console.log("Creation réussi %s", route);
         setInvalidbool(false);
         setConnectionmsg(null);
-        navigation.navigate("Ardoise");
+        navigation.dispatch({
+          type: 'REPLACE',
+          payload: {
+            name: 'MainTabs',   
+            params: {
+                  currentuser : currentuser
+            },
+          },
+        })
       }).catch(err => {
-        console.log("Creation échec: %s", err.msg);
+        console.log("Creation échec: %s", err);
         setInvalidbool(true);
         setConnectionmsg("Un problème est survenu lors de la connexion");
       });
@@ -127,7 +132,7 @@ export function AjoutRobotScreen({ route, navigation }) {
   //Affichage menu remplire le code etc
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === "ios" ? "position" : "height"}
       style={styles.formBox}
     >
       <View style={styles.form}>

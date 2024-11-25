@@ -11,6 +11,8 @@ import {
   Platform,
   Keyboard,
   ActivityIndicator,
+  Modal,
+  TouchableOpacity
 } from "react-native";
 import { useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
@@ -22,7 +24,7 @@ export function NoteScreen({ navigation, route }) {
   const [NotesFamille, setNotesFamille] = useState(null);
   const [errormsg, setErrorMsg] = useState(null);
   const [invalidbool, setInvalidbool] = useState(false);
-  const [selectedId, setSelectedId] = useState(null);
+  const [selectedNote, setSelectedNote] = useState(null);
   const [InfosFamille, setInfosFamille] = useState(null);
   const [CurrentUser, setCurrentUser] = useState(null);
   const currentId = route.params.currentuser.Id;
@@ -30,14 +32,14 @@ export function NoteScreen({ navigation, route }) {
   useEffect(() => {
     obtenirUser(currentId)
       .then((user) => setCurrentUser(user))
-      .catch((err) => console.error("Failed to fetch user:", err));
+      .catch((err) => console.error("Failed fetch user:", err));
   }, [navigation,route]);
 
   useEffect(() => {
     if (CurrentUser?.idFamille) {
       ObtenirNote(CurrentUser.idFamille)
         .then((notes) => setNotesFamille(notes))
-        .catch((err) => console.error("Error fetching notes:", err));
+        .catch((err) => console.error("Error obtention notes:", err));
     } else {
       setNotesFamille([]);
     }
@@ -47,7 +49,7 @@ export function NoteScreen({ navigation, route }) {
     if (CurrentUser?.idFamille) {
       ObtenirNote(CurrentUser.idFamille)
         .then((notes) => setNotesFamille(notes))
-        .catch((err) => console.error("Error fetching notes:", err));
+        .catch((err) => console.error("Error obtention notes:", err));
     }else {
       setNotesFamille([]);
     }
@@ -88,11 +90,12 @@ export function NoteScreen({ navigation, route }) {
   const renderItem = ({ item }) => (
     <Pressable
       style={styles.noteTile}
+      onPress={() => setSelectedNote(item)}
       onLongPress={() =>
         Alert.alert("Supprimer", "Voulez-vous supprimer cette note ?", [
           { text: "Annuler", style: "cancel" },
           {
-            text: "Supprimer",
+            text: "Supprimer", style:"destructive",
             onPress: () => deleteNote(item.Id).then(fetchNotes),
           },
         ])
@@ -100,7 +103,7 @@ export function NoteScreen({ navigation, route }) {
     >
       <AntDesign name="filetext1" size={40} color="#555" />
       <Text style={styles.title}>{item.name} :</Text>
-      <Text style={styles.noteText}>{item.message}</Text>
+      <Text numberOfLines={1} style={styles.noteText}>{item.message}</Text>
     </Pressable>
   );
 
@@ -111,7 +114,7 @@ export function NoteScreen({ navigation, route }) {
         style={styles.container}
         keyboardVerticalOffset={80}
       >
-        <Text style={styles.title}>Les Notes</Text>
+        <Text style={styles.headertitle}>Les Notes</Text>
 
         <FlatList
           style={styles.notesList}
@@ -140,6 +143,25 @@ export function NoteScreen({ navigation, route }) {
             <Text style={styles.addButtonText}>Ajouter</Text>
           </Pressable>
         </View>
+        <Modal
+        visible={!!selectedNote}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setSelectedNote(null)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>{selectedNote?.name}</Text>
+            <Text style={styles.modalText}>{selectedNote?.message}</Text>
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setSelectedNote(null)}
+            >
+              <Text style={styles.modalCloseButtonText}>Fermer</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       </KeyboardAvoidingView>
     );
   } else {
@@ -157,7 +179,14 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: "#333",
-    marginBottom: 16,
+    marginBottom: 1,
+    textAlign: "center",
+  },
+  headertitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: -10,
     textAlign: "center",
   },
   notesList: {
@@ -187,11 +216,13 @@ const styles = StyleSheet.create({
   noteText: {
     marginTop: 8,
     fontSize: 16,
+    height: 35,
     color: "#333",
     textAlign: "center",
+    overflow:"hidden",
   },
   inputContainer: {
-    marginTop: 16,
+    marginBottom:5,
     padding: 16,
     backgroundColor: "#fff",
     borderRadius: 10,
@@ -231,5 +262,37 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#fff",
     fontWeight: "bold",
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    width: 300,
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  modalCloseButton: {
+    backgroundColor: "#4caf50",
+    padding: 10,
+    borderRadius: 5,
+  },
+  modalCloseButtonText: {
+    color: "#fff",
+    fontSize: 16,
   },
 });

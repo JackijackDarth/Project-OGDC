@@ -42,16 +42,16 @@ function MainTabNavigator({ route }) {
         tabBarInactiveTintColor: 'gray',  
         tabBarStyle: {
           backgroundColor: '#1e1e1e',  
-          borderTopWidth: 0,  
+          borderTopWidth: 1,  
         },
       })}
     >
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Accueil"
         component={AccueilScreen}
         options={{ title: "OGDC" }}
         initialParams={{ currentuser }}  
-      />
+      /> */}
       <Tab.Screen
         name="Ardoise"
         component={ObjetsScreen}
@@ -61,13 +61,13 @@ function MainTabNavigator({ route }) {
       <Tab.Screen
         name="Automate"
         component={AutomateScreen}
-        options={{ title: "Automatisations" }}
+        options={{ title: "Routines" }}
         initialParams={{ currentuser }}  
       />
       <Tab.Screen
         name="FamilyManage"
         component={FamillymanageScreen}
-        options={{ title: "Gestion famille" }}
+        options={{ title: "Famille" }}
         initialParams={{ currentuser }}
       />
       <Tab.Screen
@@ -98,6 +98,8 @@ export default function App() {
         <Screen name="MainTabs" component={MainTabNavigator} options={{ headerShown: false }} />
 
         <Screen name="Aide" component={AideScreen} />
+
+        <Screen name="Accueil" component={AccueilScreen} options={{ title: "OGDC" }} />
 
         <Screen name="Authen" component={AuthenScreen}
           options={{ title: "Sign up", headerShown: false }} />

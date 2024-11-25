@@ -1,1 +1,44 @@
-[{"Id":1001,"name":"Famille Simoneau","ownerId":1,"password":"DrORy46uYk","dateCreation":"2024-10-25 13 h 08 min 44 s"},{"Id":1002,"name":"Famille Ouellet","ownerId":1,"password":"nRomE78Xqc","dateCreation":"2024-10-25 13 h 09 min 00 s"},{"Id":1003,"name":"Les Lolotes","ownerId":2,"password":"2ESfRNZR0o","dateCreation":"2024-11-05, 10:04:07 p.m."},{"Id":1004,"name":"Rouge","ownerId":2,"password":"Riq8GIuxAr","dateCreation":"2024-11-05, 10:09:37 p.m."},{"Id":1005,"name":"Choir","ownerId":2,"password":"QRVhxSZntt","dateCreation":"2024-11-05, 10:12:06 p.m."},{"Id":1006,"name":"Aaaa","ownerId":2,"password":"T7EGMI6cU8","dateCreation":"2024-11-05, 10:15:11 p.m."}]
+[
+  {
+    "Id": 1001,
+    "name": "Famille Simoneau",
+    "ownerId": 1,
+    "password": "DrORy46uYk",
+    "dateCreation": "2024-10-25 13 h 08 min 44 s"
+  },
+  {
+    "Id": 1002,
+    "name": "Famille Ouellet",
+    "ownerId": 1,
+    "password": "nRomE78Xqc",
+    "dateCreation": "2024-10-25 13 h 09 min 00 s"
+  },
+  {
+    "Id": 1003,
+    "name": "Les Lolotes",
+    "ownerId": 2,
+    "password": "2ESfRNZR0o",
+    "dateCreation": "2024-11-05, 10:04:07 p.m."
+  },
+  {
+    "Id": 1004,
+    "name": "Rouge",
+    "ownerId": 2,
+    "password": "Riq8GIuxAr",
+    "dateCreation": "2024-11-05, 10:09:37 p.m."
+  },
+  {
+    "Id": 1005,
+    "name": "Choir",
+    "ownerId": 2,
+    "password": "QRVhxSZntt",
+    "dateCreation": "2024-11-05, 10:12:06 p.m."
+  },
+  {
+    "Id": 1006,
+    "name": "Aaaa",
+    "ownerId": 2,
+    "password": "T7EGMI6cU8",
+    "dateCreation": "2024-11-05, 10:15:11 p.m."
+  }
+]

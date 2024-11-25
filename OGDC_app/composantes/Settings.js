@@ -9,11 +9,6 @@ import { AntDesign } from "@expo/vector-icons";
 import { deconnexion } from "../utils";
 
 export function SettingsScreen({ navigation, route }) {
-  useEffect(() => {
-    navigation.setOptions({
-      title: "Gestion de la Famille",
-    });
-  }, [navigation]);
 
   return (
     <View style={styles.container}>

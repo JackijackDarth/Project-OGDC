@@ -12,6 +12,7 @@ import {
   Platform,
   Keyboard,
   ActivityIndicator,
+  modal
 } from "react-native";
 import { useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
