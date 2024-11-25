@@ -132,18 +132,32 @@ export function ObjetsScreen({ navigation, route }) {
     navigation.setOptions({
       title: "Gestion de la Famille",
       headerRight: () => (
-        <MaterialCommunityIcons
-          name="shape-plus"
-          size={25}
-          color="blue"
-          style={{ marginRight: 15 }}
-          onPress={() => {
-            navigation.navigate('Accueil', { usrId });
-          }}
-        />
+        <View style={{ flexDirection: "row", alignItems: "center", marginRight: 15 }}>
+          {currentuser && currentuser.idRobot == null && (
+            <MaterialCommunityIcons
+              name="arrow-right"
+              size={40}
+              color="red"
+              style={{ marginLeft: 10 }}
+              onPress={() => {
+                console.log("Aucun robot!");
+              }}
+            />
+          )}
+          <MaterialCommunityIcons
+            name="shape-plus"
+            size={25}
+            color="blue"
+            onPress={() => {
+              navigation.navigate("Accueil", { usrId });
+            }}
+          />
+          
+        </View>
       ),
     });
-  }, [navigation]);
+  }, [navigation, currentuser]);
+  
 
   // gerer la selection d<objeet
   const handleItemPress = (item) => {
