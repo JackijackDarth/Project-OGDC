@@ -65,6 +65,9 @@ export function creerNote(senderid){
 export function getMembresFamille(idFamille){
     return obtenirJSON_Get(`familles/${idFamille}`)
 }
+export function changeAdmin(idusr, idnewadmin){
+    return ModifierJSON_Put(`familles/${idusr}/${idnewadmin}`)
+}
 export function joinFamille(usrId,infosfamille){
     return ModifierJSON_Put(`familles/${usrId}`,infosfamille);
 }

@@ -12,18 +12,18 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Clipboard,
-  Alert
+  Alert,
 } from "react-native";
-import { useState, useEffect, useCallback} from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   obtenirUser,
   creerFamille,
   joinFamille,
   getInfosFamille,
-  deconnexion,
   getMembresFamille,
   leaveFamille,
-  getHistoFamille
+  getHistoFamille,
+  changeAdmin,
 } from "../utils";
 import { AntDesign } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -39,10 +39,11 @@ export function FamillymanageScreen({ navigation, route }) {
   const currentId = route.params.currentuser.Id;
   const [selectedId, setSelectedId] = useState(null);
   const [FamilleUsrList, setFamilleUsrList] = useState(null);
-  const [loading, setLoading] = useState(true) 
-  const [codefamille, setcodefamillet] = useState(""); 
+  const [loading, setLoading] = useState(true);
+  const [codefamille, setcodefamillet] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  const fetchData =useCallback( async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -57,28 +58,30 @@ export function FamillymanageScreen({ navigation, route }) {
         setInfosFamille(familleDetails);
         setcodefamillet(familleDetails.password);
         setFamilleUsrList(familleMembers);
+        setIsAdmin(familleDetails.ownerId === currentId);
       } else {
         setInfosFamille(null);
         setFamilleUsrList(null);
+        setIsAdmin(false);
       }
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
       setLoading(false);
     }
-  },[route]);
-  
+  }, [route]);
+
   useFocusEffect(
     useCallback(() => {
       const unsubscribe = navigation.addListener("focus", fetchData);
-    const intervalId = setInterval(() => {
-      fetchData();
-    }, 5000);
-  
-    return () => {
-      clearInterval(intervalId);
-      unsubscribe();
-    };
+      const intervalId = setInterval(() => {
+        fetchData();
+      }, 5000);
+
+      return () => {
+        clearInterval(intervalId);
+        unsubscribe();
+      };
     }, [fetchData])
   );
   useEffect(() => {
@@ -89,41 +92,60 @@ export function FamillymanageScreen({ navigation, route }) {
           name="logout"
           size={25}
           color="blue"
+          style={{ marginRight: 15 }}
           onPress={() => {
-            if (InfosFamille?.ownerId === currentId) {
+            if (isAdmin) {
               Alert.alert(
                 "Action impossible",
                 "Vous ne pouvez pas quitter la famille car vous en êtes le propriétaire.",
                 [{ text: "OK", style: "cancel" }]
               );
             } else {
-              leaveFamille(currentId)
-                .then(() => {
-                  fetchData();
-                })
-                .catch((err) => {
-                  console.error("Error leaving family:", err);
-                });
+              Alert.alert(
+                "Confirmation",
+                `Êtes-vous sûr de vouloir quitter la famille ?`,
+                [
+                  {
+                    text: "Annuler",
+                    style: "cancel",
+                  },
+                  {
+                    text: "Quitter",
+                    style: "destructive",
+                    onPress: async () => {
+                      try {
+                        leaveFamille(currentId)
+                          .then(() => {
+                            fetchData();
+                          })
+                          .catch((err) => {
+                            console.error("Error leaving family:", err);
+                          });
+                      } catch (error) {
+                        console.error("Error leaving family:", error);
+                      }
+                    },
+                  },
+                ]
+              );
             }
           }}
         />
       ),
-      headerLeft: () => (
-        <AntDesign
-          name="clockcircleo"
-          size={25}
-          color="blue"
-          onPress={() => {
-            navigation.navigate("Historique", { usrid: currentId })
-          }}
-          style={{ marginLeft: 15 }}
-        />
-      ),
+      headerLeft: () =>
+        isAdmin && (
+          <AntDesign
+            name="clockcircleo"
+            size={25}
+            color="blue"
+            onPress={() => {
+              navigation.navigate("Historique", { usrid: currentId });
+            }}
+            style={{ marginLeft: 15 }}
+          />
+        ),
     });
   }, [navigation, InfosFamille, currentId]);
-  
-  
-  
 
   function RejoindreFamille() {
     if (NomFamille && /\S/.test(NomFamille)) {
@@ -134,7 +156,7 @@ export function FamillymanageScreen({ navigation, route }) {
         .then(() => {
           setInvalidbool(false);
           setErrorMsg("");
-          fetchData()
+          fetchData();
         })
         .catch((err) => {
           console.log(err);
@@ -148,27 +170,24 @@ export function FamillymanageScreen({ navigation, route }) {
   }
 
   const copyFamilyCode = () => {
-    if (InfosFamille){
+    if (InfosFamille) {
       //le nouveau clipboard marche juste pas donc je prend ça pour le moment
-      Clipboard.setString(InfosFamille.password + " "+InfosFamille.name); 
-      setcodefamillet("Code copié !"); 
-      
-      
+      Clipboard.setString(InfosFamille.password + " " + InfosFamille.name);
+      setcodefamillet("Code copié !");
+
       setTimeout(() => {
         setcodefamillet(InfosFamille.password);
       }, 3000);
     }
-   
   };
   useEffect(() => {
-    setSelectedId(null)
-  }, [navigation,route]);
+    setSelectedId(null);
+  }, [navigation, route]);
 
-  
   const renderItem = ({ item }) => {
     const backgroundColor = item.Id === selectedId ? "#4CAF50" : "#ffffff";
     const color = item.Id === selectedId ? "white" : "#333333";
-  
+
     const handleDelete = () => {
       Alert.alert(
         "Confirmation",
@@ -183,9 +202,8 @@ export function FamillymanageScreen({ navigation, route }) {
             style: "destructive",
             onPress: async () => {
               try {
-                console.log(item.Id)
+                console.log(item.Id);
                 await leaveFamille(item.Id);
-                
               } catch (error) {
                 console.error("Error deleting user:", error);
               }
@@ -194,7 +212,32 @@ export function FamillymanageScreen({ navigation, route }) {
         ]
       );
     };
-  
+    const handlePromote = () => {
+      Alert.alert(
+        "Confirmation",
+        `Êtes-vous sure de vouloir léguer votre rôle d'administrateur a ${item.username} ?`,
+        [
+          {
+            text: "Annuler",
+            style: "cancel",
+          },
+          {
+            text: "Promouvoir",
+            style: "destructive",
+            onPress: async () => {
+              try {
+                console.log(item.Id);
+                setIsAdmin(false)
+                await changeAdmin(currentId,item.Id);
+              } catch (error) {
+                console.error("Error deleting user:", error);
+              }
+            },
+          },
+        ]
+      );
+    };
+
     return (
       <TouchableOpacity
         onPress={() => setSelectedId(item.Id)}
@@ -205,40 +248,49 @@ export function FamillymanageScreen({ navigation, route }) {
           <Text style={styles.email}>{item.email}</Text>
         </View>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <AntDesign name="user" style={styles.icon} />
-        { InfosFamille.ownerId === currentId && currentId != item.Id &&  <TouchableOpacity onPress={handleDelete} style={{ marginLeft: 10 }}>
-            <AntDesign name="delete" size={24} color="#f44336" />
-          </TouchableOpacity>}
+
+          {isAdmin && currentId != item.Id && (
+            <TouchableOpacity onPress={handlePromote} style={{ marginLeft: 10 }}>
+              <AntDesign name="key" style={styles.icon} />
+            </TouchableOpacity>
+          )}
+          
+          {InfosFamille.ownerId == item.Id && (<AntDesign name="Safety" style={styles.icon} />)}
+
+          {isAdmin && currentId != item.Id && (
+            <TouchableOpacity onPress={handleDelete} style={{ marginLeft: 10 }}>
+              <AntDesign name="delete" size={24} color="#f44336" />
+            </TouchableOpacity>
+          )}
         </View>
       </TouchableOpacity>
     );
   };
-  
- 
+
   if (currentuser) {
     if (currentuser.idFamille) {
-      if(InfosFamille){
+      if (InfosFamille) {
         return (
-        <SafeAreaView style={stylesCommuns.app}>
-          <View style={styles.section}>
-            <Text style={styles.title}>
-              Vous êtes membre de la famille {InfosFamille.name}
-            </Text>
-          </View>
-          <FlatList
-            data={FamilleUsrList}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.Id}
-            extraData={selectedId}
-          />
-          <View style={styles.codeContainer}>
-            <Text style={styles.codeText}>Code famille :</Text>
-            <Pressable onPress={copyFamilyCode} style={styles.copyButton}>
-              <Text style={styles.copyButtonText}>{codefamille}</Text>
-            </Pressable>
-          </View>
-        </SafeAreaView>
-      );
+          <SafeAreaView style={stylesCommuns.app}>
+            <View style={styles.section}>
+              <Text style={styles.title}>
+                Vous êtes membre de la famille {InfosFamille.name}
+              </Text>
+            </View>
+            <FlatList
+              data={FamilleUsrList}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.Id}
+              extraData={selectedId}
+            />
+            <View style={styles.codeContainer}>
+              <Text style={styles.codeText}>Code famille :</Text>
+              <Pressable onPress={copyFamilyCode} style={styles.copyButton}>
+                <Text style={styles.copyButtonText}>{codefamille}</Text>
+              </Pressable>
+            </View>
+          </SafeAreaView>
+        );
       }
     } else {
       return (
@@ -268,7 +320,7 @@ export function FamillymanageScreen({ navigation, route }) {
                 <Text style={styles.confirmButtonText}>Confirmer</Text>
               </Pressable>
             </View>
-            <Text  style={styles.title} > OU </Text>
+            <Text style={styles.title}> OU </Text>
             <View style={styles.formContainer}>
               <Text style={styles.subtitle}>Créer une Famille</Text>
               <Pressable
@@ -286,8 +338,8 @@ export function FamillymanageScreen({ navigation, route }) {
         </SafeAreaView>
       );
     }
-  }else{
-    return <ActivityIndicator size={20} />
+  } else {
+    return <ActivityIndicator size={20} />;
   }
 }
 
@@ -341,7 +393,6 @@ export function MenuFamilleScreen({ route, navigation }) {
   );
 }
 
-
 export function FamHistoryScreen({ route, navigation }) {
   const [InfosFamille, setInfosFamille] = useState(null);
   const [HistoFamille, setHistoFamille] = useState(null);
@@ -349,7 +400,7 @@ export function FamHistoryScreen({ route, navigation }) {
   const currentId = route.params.usrid;
   const [selectedId, setSelectedId] = useState(null);
 
-  const fetchData =useCallback( async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -357,11 +408,12 @@ export function FamHistoryScreen({ route, navigation }) {
       setCurrentUser(user);
 
       if (user?.idFamille) {
-        const [familleDetails, familleHistory, familleMembers] = await Promise.all([
-          getInfosFamille(user.idFamille),
-          getHistoFamille(user.Id),
-          getMembresFamille(user.idFamille),
-        ]);
+        const [familleDetails, familleHistory, familleMembers] =
+          await Promise.all([
+            getInfosFamille(user.idFamille),
+            getHistoFamille(user.Id),
+            getMembresFamille(user.idFamille),
+          ]);
         setInfosFamille(familleDetails);
         setHistoFamille(familleHistory);
         setcodefamillet(familleDetails.password);
@@ -377,31 +429,30 @@ export function FamHistoryScreen({ route, navigation }) {
     } finally {
       setLoading(false);
     }
-  },[route]);
-  
+  }, [route]);
+
   useFocusEffect(
     useCallback(() => {
       const unsubscribe = navigation.addListener("focus", fetchData);
-    const intervalId = setInterval(() => {
-      fetchData();
-    }, 5000);
-  
-    return () => {
-      clearInterval(intervalId);
-      unsubscribe();
-    };
+      const intervalId = setInterval(() => {
+        fetchData();
+      }, 5000);
+
+      return () => {
+        clearInterval(intervalId);
+        unsubscribe();
+      };
     }, [fetchData])
   );
-  
-  useEffect(() => {
-    setSelectedId(null)
-  }, [navigation,route]);
 
-  
+  useEffect(() => {
+    setSelectedId(null);
+  }, [navigation, route]);
+
   const renderItem = ({ item }) => {
     const backgroundColor = item.Id === selectedId ? "#4CAF50" : "#ffffff";
     const color = item.Id === selectedId ? "white" : "#333333";
-  
+
     return (
       <TouchableOpacity
         onPress={() => setSelectedId(item.Id)}
@@ -415,57 +466,55 @@ export function FamHistoryScreen({ route, navigation }) {
       </TouchableOpacity>
     );
   };
-  
- 
+
   if (currentuser) {
     if (currentuser.idFamille) {
-      if(InfosFamille){
+      if (InfosFamille) {
         return (
-        <SafeAreaView style={stylesCommuns.app}>
-          <View style={styles.section}>
-            <Text style={styles.title}>
-             Historique de la famille {InfosFamille.name}
-            </Text>
-          </View>
-          <FlatList
-            data={HistoFamille}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.Id}
-            extraData={selectedId}
-          />
-        </SafeAreaView>
-      );
+          <SafeAreaView style={stylesCommuns.app}>
+            <View style={styles.section}>
+              <Text style={styles.title}>
+                Historique de la famille {InfosFamille.name}
+              </Text>
+            </View>
+            <FlatList
+              data={HistoFamille}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.Id}
+              extraData={selectedId}
+            />
+          </SafeAreaView>
+        );
       }
     }
-  }else{
-    return <ActivityIndicator size={20} />
+  } else {
+    return <ActivityIndicator size={20} />;
   }
 }
-
 
 const styles = StyleSheet.create({
   section: {
     padding: 20,
-    backgroundColor: "#f1f7fe",  
+    backgroundColor: "#f1f7fe",
     borderRadius: 12,
     marginVertical: 10,
   },
   description: {
     fontSize: 16,
     textAlign: "center",
-    color: "#666", 
+    color: "#666",
     marginBottom: 20,
   },
   subtitle: {
     fontSize: 20,
     fontWeight: "500",
     textAlign: "center",
-    color: "#555",  
+    color: "#555",
     marginBottom: 15,
   },
   formContainer: {
     padding: 20,
-    backgroundColor: "#fff",  
+    backgroundColor: "#fff",
     borderRadius: 12,
     marginHorizontal: 20,
     marginBottom: 20,
@@ -482,34 +531,34 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9f9f9",
   },
   inputError: {
-    borderColor: "rgba(255, 0, 0, 0.4)", 
+    borderColor: "rgba(255, 0, 0, 0.4)",
   },
   errorText: {
-    color: "red", 
+    color: "red",
     fontSize: 14,
     marginBottom: 10,
     textAlign: "center",
   },
   createFamilyButton: {
-    backgroundColor: "#4CAF50",  
+    backgroundColor: "#4CAF50",
     borderRadius: 24,
     paddingVertical: 12,
     alignItems: "center",
     marginBottom: 15,
   },
   createFamilyButtonText: {
-    color: "#fff",  
+    color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
   },
   confirmButton: {
-    backgroundColor: "#0066ff",  
+    backgroundColor: "#0066ff",
     borderRadius: 24,
     paddingVertical: 12,
     alignItems: "center",
   },
   confirmButtonText: {
-    color: "#fff", 
+    color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -529,12 +578,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    flexDirection: "row",  
-    alignItems: "center",  
-    justifyContent: "space-between",  
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   textContainer: {
-    flex: 1, 
+    flex: 1,
   },
   name: {
     fontSize: 18,
@@ -542,25 +591,25 @@ const styles = StyleSheet.create({
   },
   email: {
     fontSize: 14,
-    color: "#555",  
+    color: "#555",
   },
   icon: {
-    fontSize: 24,  
-    color: "#555", 
+    fontSize: 24,
+    color: "#555",
   },
   title: {
     fontSize: 29,
-    fontWeight:"600",
+    fontWeight: "600",
     textAlign: "center",
     marginBottom: 10,
-    color: "#010101", 
+    color: "#010101",
   },
   codeContainer: {
     position: "absolute",
     bottom: 40,
     left: 20,
     right: 20,
-    backgroundColor: "#f9f9f9", 
+    backgroundColor: "#f9f9f9",
     padding: 15,
     borderRadius: 10,
     justifyContent: "center",
@@ -569,7 +618,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    
   },
   codeText: {
     fontSize: 18,
@@ -577,20 +625,19 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   copyButton: {
-    backgroundColor: "#007BFF",  
+    backgroundColor: "#007BFF",
     borderRadius: 8,
     padding: 10,
     marginTop: 10,
   },
   copyButtonText: {
-    color: "#fff",  
+    color: "#fff",
     textAlign: "center",
   },
   copyMessage: {
     fontSize: 16,
-    color: "#28a745",   
+    color: "#28a745",
     textAlign: "center",
     marginTop: 10,
   },
 });
-
