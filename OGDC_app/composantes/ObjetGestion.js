@@ -276,6 +276,7 @@ export function MenuObjetScreen({ route, navigation }) {
   function EditObjet() {
     console.log(ListobjComplet);
   
+    //fix pour le bug de update : 
     // Clone the object to update
     const updatedListeObjets = {
       ...ListobjComplet.listeObjets,
