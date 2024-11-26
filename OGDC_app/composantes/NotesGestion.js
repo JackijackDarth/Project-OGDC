@@ -168,8 +168,8 @@ export function NoteScreen({ navigation, route }) {
                   onPress: () => {
                     deleteNote(selectedNote.Id)
                       .then(() => {
-                        setSelectedNote(null); // Close modal
-                        fetchNotes(); // Refresh notes
+                        setSelectedNote(null);
+                        fetchNotes();
                       })
                       .catch((err) => console.error("Erreur suppression:", err));
                   },

@@ -130,7 +130,6 @@ export function ObjetsScreen({ navigation, route }) {
 
   useEffect(() => {
     navigation.setOptions({
-      title: "Gestion de la Famille",
       headerRight: () => (
         <View style={{ flexDirection: "row", alignItems: "center", marginRight: 15 }}>
           {currentuser && currentuser.idRobot == null && (
@@ -139,9 +138,6 @@ export function ObjetsScreen({ navigation, route }) {
               size={40}
               color="red"
               style={{ marginLeft: 10 }}
-              onPress={() => {
-                console.log("Aucun robot!");
-              }}
             />
           )}
           <MaterialCommunityIcons
@@ -280,6 +276,7 @@ export function MenuObjetScreen({ route, navigation }) {
   function EditObjet() {
     console.log(ListobjComplet);
   
+    //fix pour le bug de update : 
     // Clone the object to update
     const updatedListeObjets = {
       ...ListobjComplet.listeObjets,
