@@ -4,5 +4,5 @@
 
 cd /
 cd home/pi/Documents/OGDC/greg
-python3 'command.py'
+python3 'main.py'
 cd /

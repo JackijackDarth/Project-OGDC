@@ -1,0 +1,14 @@
+{
+    "led_states": {
+        "red_led": 0,
+        "green_led": 0,
+        "blue_led": 0
+    },
+    "temp": {
+        "temperature": 26.0,
+        "humidity": 43.0
+    },
+    "exit_flag": false,
+    "manage_temp": null,
+    "camera": "La cam\u00e9ra est \u00e9teinte"
+}

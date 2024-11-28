@@ -1,0 +1,17 @@
+{
+    "musique": null,
+    "repete": null,
+    "meteo": null,
+    "delete_note": null,
+    "note": null,
+    "rouge": null,
+    "bleu": null,
+    "vert": null,
+    "capteur": null,
+    "temperature": null,
+    "camera": null,
+    "quitter": null,
+    "teste": null,
+    "estActif": null,
+    "commande": null
+}
